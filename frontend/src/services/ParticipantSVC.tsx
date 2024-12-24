@@ -24,7 +24,7 @@ export const markParticipantAttendance = async (
   try {
     const response = await axios.post(
       `${SERVER_URL}/participant/markAttendance`,
-      { gmid: gmid, eventId: eventId, status: true }
+      { gmId: gmid, eventId: eventId, status: true }
     );
     if (response.status == 200) {
       return "Successfully marked as present";
