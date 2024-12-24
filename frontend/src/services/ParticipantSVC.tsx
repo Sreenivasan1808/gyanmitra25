@@ -4,7 +4,8 @@ const SERVER_URL = import.meta.env.VITE_SERVER_API_URL;
 export const getParticipantDetailsFromGMID = async (gmid: string) => {
   try {
     const response = await axios.get(
-      `${SERVER_URL}/participant/getParticipantDetails`, {params: {gmId: gmid}}
+      `${SERVER_URL}/participant/getParticipantDetails`,
+      { params: { gmId: gmid } }
     );
     if (response.status == 200) {
       return response.data;

@@ -36,6 +36,11 @@ const EventAttendance = () => {
       }));
       setError("");
     } else {
+      setParticipantDetails({
+        gmid: "",
+        name: "",
+        college: "",
+      });
       setError("Invalid GMID");
     }
   };
@@ -140,7 +145,7 @@ const EventAttendance = () => {
                 <p className="text-center text-red-600 p-4">{error}</p>
                 <button
                   className={`${
-                    error.length != 0 || participantDetails.college.length == 0
+                    error.length != 0 || participantDetails.college && participantDetails.college.length == 0
                       ? "cursor-not-allowed bg-green-400"
                       : "cursor-pointer bg-green-600"
                   } rounded-lg px-4 py-2  text-white`}
