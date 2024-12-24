@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import EventsList from "./EventsList";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import {
+  getParticipantDetailsFromGMID,
+  markParticipantAttendance,
+} from "../../services/ParticipantSVC";
 
 const EventAttendance = () => {
   const [event, setEvent] = useState<{
@@ -8,6 +12,50 @@ const EventAttendance = () => {
     name: String;
     imgSrc: string;
   } | null>(null);
+
+  const [participantDetails, setParticipantDetails] = useState({
+    gmid: "",
+    name: "",
+    college: "",
+  });
+
+  const [error, setError] = useState("");
+
+  const handleGetParticipantDetails = async (e: any) => {
+    e.preventDefault();
+    if (participantDetails.gmid.length == 0) {
+      setError("Enter the GMID");
+      return;
+    }
+    let details = await getParticipantDetailsFromGMID(participantDetails.gmid);
+    if (details != null) {
+      setParticipantDetails((prevData) => ({
+        ...prevData,
+        name: details.name,
+        college: details.college,
+      }));
+      setError("");
+    } else {
+      setError("Invalid GMID");
+    }
+  };
+
+  const handleMarkAsPresent = async (e: any) => {
+    e.preventDefault();
+    if (participantDetails.gmid.length == 0) {
+      setError("Enter the GMID");
+      return;
+    }
+
+    if (error.length == 0 && event) {
+      let message = await markParticipantAttendance(
+        participantDetails.gmid,
+        event.id
+      );
+      //display message
+      console.log(message);
+    }
+  };
   return (
     <div className="w-full h-full overflow-scroll">
       {event === null && (
@@ -31,7 +79,8 @@ const EventAttendance = () => {
           </button>
           <div className="p-4 flex flex-col gap-2">
             <h1 className="text-lg text-text-950 ">
-              Event name: <span className="text-text-950 font-semibold">{event.name}</span>
+              Event name:{" "}
+              <span className="text-text-950 font-semibold">{event.name}</span>
             </h1>
 
             {/* Attendance form */}
@@ -48,6 +97,14 @@ const EventAttendance = () => {
                     name="gmid"
                     className="border-2 rounded-lg outline-none focus:ring-0 focus:border-accent-500 p-2"
                     autoFocus
+                    onChange={(e) =>
+                      setParticipantDetails((prevData) => ({
+                        ...prevData,
+                        gmid: e.target.value,
+                      }))
+                    }
+                    onBlur={handleGetParticipantDetails}
+                    value={participantDetails.gmid}
                   />
                 </div>
                 <div className="flex flex-col gap-1 w-72">
@@ -58,6 +115,7 @@ const EventAttendance = () => {
                     name="fname"
                     disabled
                     className="hover:cursor-not-allowed border-2 rounded-lg outline-none p-2"
+                    value={participantDetails.name}
                   />
                 </div>
                 <div className="flex flex-col gap-1 w-72">
@@ -68,16 +126,28 @@ const EventAttendance = () => {
                     name="college"
                     disabled
                     className="hover:cursor-not-allowed border-2 rounded-lg outline-none p-2"
+                    value={participantDetails.college}
                   />
                 </div>
               </div>
-              <div className="flex justify-end gap-2">
-                <button className="rounded-lg px-4 py-2 bg-secondary-600 text-white">
+              <div className="flex justify-between gap-2">
+                <button
+                  className="rounded-lg px-4 py-2 bg-secondary-600 text-white"
+                  onClick={handleGetParticipantDetails}
+                >
                   Get Details
                 </button>
+                <p className="text-center text-red-600 p-4">{error}</p>
                 <button
-                  className="rounded-lg px-4 py-2 bg-green-600 text-white"
-                  disabled
+                  className={`${
+                    error.length != 0 || participantDetails.college.length == 0
+                      ? "cursor-not-allowed bg-green-400"
+                      : "cursor-pointer bg-green-600"
+                  } rounded-lg px-4 py-2  text-white`}
+                  disabled={
+                    error.length != 0 && participantDetails.college.length == 0
+                  }
+                  onClick={handleMarkAsPresent}
                 >
                   Mark as present
                 </button>
