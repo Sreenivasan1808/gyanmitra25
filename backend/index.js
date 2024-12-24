@@ -17,6 +17,10 @@ mongoose.connect(MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
+const db2=mongoose.createConnection(MONGO_URL_2, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
