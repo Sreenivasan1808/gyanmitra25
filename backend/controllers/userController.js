@@ -16,7 +16,7 @@ const getDetails = async (req, res) => {
 };
 const markAttendence = async (req, res) => {
   try {
-    const user_id = req.body.gmId;
+    const user_id = req.body.gmid;
     const event_id = req.body.eventId;
     const status = req.body.status;
     const newdata = new attendenceModel({
