@@ -7,6 +7,7 @@ export const getParticipantDetailsFromGMID = async (gmid: string) => {
       `${SERVER_URL}/participant/getParticipantDetails`,
       { params: { gmId: gmid } }
     );
+    console.log(response);
     if (response.status == 200) {
       return response.data;
     } else {
@@ -29,6 +30,8 @@ export const markParticipantAttendance = async (
     );
     if (response.status == 200) {
       return "Successfully marked as present";
+    } else if (response.status == 204) {
+      return "Already Marked";
     } else {
       return "Attendance not marked";
     }
