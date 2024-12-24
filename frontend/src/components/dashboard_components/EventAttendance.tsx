@@ -5,6 +5,7 @@ import {
   getParticipantDetailsFromGMID,
   markParticipantAttendance,
 } from "../../services/ParticipantSVC";
+import Snackbar from "../util_components/Snackbar";
 
 const EventAttendance = () => {
   const [event, setEvent] = useState<{
@@ -20,6 +21,20 @@ const EventAttendance = () => {
   });
 
   const [error, setError] = useState("");
+
+  const [snackbar, setSnackbar] = useState({
+    isOpen: false,
+    message: '',
+    type: 'info', // Default type
+  });
+
+  const showSnackbar = (message:string, type:string) => {
+    setSnackbar({ isOpen: true, message, type });
+  };
+
+  const closeSnackbar = () => {
+    setSnackbar((prev) => ({ ...prev, isOpen: false }));
+  };
 
   const handleGetParticipantDetails = async (e: any) => {
     e.preventDefault();
@@ -53,12 +68,13 @@ const EventAttendance = () => {
     }
 
     if (error.length == 0 && event) {
-      let message = await markParticipantAttendance(
+      let result = await markParticipantAttendance(
         participantDetails.gmid,
         event.id
       );
       //display message
-      console.log(message);
+      console.log(result);
+      showSnackbar(result.message, result.type);
     }
   };
   return (
@@ -145,11 +161,9 @@ const EventAttendance = () => {
                 <p className="text-center text-red-600 p-4">{error}</p>
                 <button
                   className={`${
-                    error.length != 0 ||
-                    (participantDetails.college &&
-                      participantDetails.college.length == 0)
-                      ? "cursor-not-allowed bg-green-400"
-                      : "cursor-pointer bg-green-600"
+                    error.length != 0 || participantDetails.college.length == 0
+                      ? "hover:cursor-not-allowed bg-green-400"
+                      : "hover:cursor-pointer bg-green-600 hover:bg-green-700 hover:scale-95"
                   } rounded-lg px-4 py-2  text-white`}
                   disabled={
                     error.length != 0 && participantDetails.college.length == 0
@@ -224,6 +238,12 @@ const EventAttendance = () => {
           </div>
         </div>
       )}
+      <Snackbar
+        message={snackbar.message}
+        isOpen={snackbar.isOpen}
+        type={snackbar.type}
+        onClose={closeSnackbar}
+      />
     </div>
   );
 };
