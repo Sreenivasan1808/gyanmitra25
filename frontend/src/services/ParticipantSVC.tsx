@@ -4,7 +4,7 @@ const SERVER_URL = import.meta.env.VITE_SERVER_API_URL;
 export const getParticipantDetailsFromGMID = async (gmid: string) => {
   try {
     const response = await axios.get(
-      `${SERVER_URL}/participant/getParticipantDetails`
+      `${SERVER_URL}/participant/getParticipantDetails`, {params: {gmId: gmid}}
     );
     if (response.status == 200) {
       return response.data;
@@ -24,7 +24,7 @@ export const markParticipantAttendance = async (
   try {
     const response = await axios.post(
       `${SERVER_URL}/participant/markAttendance`,
-      { gmid: gmid, eventId: eventId, status: true }
+      { gmId: gmid, eventId: eventId, status: true }
     );
     if (response.status == 200) {
       return "Successfully marked as present";
