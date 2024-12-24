@@ -9,7 +9,7 @@ const app = express();
 dotenv.config();
 const PORT = process.env.PORT;
 const MONGO_URL = process.env.MONGO_URL;
-
+const MONGO_URL_2=process.env.MONGO_URL_2
 app.use(cors());
 app.use(bodyParser.json());
 
@@ -21,7 +21,7 @@ const db2=mongoose.createConnection(MONGO_URL_2, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-module.exports={db:db2}
+module.exports=db2
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {

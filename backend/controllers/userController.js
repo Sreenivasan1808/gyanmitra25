@@ -1,4 +1,4 @@
-const userModel = requier("../models/User");
+const userModel = require("../models/User");
 const attendenceModel = require("../models/attendence");
 
 const getDetails = async (req, res) => {

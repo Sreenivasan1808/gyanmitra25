@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { Schema } = mongoose;
-const db=require("../index/db")
+const db=require("../index")
 const User = new Schema({
   user_id: { type: String, unique: true, required: true },
   name: { type: String, required: true },
