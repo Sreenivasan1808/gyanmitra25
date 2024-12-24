@@ -21,7 +21,7 @@ const db2=mongoose.createConnection(MONGO_URL_2, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-
+module.exports={db:db2}
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
