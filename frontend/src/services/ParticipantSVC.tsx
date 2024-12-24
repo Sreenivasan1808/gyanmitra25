@@ -28,11 +28,11 @@ export const markParticipantAttendance = async (
       { gmId: gmid, eventId: eventId, status: true }
     );
     if (response.status == 200) {
-      return "Successfully marked as present";
+      return {message: "Successfully marked as present", type: 'success'};
     } else {
-      return "Attendance not marked";
+      return {message: "Attendance not marked", type: 'error'};
     }
   } catch (error) {
-    return "Something went wrong with the server";
+    return {message: "Something went wrong with the server", type: 'error'};
   }
 };
