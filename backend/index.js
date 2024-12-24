@@ -31,3 +31,6 @@ db.once("open", () => {
   });
 });
 
+
+const participantRouter = require("./routes/userRoutes"); //same as userRouter
+app.use("/participant", participantRouter);
