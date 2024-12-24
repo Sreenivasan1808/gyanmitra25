@@ -37,7 +37,7 @@ const Dashboard = () => {
       <div className="w-full md:w-[80%] h-screen flex flex-col">
         {/* Header */}
         <div className="w-full bg-background-100 p-2 text-xl text-text-800 font-semibold flex justify-between items-center px-4">
-          <h2 >Vipravuha</h2>
+          <h2>Vipravuha</h2>
           <span
             className="md:hidden cursor-pointer"
             onClick={() => setIsOpen((prev) => !prev)}
