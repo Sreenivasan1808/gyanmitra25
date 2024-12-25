@@ -35,7 +35,7 @@ const attendanceDownload = async (req, res) => {
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 
             // Send the buffer as response
-            res.send(buffer);
+            res.status(200).send(buffer);
        
     } catch (error) {
         console.error(error); // Log error for debugging

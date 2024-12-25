@@ -33,6 +33,7 @@ const getAllParticipants = async (req,res) =>{
     res.status(200).json(data1)
   }
   catch (e){
+    res.status(500).json({message: "Server error"})
     console.log(e)
   }
 }
