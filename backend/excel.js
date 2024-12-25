@@ -5,7 +5,7 @@ const userModel = require("./models/user")
 // Sample JSON data
 const attendanceDownload = async (req, res) => {
     try {
-       
+       console.log("entered")
             const participants = await attendanceModel.find({ event_id: req.query.event_id });
             let jsonData = [];
             

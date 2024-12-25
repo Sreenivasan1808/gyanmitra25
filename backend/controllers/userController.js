@@ -12,7 +12,7 @@ const getDetails = async (req, res) => {
       res.status(200).json(data);
     } else {
       console.log("not found")
-      res.status(204).json("No such User Found");
+      res.status(204).json({message: "No such User Found"});
     }
   } catch (e) {
     console.log(e);
@@ -68,6 +68,7 @@ const markAttendence = async (req, res) => {
     console.log(e);
   }
 };
+
 
 module.exports = {
   getDetails: getDetails,
