@@ -1,4 +1,4 @@
-const userModel = require("../models/User");
+const userModel = require("../models/user");
 const attendenceModel = require("../models/attendence");
 
 const getDetails = async (req, res) => {
@@ -55,6 +55,7 @@ const markAttendence = async (req, res) => {
   
     console.log("hi")
     if (s) {
+      console.log(s);
       res.status(200).json("marked successfully");
     } else {
       res.status(201).json("not marked");

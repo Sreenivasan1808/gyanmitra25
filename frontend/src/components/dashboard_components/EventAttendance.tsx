@@ -42,7 +42,9 @@ const EventAttendance = () => {
       setError("Enter the GMID");
       return;
     }
+    console.log(participantDetails.gmid)
     let details = await getParticipantDetailsFromGMID(participantDetails.gmid);
+    console.log(details);
     if (details != null) {
       setParticipantDetails((prevData) => ({
         ...prevData,
@@ -153,7 +155,7 @@ const EventAttendance = () => {
               </div>
               <div className="flex justify-between gap-2">
                 <button
-                  className="rounded-lg px-4 py-2 bg-secondary-600 text-white"
+                  className="rounded-lg px-4 py-2 bg-secondary-600 hover:bg-secondary-700 text-white hover:scale-95"
                   onClick={handleGetParticipantDetails}
                 >
                   Get Details
@@ -178,7 +180,7 @@ const EventAttendance = () => {
             {/* Table displaying list of participants marked as present */}
             <div className="flex justify-between mt-4 items-center">
               <h1 className="text-lg mt-4">List of present participants</h1>
-              <button className="rounded-lg px-4 py-2 bg-primary-600 text-white">
+              <button className="rounded-lg px-4 py-2 bg-primary-600 hover:bg-primary-700 hover:scale-95 text-white">
                 Download
               </button>
             </div>
