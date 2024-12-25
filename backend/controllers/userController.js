@@ -12,7 +12,7 @@ const getDetails = async (req, res) => {
       res.status(200).json(data);
     } else {
       console.log("not found")
-      res.status(204).json("No such User Found");
+      res.status(204).json({message: "No such User Found"});
     }
   } catch (e) {
     console.log(e);
@@ -56,18 +56,19 @@ const markAttendence = async (req, res) => {
     console.log("hi")
     if (s) {
       console.log(s);
-      res.status(200).json("marked successfully");
+      res.status(200).json({message: "marked successfully"});
     } else {
-      res.status(201).json("not marked");
+      res.status(201).json({message: "not marked"});
     }
   }
     else{
-      res.status(204).json("attendence already marked")
+      res.status(204).json({message: "attendence already marked"})
     }
   } catch (e) {
     console.log(e);
   }
 };
+
 
 module.exports = {
   getDetails: getDetails,
