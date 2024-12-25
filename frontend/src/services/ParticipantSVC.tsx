@@ -5,7 +5,7 @@ export const getParticipantDetailsFromGMID = async (gmid: string) => {
   try {
     const response = await axios.get(
       `${SERVER_URL}/participant/getParticipantDetails`,
-      { params: { gmId: gmid } }
+      { params: { gmid: gmid } }
     );
     console.log(response);
     if (response.status == 200) {
@@ -26,7 +26,7 @@ export const markParticipantAttendance = async (
   try {
     const response = await axios.post(
       `${SERVER_URL}/participant/markAttendance`,
-      { gmId: gmid, eventId: eventId, status: true }
+      { gmid: gmid, eventId: eventId, status: true }
     );
     if (response.status == 200) {
       return {message: "Successfully marked as present", type: 'success'};

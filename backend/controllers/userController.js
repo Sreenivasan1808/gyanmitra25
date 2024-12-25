@@ -4,7 +4,8 @@ const attendenceModel = require("../models/attendence");
 const getDetails = async (req, res) => {
   try {
     const user_id = req.query.gmid;
-    const data = await userModel.find({ userModel: user_id });
+    console.log(user_id);
+    const data = await userModel.findOne({ user_id: user_id });
     if (data) {
       res.status(200).json(data);
     } else {
@@ -21,11 +22,12 @@ const markAttendence = async (req, res) => {
     const status = req.body.status;
     const newdata = new attendenceModel({
       user_id: user_id,
-      event_id: event_id,
+      eventid: event_id,
       status: status,
     });
     const s = await newdata.save();
     if (s) {
+      console.log(s);
       res.status(200).json("marked successfully");
     } else {
       res.status(201).json("not marked");
