@@ -41,7 +41,8 @@ const uploadWinners = async (req, res) => {
         const newData = new winnersModel({
             first_prize: first_prize,
             second_prize: second_prize,
-            third_prize: third_prize
+            third_prize: third_prize,
+            event_id:event_id
         });
 
         const s = await newData.save(); // Ensure to await the save operation
@@ -55,6 +56,22 @@ const uploadWinners = async (req, res) => {
         res.status(500).json({ message: "An error occurred",e})
     }
 }
+const getWinners = async (req,res)=>{
+    try{
+        const data = await winnersModel.findOne({event_id:req.query.eventId})
+        if(data==null){
+            res.status(204).json({message:"no details found"})
+        }
+        else{
+            res.status(200).json(data)
+        }
+    }
+    catch(e){
+        console.log(e);
+        res.status(500).json({ message: "An error occurred",e})
+    }
+}
 module.exports={
-    uploadWinners:uploadWinners
+    uploadWinners:uploadWinners,
+    getWinners:getWinners
 }
