@@ -90,7 +90,7 @@ const EventAttendance = () => {
       {event != null && (
         <div className="p-8">
           <button
-            className="flex gap-2 border-2 rounded-lg border-accent-300 p-2"
+            className="flex gap-2 border-2 rounded-lg border-accent-300 p-2 hover:scale-95"
             onClick={() => {
               setEvent(null);
             }}

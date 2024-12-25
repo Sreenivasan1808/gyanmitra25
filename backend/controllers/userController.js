@@ -22,7 +22,7 @@ const markAttendence = async (req, res) => {
     const status = req.body.status;
     const newdata = new attendenceModel({
       user_id: user_id,
-      eventid: event_id,
+      event_id: event_id,
       status: status,
     });
     const s = await newdata.save();
