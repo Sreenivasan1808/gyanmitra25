@@ -5,7 +5,7 @@ export const getParticipantDetailsFromGMID = async (gmid: string) => {
   try {
     const response = await axios.get(
       `${SERVER_URL}/participant/getParticipantDetails`,
-      { params: { gmid: gmid } }
+      { params: { gmId: gmid } }
     );
     console.log(response);
     if (response.status == 200) {
@@ -26,11 +26,15 @@ export const markParticipantAttendance = async (
   try {
     const response = await axios.post(
       `${SERVER_URL}/participant/markAttendance`,
-      { gmid: gmid, eventId: eventId, status: true }
+      { gmId: gmid, eventId: eventId, status: true }
     );
+    // console.log(response)
     if (response.status == 200) {
       return {message: "Successfully marked as present", type: 'success'};
-    } else {
+    }else if(response.status == 204){
+      return {message: "Attendance already marked", type: "info"}
+    } 
+    else {
       return {message: "Attendance not marked", type: 'error'};
     }
   } catch (error) {

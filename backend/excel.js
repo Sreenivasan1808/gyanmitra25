@@ -1,7 +1,6 @@
 const XLSX = require('xlsx');
 const attendanceModel = require("./models/attendence");
 const userModel = require("./models/user")
-const axios=require("axios")
 
 // Sample JSON data
 const attendanceDownload = async (req, res) => {

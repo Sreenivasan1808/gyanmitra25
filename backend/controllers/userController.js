@@ -56,13 +56,13 @@ const markAttendence = async (req, res) => {
     console.log("hi")
     if (s) {
       console.log(s);
-      res.status(200).json("marked successfully");
+      res.status(200).json({message: "marked successfully"});
     } else {
-      res.status(201).json("not marked");
+      res.status(201).json({message: "not marked"});
     }
   }
     else{
-      res.status(204).json("attendence already marked")
+      res.status(204).json({message: "attendence already marked"})
     }
   } catch (e) {
     console.log(e);

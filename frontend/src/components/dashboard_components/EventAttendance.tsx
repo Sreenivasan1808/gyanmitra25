@@ -44,7 +44,7 @@ const EventAttendance = () => {
     }
     console.log(participantDetails.gmid)
     let details = await getParticipantDetailsFromGMID(participantDetails.gmid);
-    console.log(details);
+    // console.log(details);
     if (details != null) {
       setParticipantDetails((prevData) => ({
         ...prevData,
@@ -75,7 +75,7 @@ const EventAttendance = () => {
         event.id
       );
       //display message
-      console.log(result);
+      // console.log(result);
       showSnackbar(result.message, result.type);
     }
   };
