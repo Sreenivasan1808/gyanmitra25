@@ -28,12 +28,31 @@ export const markParticipantAttendance = async (
       `${SERVER_URL}/participant/markAttendance`,
       { gmId: gmid, eventId: eventId, status: true }
     );
+    // console.log(response)
     if (response.status == 200) {
-      return { message: "Successfully marked as present", type: "success" };
-    } else {
-      return { message: "Attendance not marked", type: "error" };
+      return {message: "Successfully marked as present", type: 'success'};
+    }else if(response.status == 204){
+      return {message: "Attendance already marked", type: "info"}
+    } 
+    else {
+      return {message: "Attendance not marked", type: 'error'};
     }
   } catch (error) {
     return { message: "Something went wrong with the server", type: "error" };
   }
 };
+
+export const getEventParticipantsList = async (eventId: number) => {
+  try {
+    const response = await axios.get(`${SERVER_URL}/participant/getAllParticipants`, {params: {event_id: eventId}});
+    if(response.status == 200){
+      return response.data;
+    }else{
+      return null;
+    }
+  } catch (error) {
+    console.log("Get event participants list")
+    console.log(error)
+    return null;
+  }
+}

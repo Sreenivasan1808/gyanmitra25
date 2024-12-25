@@ -33,6 +33,7 @@ const getAllParticipants = async (req,res) =>{
     res.status(200).json(data1)
   }
   catch (e){
+    res.status(500).json({message: "Server error"})
     console.log(e)
   }
 }
@@ -48,7 +49,7 @@ const markAttendence = async (req, res) => {
     const newdata = new attendenceModel({
       user_id: user_id,
       event_id: event_id,
-      status: status
+      status: status,
     });
     const s = await newdata.save();
   
