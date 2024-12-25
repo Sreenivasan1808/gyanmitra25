@@ -5,7 +5,7 @@ const attendenceSchema = mongoose.Schema({
         type:String,
         required:true
     },
-    eventid:{
+    event_id:{
         type:String,
         required:true,
     },
