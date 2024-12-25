@@ -70,10 +70,31 @@ const markAttendence = async (req, res) => {
   }
 };
 
+const getAttendanceDetails = async(req,res) => {
+  try {
+    console.log("entered")
+         const participants = await attendenceModel.find({ event_id: req.query.event_id });
+         let jsonData = [];
+         
+         for (let i = 0; i < participants.length; i++) {
+             const user_id = participants[i].user_id; 
+             const data=await userModel.findOne({user_id:user_id})
+             
+             if (data) {
+                 jsonData.push({user_id:data.user_id,name:data.name,cname:data.cname});
+             }
+         }
+         res.status(200).json(jsonData)
+        }
+        catch(e){
+          console.log(e)
+        }
 
+}
 module.exports = {
   getDetails: getDetails,
   markAttendence: markAttendence,
-  getAllParticipants:getAllParticipants
+  getAllParticipants:getAllParticipants,
+  getAttendanceDetails:getAttendanceDetails
 };
 
