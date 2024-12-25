@@ -8,30 +8,37 @@ const EventsList = ({ setEvent }: any) => {
       imgSrc: "",
     },
     {
+      id: 1,
       name: "Coding",
       imgSrc: "",
     },
     {
+      id: 2,
       name: "Quiz",
       imgSrc: "",
     },
     {
+      id: 3,
       name: "Paper presentation",
       imgSrc: "",
     },
     {
+      id: 4,
       name: "Debugging",
       imgSrc: "",
     },
     {
+      id: 5,
       name: "Coding",
       imgSrc: "",
     },
     {
+      id: 6,
       name: "Quiz",
       imgSrc: "",
     },
     {
+      id: 7,
       name: "Paper presentation",
       imgSrc: "",
     },

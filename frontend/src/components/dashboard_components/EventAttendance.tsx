@@ -1,34 +1,43 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EventsList from "./EventsList";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import {
+  getEventParticipantsList,
   getParticipantDetailsFromGMID,
   markParticipantAttendance,
 } from "../../services/ParticipantSVC";
 import Snackbar from "../util_components/Snackbar";
+import { downloadAttendanceExcelByEvent } from "../../services/DownloadsSVC";
+import { saveAs } from "file-saver";
 
 const EventAttendance = () => {
+  //Event details
   const [event, setEvent] = useState<{
     id: number;
     name: String;
     imgSrc: string;
   } | null>(null);
 
+  //Details of the new participant
   const [participantDetails, setParticipantDetails] = useState({
     gmid: "",
     name: "",
     college: "",
   });
 
+  //Error message to show if GMID entered is not valid
   const [error, setError] = useState("");
 
+  //Snackbar handler state
   const [snackbar, setSnackbar] = useState({
     isOpen: false,
-    message: '',
-    type: 'info', // Default type
+    message: "",
+    type: "info", // Default type
   });
 
-  const showSnackbar = (message:string, type:string) => {
+  const [participantsList, setParticipantsList] = useState<[] | null>(null);
+
+  const showSnackbar = (message: string, type: string) => {
     setSnackbar({ isOpen: true, message, type });
   };
 
@@ -36,13 +45,14 @@ const EventAttendance = () => {
     setSnackbar((prev) => ({ ...prev, isOpen: false }));
   };
 
+  //Get the details of a participant using GMID - for attendance
   const handleGetParticipantDetails = async (e: any) => {
     e.preventDefault();
     if (participantDetails.gmid.length == 0) {
       setError("Enter the GMID");
       return;
     }
-    console.log(participantDetails.gmid)
+    // console.log(participantDetails.gmid)
     let details = await getParticipantDetailsFromGMID(participantDetails.gmid);
     // console.log(details);
     if (details != null) {
@@ -62,13 +72,14 @@ const EventAttendance = () => {
     }
   };
 
+  //Mark a new participant as present
   const handleMarkAsPresent = async (e: any) => {
     e.preventDefault();
     if (participantDetails.gmid.length == 0) {
       setError("Enter the GMID");
       return;
     }
-
+    console.log(event);
     if (error.length == 0 && event) {
       let result = await markParticipantAttendance(
         participantDetails.gmid,
@@ -78,7 +89,42 @@ const EventAttendance = () => {
       // console.log(result);
       showSnackbar(result.message, result.type);
     }
+    handleEventParticipantsListTable();
   };
+
+  //Download excel file containing participants list of this event
+  const handleAttendanceExcelDownload = async (e: any) => {
+    e.preventDefault();
+    if (event) {
+      const excel_blob = await downloadAttendanceExcelByEvent(event?.id);
+      if (excel_blob != null) {
+        saveAs(excel_blob, `${event.name} Participants List.xlsx`);
+        showSnackbar("Downloading...", "info");
+      } else {
+        showSnackbar(
+          "Something went wrong. Couldn't download the file",
+          "error"
+        );
+      }
+    }
+  };
+
+  //Fetch participants list for the attendance table
+  const handleEventParticipantsListTable = async () => {
+    if (event) {
+      const participants = await getEventParticipantsList(event?.id);
+      if (participants == null || participants.length == 0) {
+        return;
+      }
+      setParticipantsList(participants);
+    }
+  };
+
+  //Use effect for handleEventParticipantsListTable
+  useEffect(() => {
+    handleEventParticipantsListTable();
+  }, [event]);
+
   return (
     <div className="w-full h-full overflow-scroll">
       {event === null && (
@@ -89,10 +135,18 @@ const EventAttendance = () => {
       )}
       {event != null && (
         <div className="p-8">
+          {/* Back Button */}
           <button
             className="flex gap-2 border-2 rounded-lg border-accent-300 p-2 hover:scale-95"
             onClick={() => {
               setEvent(null);
+              setParticipantDetails({
+                gmid: "",
+                name: "",
+                college: "",
+              });
+              setError("");
+              setParticipantsList(null);
             }}
           >
             <span>
@@ -100,6 +154,7 @@ const EventAttendance = () => {
             </span>
             Back
           </button>
+          {/* Form and table container */}
           <div className="p-4 flex flex-col gap-2">
             <h1 className="text-lg text-text-950 ">
               Event name:{" "}
@@ -180,7 +235,10 @@ const EventAttendance = () => {
             {/* Table displaying list of participants marked as present */}
             <div className="flex justify-between mt-4 items-center">
               <h1 className="text-lg mt-4">List of present participants</h1>
-              <button className="rounded-lg px-4 py-2 bg-primary-600 hover:bg-primary-700 hover:scale-95 text-white">
+              <button
+                className="rounded-lg px-4 py-2 bg-primary-600 hover:bg-primary-700 hover:scale-95 text-white"
+                onClick={handleAttendanceExcelDownload}
+              >
                 Download
               </button>
             </div>
@@ -202,39 +260,32 @@ const EventAttendance = () => {
                 </tr>
               </thead>
               <tbody>
-                <tr className="bg-white border-b">
-                  <td className="px-6 py-4 w-fit">1</td>
-                  <td
-                    scope="row"
-                    className="px-6 py-4 font-medium text-text-900 whitespace-nowrap w-fit"
-                  >
-                    gm1000
-                  </td>
-                  <td className="px-6 py-4 w-full">Silver</td>
-                  <td className="px-6 py-4 w-full">Laptop</td>
-                </tr>
-                <tr className="bg-white border-b">
-                  <td className="px-6 py-4 w-fit">2</td>
-                  <td
-                    scope="row"
-                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap w-fit"
-                  >
-                    gm1001
-                  </td>
-                  <td className="px-6 py-4 w-full">White</td>
-                  <td className="px-6 py-4 w-full">Laptop PC</td>
-                </tr>
-                <tr className="bg-white dark:bg-gray-800">
-                  <td className="px-6 py-4 w-fit">3</td>
-                  <td
-                    scope="row"
-                    className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap w-fit"
-                  >
-                    gm1002
-                  </td>
-                  <td className="px-6 py-4 w-full">Black</td>
-                  <td className="px-6 py-4 w-full">Accessories</td>
-                </tr>
+                {participantsList != null &&
+                  participantsList.map((participant: any, idx) => {
+                    return (
+                      <tr className="bg-white border-b">
+                        <td className="px-4 py-4 w-fit">{idx + 1}</td>
+                        <td
+                          scope="row"
+                          className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-fit text-center"
+                        >
+                          {participant.user_id}
+                        </td>
+                        <td
+                          scope="row"
+                          className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-fit text-center"
+                        >
+                          {participant.name}
+                        </td>
+                        <td
+                          scope="row"
+                          className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-fit text-center"
+                        >
+                          {participant.cname}
+                        </td>
+                      </tr>
+                    );
+                  })}
               </tbody>
             </table>
           </div>

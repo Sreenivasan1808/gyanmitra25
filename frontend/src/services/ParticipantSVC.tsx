@@ -41,3 +41,18 @@ export const markParticipantAttendance = async (
     return {message: "Something went wrong with the server", type: 'error'};
   }
 };
+
+export const getEventParticipantsList = async (eventId: number) => {
+  try {
+    const response = await axios.get(`${SERVER_URL}/participant/getAllParticipants`, {params: {event_id: eventId}});
+    if(response.status == 200){
+      return response.data;
+    }else{
+      return null;
+    }
+  } catch (error) {
+    console.log("Get event participants list")
+    console.log(error)
+    return null;
+  }
+}
