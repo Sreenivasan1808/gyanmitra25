@@ -34,3 +34,5 @@ db.once("open", () => {
 
 const participantRouter = require("./routes/userRoutes"); //same as userRouter
 app.use("/participant", participantRouter);
+const coordinatorRouter = require("./routes/coordinatorRoutes"); //same as userRouter
+app.use("/coordinator", coordinatorRouter);
