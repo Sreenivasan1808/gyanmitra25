@@ -162,12 +162,9 @@ const EventAttendance = () => {
             </h1>
 
             {/* Attendance form */}
-            <form
-              action=""
-              className="flex md:flex-col border-2 rounded-lg border-accent-300 p-4"
-            >
-              <div className="flex gap-4 p-4 justify-between">
-                <div className="flex flex-col gap-1">
+            <form className="flex flex-col  border-2 rounded-lg border-accent-300 p-4">
+              <div className="md:flex gap-4 p-4 justify-between">
+                <div className="flex flex-col gap-1 max-w-72">
                   <label htmlFor="gmid">GMID</label>
                   <input
                     type="text"
@@ -185,7 +182,7 @@ const EventAttendance = () => {
                     value={participantDetails.gmid}
                   />
                 </div>
-                <div className="flex flex-col gap-1 w-72">
+                <div className="flex flex-col gap-1 w-full">
                   <label htmlFor="gmid">Full Name</label>
                   <input
                     type="text"
@@ -196,7 +193,7 @@ const EventAttendance = () => {
                     value={participantDetails.name}
                   />
                 </div>
-                <div className="flex flex-col gap-1 w-72">
+                <div className="flex flex-col gap-1 w-full">
                   <label htmlFor="gmid">College</label>
                   <input
                     type="text"
@@ -208,20 +205,21 @@ const EventAttendance = () => {
                   />
                 </div>
               </div>
-              <div className="flex justify-between gap-2">
-                <button
+
+              {/* <button
                   className="rounded-lg px-4 py-2 bg-secondary-600 hover:bg-secondary-700 text-white hover:scale-95"
                   onClick={handleGetParticipantDetails}
                 >
                   Get Details
-                </button>
-                <p className="text-center text-red-600 p-4">{error}</p>
+                </button> */}
+              <p className="text-center text-red-600 p-4  ">{error}</p>
+              <div className="w-full flex justify-center">
                 <button
                   className={`${
                     error.length != 0 || participantDetails.college.length == 0
                       ? "hover:cursor-not-allowed bg-green-400"
                       : "hover:cursor-pointer bg-green-600 hover:bg-green-700 hover:scale-95"
-                  } rounded-lg px-4 py-2  text-white`}
+                  } rounded-lg px-4 py-2  text-white text-center`}
                   disabled={
                     error.length != 0 && participantDetails.college.length == 0
                   }
