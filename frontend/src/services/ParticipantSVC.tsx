@@ -38,7 +38,7 @@ export const markParticipantAttendance = async (
       return {message: "Attendance not marked", type: 'error'};
     }
   } catch (error) {
-    return {message: "Something went wrong with the server", type: 'error'};
+    return { message: "Something went wrong with the server", type: "error" };
   }
 };
 
