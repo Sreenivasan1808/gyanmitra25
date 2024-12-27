@@ -1,5 +1,8 @@
 const winnersModel=require("../models/winners")
 const attendanceModel = require("../models/attendence")
+const userModel = require("../models/user");
+const eventModel = require("../models/events");
+
 const uploadWinners = async (req, res) => {
     try {
         console.log(req.body)
@@ -13,29 +16,36 @@ const uploadWinners = async (req, res) => {
         console.log(fp);
 
         for (let i = 0; i < fp.length; i++) {
-            const verify = await attendanceModel.findOne({ user_id: fp[i], event_id: event_id });
-            if (verify == null) {
-                return res.status(204).json({ message: `${fp[i]} not participated in this event` });
+            if(fp[i] != null && fp[i].length != 0)
+            {
+                const verify = await attendanceModel.findOne({ user_id: fp[i], event_id: event_id });
+                if (verify == null) {
+                    return res.status(204).json({ message: `${fp[i]} not participated in this event` });
+                }
+                first_prize.push(fp[i]);
             }
-            first_prize.push(fp[i]);
         }
 
         const sp = req.body.secondPrize;
         for (let i = 0; i < sp.length; i++) {
-            const verify = await attendanceModel.findOne({ user_id: sp[i], event_id: event_id });
-            if (verify == null) {
-                return res.status(204).json({ message: `${sp[i]} not participated in this event` });
+            if(sp[i] != null && sp[i].length != 0){
+                const verify = await attendanceModel.findOne({ user_id: sp[i], event_id: event_id });
+                if (verify == null) {
+                    return res.status(204).json({ message: `${sp[i]} not participated in this event` });
+                }
+                second_prize.push(sp[i]); // Corrected this line
             }
-            second_prize.push(sp[i]); // Corrected this line
         }
 
         const tp = req.body.thirdPrize;
         for (let i = 0; i < tp.length; i++) { // Corrected this line
-            const verify = await attendanceModel.findOne({ user_id: tp[i], event_id: event_id });
-            if (verify == null) {
-                return res.status(204).json({ message: `${tp[i]} not participated in this event` });
+            if(tp[i] != null && tp[i].length != 0){
+                const verify = await attendanceModel.findOne({ user_id: tp[i], event_id: event_id });
+                if (verify == null) {
+                    return res.status(204).json({ message: `${tp[i]} not participated in this event` });
+                }
+                third_prize.push(tp[i]);
             }
-            third_prize.push(tp[i]);
         }
 
         const newData = new winnersModel({
@@ -46,6 +56,7 @@ const uploadWinners = async (req, res) => {
         });
 
         const s = await newData.save(); // Ensure to await the save operation
+        console.log("Saved winners")
         if (s) {
             res.status(200).json({ message: "uploaded successfully" });
         } else {
@@ -56,6 +67,49 @@ const uploadWinners = async (req, res) => {
         res.status(500).json({ message: "An error occurred",e})
     }
 }
+
+const getWinnersDetailsFromGmid = async (winners) => {
+    console.log("winners list")
+    console.log(winners);
+    let firstPrizeIds = winners.first_prize;
+    let secondPrizeIds = winners.second_prize;
+    let thirdPrizeIds = winners.third_prize;
+
+    let firstPrizeDetails = [];
+    for(let i = 0; i < firstPrizeIds.length; i++){
+        let participant = await userModel.findOne({user_id: firstPrizeIds[i]});
+        firstPrizeDetails.push({
+            gmid: participant.user_id,
+            name: participant.name,
+            college: participant.cname
+        });
+    }
+    let secondPrizeDetails = [];
+    for(let i = 0; i < secondPrizeIds.length; i++){
+        let participant = await userModel.findOne({user_id: firstPrizeIds[i]});
+        secondPrizeDetails.push({
+            gmid: participant.user_id,
+            name: participant.name,
+            college: participant.cname
+        });
+    }
+    let thirdPrizeDetails = [];
+    for(let i = 0; i < thirdPrizeIds.length; i++){
+        let participant = await userModel.findOne({user_id: firstPrizeIds[i]});
+        thirdPrizeDetails.push({
+            gmid: participant.user_id,
+            name: participant.name,
+            college: participant.cname
+        });
+    }
+
+    return {
+        firstPrize: firstPrizeDetails,
+        secondPrize: secondPrizeDetails,
+        thirdPrize: thirdPrizeDetails
+    }
+}
+
 const getWinners = async (req,res)=>{
     try{
         const data = await winnersModel.findOne({event_id:req.query.eventId})
@@ -63,7 +117,9 @@ const getWinners = async (req,res)=>{
             res.status(204).json({message:"no details found"})
         }
         else{
-            res.status(200).json(data)
+            const winnersDetails = await getWinnersDetailsFromGmid(data);
+            console.log(winnersDetails);
+            res.status(200).json(winnersDetails)
         }
     }
     catch(e){
@@ -71,7 +127,62 @@ const getWinners = async (req,res)=>{
         res.status(500).json({ message: "An error occurred",e})
     }
 }
+
+const getParticipantsCollegeWise = async (req, res) => { //to test
+    try {
+      const { cname } = req.params;
+  
+      // Find users with the given college name
+      const users = await userModel.find({ cname });
+  
+      if (users.length === 0) {
+        return res.status(404).json({ message: "No users found for the given college name" });
+      }
+  
+      // Create an array of user IDs
+      const userIds = users.map(user => user.user_id);
+  
+      // Find attendance records for these user IDs
+      const attendanceRecords = await attendanceModel.find({ user_id: { $in: userIds } });
+  
+      // Create an array of event IDs from the attendance records
+      const eventIds = attendanceRecords.map(record => record.event_id);
+  
+      // Find event details for these event IDs
+      const events = await eventModel.find({ eventid: { $in: eventIds } });
+  
+      // Map users to their event participation details
+      const userEventDetails = users.map(user => {
+        const userAttendance = attendanceRecords.filter(record => record.user_id === user.user_id);
+        const participatedEvents = userAttendance.map(record => {
+          const eventDetails = events.find(event => event.eventid === record.event_id);
+          return {
+            event_id: record.event_id,
+            status: record.status,
+            event_details: eventDetails || null,
+          };
+        });
+  
+        return {
+          user: {
+            user_id: user.user_id,
+            name: user.name,
+            email: user.email,
+            phone: user.phone,
+          },
+          events: participatedEvents,
+        };
+      });
+      console.log(userEventDetails);
+      res.status(200).json({ users: userEventDetails });
+    } catch (error) {
+      console.error("Error fetching users and events:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
 module.exports={
     uploadWinners:uploadWinners,
-    getWinners:getWinners
+    getWinners:getWinners,
+    getParticipantsCollegeWise:getParticipantsCollegeWise
 }

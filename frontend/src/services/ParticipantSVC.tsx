@@ -57,10 +57,3 @@ export const getEventParticipantsList = async (eventId: number) => {
   }
 }
 
-export const uploadWinners = async (winnersList) => {
-  try {
-    const response = await axios.get(`${SERVER_URL}/`) 
-  } catch (error) {
-    
-  }
-}

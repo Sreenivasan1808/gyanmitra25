@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import EventsList from "./EventsList";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { getParticipantDetailsFromGMID } from "../../services/ParticipantSVC";
+import Snackbar from "../util_components/Snackbar";
+import { getWinnersList, uploadWinners } from "../../services/WinnersSVC";
 
 const EventWinners = () => {
   const [event, setEvent] = useState<{
@@ -9,6 +11,12 @@ const EventWinners = () => {
     name: String;
     imgSrc: string;
   } | null>(null);
+
+  const [snackbar, setSnackbar] = useState({
+    isOpen: false,
+    message: "",
+    type: "info", // Default type
+  });
 
   const [formData, setFormData] = useState({
     firstPrize: [
@@ -29,12 +37,95 @@ const EventWinners = () => {
   });
 
   //Upload the winners list for this event
-  const handleWinnersUpload = async () => {
-    
+  const handleWinnersUpload = async (e: any) => {
+    e.preventDefault();
+    if (event != null) {
+      let winnersIds = {
+        firstPrize: formData.firstPrize.map((item) => item.gmid),
+        secondPrize: formData.secondPrize.map((item) => item.gmid),
+        thirdPrize: formData.thirdPrize.map((item) => item.gmid),
+      };
+      let status = await uploadWinners(winnersIds, event?.id);
+      showSnackbar(status?.message, status?.type);
+    }
+  };
+
+  const [editable, setEditable] = useState(true);
+
+  //Get winners details if already declared
+  const handleFetchWinnersData = async () => {
+    if (event == null) return;
+    const eventWinners = await getWinnersList(event.id);
+    if(eventWinners == null){
+      setEditable(true);
+      return;
+    }
+    console.log("Event winners")
+    console.log(eventWinners);
+    setFormData((prev) => {
+      let firstPrize = prev.firstPrize;
+      let secondPrize = prev.secondPrize;
+      let thirdPrize = prev.thirdPrize;
+
+      for(let i = 0; i < eventWinners.firstPrize.length; i++){
+        firstPrize[i] = {...eventWinners.firstPrize[i]};
+      }
+      for(let i = 0; i < eventWinners.secondPrize.length; i++){
+        secondPrize[i] = {...eventWinners.secondPrize[i]};
+      }
+      for(let i = 0; i < eventWinners.thirdPrize.length; i++){
+        thirdPrize[i] = {...eventWinners.thirdPrize[i]};
+      }
+
+      setEditable(false);
+      // console.log("new formData")
+      // console.log({
+      //   firstPrize: firstPrize,
+      //   secondPrize: secondPrize,
+      //   thirdPrize: thirdPrize
+      // });
+
+      return {
+        firstPrize: firstPrize,
+        secondPrize: secondPrize,
+        thirdPrize: thirdPrize
+      }
+    })
+  };
+
+  useEffect(() => {
+    handleFetchWinnersData();
+  }, [event]);
+
+  const showSnackbar = (message: string, type: string) => {
+    setSnackbar({ isOpen: true, message, type });
+  };
+
+  const closeSnackbar = () => {
+    setSnackbar((prev) => ({ ...prev, isOpen: false }));
   };
 
   //Clear all forms
-  const handleClearButton = () => {};
+  const handleClearButton = (e: any) => {
+    e.preventDefault();
+    setFormData({
+      firstPrize: [
+        { gmid: "", name: "", college: "" },
+        { gmid: "", name: "", college: "" },
+        { gmid: "", name: "", college: "" },
+      ],
+      secondPrize: [
+        { gmid: "", name: "", college: "" },
+        { gmid: "", name: "", college: "" },
+        { gmid: "", name: "", college: "" },
+      ],
+      thirdPrize: [
+        { gmid: "", name: "", college: "" },
+        { gmid: "", name: "", college: "" },
+        { gmid: "", name: "", college: "" },
+      ],
+    });
+  };
 
   const handleGmidChange = (prizeCategory: any, index: any, event: any) => {
     const newGmid = event.target.value;
@@ -43,7 +134,6 @@ const EventWinners = () => {
 
     setFormData((prevFormData) => {
       const updatedPrizes = [...prevFormData[prizeCategory]];
-
       updatedPrizes[index] = {
         ...updatedPrizes[index],
 
@@ -52,7 +142,6 @@ const EventWinners = () => {
 
       return {
         ...prevFormData,
-
         [prizeCategory]: updatedPrizes,
       };
     });
@@ -63,6 +152,9 @@ const EventWinners = () => {
     index: number
   ) => {
     const gmid = formData[prizeCategory][index].gmid;
+    if (gmid == null || gmid.length == 0) {
+      return;
+    }
     let participantDetails = await getParticipantDetailsFromGMID(gmid);
     // console.log(participantDetails)
 
@@ -98,6 +190,24 @@ const EventWinners = () => {
             className="flex gap-2 border-2 rounded-lg border-accent-300 p-2"
             onClick={() => {
               setEvent(null);
+              setEditable(true);
+              setFormData({
+                firstPrize: [
+                  { gmid: "", name: "", college: "" },
+                  { gmid: "", name: "", college: "" },
+                  { gmid: "", name: "", college: "" },
+                ],
+                secondPrize: [
+                  { gmid: "", name: "", college: "" },
+                  { gmid: "", name: "", college: "" },
+                  { gmid: "", name: "", college: "" },
+                ],
+                thirdPrize: [
+                  { gmid: "", name: "", college: "" },
+                  { gmid: "", name: "", college: "" },
+                  { gmid: "", name: "", college: "" },
+                ],
+              })
             }}
           >
             <span>
@@ -151,7 +261,7 @@ const EventWinners = () => {
                       >
                         <input
                           type="text"
-                          className="border-2 rounded-lg outline-none focus:ring-0 focus:border-accent-500 p-1 md:p-2"
+                          className={`${editable == false ? "hover:cursor-not-allowed": ""} border-2 rounded-lg outline-none focus:ring-0 focus:border-accent-500 p-1 md:p-2`}
                           value={prize.gmid}
                           onChange={(event) =>
                             handleGmidChange("firstPrize", index, event)
@@ -159,6 +269,8 @@ const EventWinners = () => {
                           onBlur={(e) => {
                             handleGetParticipantDetails("firstPrize", index);
                           }}
+                          required={index == 0}
+                          disabled={!editable}
                         />
                       </td>
 
@@ -213,7 +325,7 @@ const EventWinners = () => {
                       >
                         <input
                           type="text"
-                          className="border-2 rounded-lg outline-none focus:ring-0 focus:border-accent-500 p-1 md:p-2"
+                          className={`${editable == false ? "hover:cursor-not-allowed": ""} border-2 rounded-lg outline-none focus:ring-0 focus:border-accent-500 p-1 md:p-2`}
                           value={prize.gmid}
                           onChange={(event) =>
                             handleGmidChange("secondPrize", index, event)
@@ -221,6 +333,8 @@ const EventWinners = () => {
                           onBlur={(e) => {
                             handleGetParticipantDetails("secondPrize", index);
                           }}
+                          required={index == 0}
+                          disabled={!editable}
                         />
                       </td>
 
@@ -275,7 +389,7 @@ const EventWinners = () => {
                       >
                         <input
                           type="text"
-                          className="border-2 rounded-lg outline-none focus:ring-0 focus:border-accent-500 p-1 md:p-2"
+                          className={`${editable == false ? "hover:cursor-not-allowed": ""} border-2 rounded-lg outline-none focus:ring-0 focus:border-accent-500 p-1 md:p-2`}
                           value={prize.gmid}
                           onChange={(event) =>
                             handleGmidChange("thirdPrize", index, event)
@@ -283,6 +397,8 @@ const EventWinners = () => {
                           onBlur={(e) => {
                             handleGetParticipantDetails("thirdPrize", index);
                           }}
+                          required={index == 0}
+                          disabled={!editable}
                         />
                       </td>
 
@@ -316,6 +432,13 @@ const EventWinners = () => {
           </div>
         </div>
       )}
+
+      <Snackbar
+        message={snackbar.message}
+        isOpen={snackbar.isOpen}
+        type={snackbar.type}
+        onClose={closeSnackbar}
+      />
     </div>
   );
 };
