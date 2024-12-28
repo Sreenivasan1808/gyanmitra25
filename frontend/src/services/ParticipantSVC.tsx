@@ -57,3 +57,31 @@ export const getEventParticipantsList = async (eventId: number) => {
   }
 }
 
+export const getAllParticipantsCollegeWise = async (college: String) => {
+  try {
+    const response = await axios.get(`${SERVER_URL}/coordinator/get-collegewise-participants`, {params: {cname:college}});
+    console.log(response);
+    
+    if(response.status == 200){
+      return response.data.users;
+    }else{
+      return {message: "No data available", type: "error"};
+    }
+
+  } catch (error) {
+    return {message: "Server error", type: "error"}
+  }
+}
+
+export const getAllCollegeList = async () => {
+  try {
+    const response = await axios.get(`${SERVER_URL}/coordinator/getcollegelist`);
+    if(response.status == 200){
+      return response.data.uniqueCnames;
+    }else{
+      return {message: "Couldn't retreive college list", type: "error"}
+    }
+  } catch (error) {
+    return {message: "Internal server error", type: "error"}
+  }
+}

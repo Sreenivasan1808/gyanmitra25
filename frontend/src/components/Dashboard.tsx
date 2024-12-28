@@ -1,14 +1,13 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import Sidebar from "./Sidebar";
-import EventAttendance from "./dashboard_components/EventAttendance";
-import EventWinners from "./dashboard_components/EventWinners";
+// import EventAttendance from "./dashboard_components/EventAttendance";
+// import EventWinners from "./dashboard_components/EventWinners";
+import { Outlet } from "react-router-dom";
 
-const pages = [<EventAttendance />, <EventWinners />];
 
 const Dashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
 
   return (
     <div className="min-h-screen bg-background-50 flex relative overflow-hidden">
@@ -20,8 +19,6 @@ const Dashboard = () => {
       >
         <Sidebar
           setIsOpen={setIsOpen}
-          currentPage={currentPage}
-          setCurrentPage={setCurrentPage}
         ></Sidebar>
       </div>
 
@@ -46,7 +43,10 @@ const Dashboard = () => {
           </span>
         </div>
         {/* Main Page */}
-        <div className=" max-h-screen pb-4">{pages[currentPage]}</div>
+        <div className=" max-h-screen pb-4">
+          {/* {pages[currentPage]} */}
+          <Outlet/>
+        </div>
       </div>
     </div>
   );

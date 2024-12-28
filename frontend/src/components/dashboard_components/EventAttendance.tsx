@@ -261,7 +261,7 @@ const EventAttendance = () => {
                 {participantsList != null &&
                   participantsList.map((participant: any, idx) => {
                     return (
-                      <tr className="bg-white border-b">
+                      <tr className="bg-white border-b" key={idx}>
                         <td className="px-4 py-4 w-fit">{idx + 1}</td>
                         <td
                           scope="row"
