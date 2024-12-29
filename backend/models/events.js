@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
+const db = require("../index")
 
 const event = new Schema({
     eventid: { type: String, unique: true, required: true },
@@ -19,6 +20,6 @@ const event = new Schema({
     images:{type:String,required:true}
   });
 
-const eventModel = mongoose.model("Events", event);
+const eventModel = db.model("Events", event);
 
 module.exports = eventModel;
