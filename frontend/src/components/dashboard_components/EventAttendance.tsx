@@ -9,7 +9,6 @@ import {
 import Snackbar from "../util_components/Snackbar";
 import { downloadAttendanceExcelByEvent } from "../../services/DownloadsSVC";
 import { saveAs } from "file-saver";
-
 const EventAttendance = () => {
   //Event details
   const [event, setEvent] = useState<{
