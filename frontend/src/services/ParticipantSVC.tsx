@@ -19,9 +19,9 @@ export const getParticipantDetailsFromGMID = async (gmid: string) => {
   }
 };
 
-export const markParticipantAttendance = async (
+export const markEventParticipantAttendance = async (
   gmid: string,
-  eventId: number
+  eventId: string
 ) => {
   try {
     const response = await axios.post(
@@ -83,5 +83,25 @@ export const getAllCollegeList = async () => {
     }
   } catch (error) {
     return {message: "Internal server error", type: "error"}
+  }
+}
+
+export const markWorkshopParticipantAttendance = async (gmid: string, workshopid: string) => {
+  try {
+    const response = await axios.post(
+      `${SERVER_URL}/participant/markWorkshopAttendance`,
+      { gmId: gmid, workshopId: workshopid, status: true }
+    );
+    // console.log(response)
+    if (response.status == 200) {
+      return {message: "Successfully marked as present", type: 'success'};
+    }else if(response.status == 204){
+      return {message: "Attendance already marked", type: "info"}
+    } 
+    else {
+      return {message: "Attendance not marked", type: 'error'};
+    }
+  } catch (error) {
+    return { message: "Something went wrong with the server", type: "error" };
   }
 }
