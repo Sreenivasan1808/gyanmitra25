@@ -2,26 +2,26 @@ const express = require("express");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
-const bodyParser = require('body-parser')
+const bodyParser = require("body-parser");
 
 const app = express();
 
 dotenv.config();
 const PORT = process.env.PORT;
 const MONGO_URL = process.env.MONGO_URL;
-const MONGO_URL_2=process.env.MONGO_URL_2
+const MONGO_URL_2 = process.env.MONGO_URL_2;
 app.use(cors());
 app.use(bodyParser.json());
 
 mongoose.connect(MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-});
-const db2=mongoose.createConnection(MONGO_URL_2, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-})
-module.exports=db2
+});
+const db2 = mongoose.createConnection(MONGO_URL_2, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+module.exports = db2;
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
@@ -31,8 +31,11 @@ db.once("open", () => {
   });
 });
 
-
 const participantRouter = require("./routes/userRoutes"); //same as userRouter
 app.use("/participant", participantRouter);
 const coordinatorRouter = require("./routes/coordinatorRoutes"); //same as userRouter
 app.use("/coordinator", coordinatorRouter);
+const eventRouter = require("./routes/eventRoutes"); //same as userRouter
+app.use("/event", eventRouter);
+const workshopRouter = require("./routes/workshopRoutes"); //same as userRouter
+app.use("/workshop", workshopRouter);

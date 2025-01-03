@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
-
+const db = require("../index")
 const workshop = new Schema({
     workshopid: { type: String, unique: true, required: true },
     name: { type: String, required: true },
@@ -14,6 +14,6 @@ const workshop = new Schema({
     images:{type:String,required:true}
   });
 
-const workshopModel = mongoose.model("Workshop", workshop);
+const workshopModel = db.model("Workshop", workshop);
 
 module.exports = workshopModel;
