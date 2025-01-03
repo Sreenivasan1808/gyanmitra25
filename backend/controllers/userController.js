@@ -91,6 +91,12 @@ const getAttendanceDetails = async(req,res) => {
         }
 
 }
+
+const markWorkshopAttendance = async (req, res) => {
+  //mark attendance for workshop
+  //use this route "/participant/markWorkshopAttendance"
+}
+
 module.exports = {
   getDetails: getDetails,
   markAttendence: markAttendence,

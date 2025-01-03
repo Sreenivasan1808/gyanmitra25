@@ -4,7 +4,7 @@ import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import {
   getEventParticipantsList,
   getParticipantDetailsFromGMID,
-  markParticipantAttendance,
+  markEventParticipantAttendance,
 } from "../../services/ParticipantSVC";
 import Snackbar from "../util_components/Snackbar";
 import { downloadAttendanceExcelByEvent } from "../../services/DownloadsSVC";
@@ -80,9 +80,9 @@ const EventAttendance = () => {
     }
     console.log(event);
     if (error.length == 0 && event) {
-      let result = await markParticipantAttendance(
+      let result = await markEventParticipantAttendance(
         participantDetails.gmid,
-        event.id
+        event.id+""
       );
       //display message
       // console.log(result);

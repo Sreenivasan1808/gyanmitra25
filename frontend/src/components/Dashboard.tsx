@@ -43,7 +43,7 @@ const Dashboard = () => {
           </span>
         </div>
         {/* Main Page */}
-        <div className=" max-h-screen pb-4">
+        <div className="max-h-screen pb-4 overflow-scroll">
           {/* {pages[currentPage]} */}
           <Outlet/>
         </div>

@@ -17,12 +17,17 @@ const navItems = [
   {
     name: "Events Attendance",
     icon: <UserPlusIcon className="size-6" />,
-    url: "/dashboard/attendance",
+    url: "/dashboard/event-attendance",
   },
   {
     name: "Event Winners",
     icon: <TrophyIcon className="size-6" />,
     url: "/dashboard/winners",
+  },
+  {
+    name: "Workshop Attendance",
+    icon: <UserPlusIcon className="size-6" />,
+    url: "/dashboard/workshop-attendance",
   },
   {
     name: "College Participants",
@@ -52,7 +57,7 @@ const Sidebar = ({ setIsOpen }: any) => {
           <h1 className="p-4 text-xl">Admin Dashboard</h1>
           <ul className="space-y-4 mt-8 p-2 md:mr-8">
             {navItems.map((item, idx) => {
-              const isActive = location.pathname === item.url; // Check if the current path matches the item's URL
+              const isActive = location.pathname.includes(item.url); // Check if the current path matches the item's URL
               return (
                 <li
                   key={idx}
