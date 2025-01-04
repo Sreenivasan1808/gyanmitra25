@@ -21,8 +21,11 @@ const getAllWorkshopByDepartment = async (req, res) => {
 const getWorkshopDetailsById = async (req, res) => {
     //req will have workshop id. return the workshop details of that id
     try{
+
         const workshopId = req.query.workshopId
-        const data = await eventModel.find({workshopid:workshopId})
+        console.log(workshopId);
+        const data = await workshopModel.findOne({workshopid:workshopId})
+        console.log(data);
         if(data==null){
             res.status(204).json({message:"no data found"})
         }
@@ -33,6 +36,7 @@ const getWorkshopDetailsById = async (req, res) => {
     catch(e)
     {
         console.log(e)
+        res.status(500).json({message: "Server error"})
     }
 }
 module.exports={

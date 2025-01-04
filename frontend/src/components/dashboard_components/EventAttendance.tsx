@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import EventsList from "./EventsList";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import {
   getEventParticipantsList,
@@ -9,13 +8,22 @@ import {
 import Snackbar from "../util_components/Snackbar";
 import { downloadAttendanceExcelByEvent } from "../../services/DownloadsSVC";
 import { saveAs } from "file-saver";
+import { useNavigate, useParams } from "react-router-dom";
+import { getEventDetails } from "../../services/EventsSVC";
 const EventAttendance = () => {
   //Event details
-  const [event, setEvent] = useState<{
-    id: number;
-    name: String;
-    imgSrc: string;
-  } | null>(null);
+  const [event, setEvent] = useState<any>();
+
+  const { "event-id": eventId } = useParams();
+  console.log(eventId);
+
+  if (!eventId) {
+    return (
+      <div className="h-full w-full flex justify-center items-center text-2xl text-text-950">
+        Not a valid workshop id
+      </div>
+    );
+  }
 
   //Details of the new participant
   const [participantDetails, setParticipantDetails] = useState({
@@ -26,6 +34,7 @@ const EventAttendance = () => {
 
   //Error message to show if GMID entered is not valid
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   //Snackbar handler state
   const [snackbar, setSnackbar] = useState({
@@ -82,7 +91,7 @@ const EventAttendance = () => {
     if (error.length == 0 && event) {
       let result = await markEventParticipantAttendance(
         participantDetails.gmid,
-        event.id+""
+        event.eventid+""
       );
       //display message
       // console.log(result);
@@ -95,7 +104,7 @@ const EventAttendance = () => {
   const handleAttendanceExcelDownload = async (e: any) => {
     e.preventDefault();
     if (event) {
-      const excel_blob = await downloadAttendanceExcelByEvent(event?.id);
+      const excel_blob = await downloadAttendanceExcelByEvent(event?.eventid);
       if (excel_blob != null) {
         saveAs(excel_blob, `${event.name} Participants List.xlsx`);
         showSnackbar("Downloading...", "info");
@@ -110,35 +119,38 @@ const EventAttendance = () => {
 
   //Fetch participants list for the attendance table
   const handleEventParticipantsListTable = async () => {
-    if (event) {
-      const participants = await getEventParticipantsList(event?.id);
+    if (eventId) {
+      const participants = await getEventParticipantsList(eventId);
       if (participants == null || participants.length == 0) {
         return;
       }
+      console.log("Event participants list");
+      console.log(participants);
+      
       setParticipantsList(participants);
     }
   };
 
+
+  const handleGetEventDetails = async () => {
+    const eventDetails = await getEventDetails(eventId);  
+    setEvent(eventDetails);
+  }
+
   //Use effect for handleEventParticipantsListTable
   useEffect(() => {
+    handleGetEventDetails();
     handleEventParticipantsListTable();
-  }, [event]);
+  }, []);
 
   return (
     <div className="w-full h-full overflow-scroll">
-      {event === null && (
-        <div>
-          <h1 className="p-8 text-2xl">Event Attendance</h1>
-          <EventsList setEvent={setEvent} />
-        </div>
-      )}
       {event != null && (
         <div className="p-8">
           {/* Back Button */}
           <button
             className="flex gap-2 border-2 rounded-lg border-accent-300 p-2 hover:scale-95"
             onClick={() => {
-              setEvent(null);
               setParticipantDetails({
                 gmid: "",
                 name: "",
@@ -146,6 +158,7 @@ const EventAttendance = () => {
               });
               setError("");
               setParticipantsList(null);
+              navigate(-1);
             }}
           >
             <span>

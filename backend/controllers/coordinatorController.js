@@ -5,8 +5,8 @@ const eventModel = require("../models/events");
 
 const uploadWinners = async (req, res) => {
   try {
+    console.log("body");
     console.log(req.body);
-    console.log("entered");
     const first_prize = [];
     const second_prize = [];
     const third_prize = [];
@@ -93,6 +93,8 @@ const getWinnersDetailsFromGmid = async (winners) => {
   let firstPrizeDetails = [];
   for (let i = 0; i < firstPrizeIds.length; i++) {
     let participant = await userModel.findOne({ user_id: firstPrizeIds[i] });
+    console.log("firstprize " + i);
+    console.log(participant);
     firstPrizeDetails.push({
       gmid: participant.user_id,
       name: participant.name,
@@ -101,7 +103,9 @@ const getWinnersDetailsFromGmid = async (winners) => {
   }
   let secondPrizeDetails = [];
   for (let i = 0; i < secondPrizeIds.length; i++) {
-    let participant = await userModel.findOne({ user_id: firstPrizeIds[i] });
+    let participant = await userModel.findOne({ user_id: secondPrizeIds[i] });
+    console.log("secondprize " + i);
+    console.log(participant);
     secondPrizeDetails.push({
       gmid: participant.user_id,
       name: participant.name,
@@ -110,7 +114,9 @@ const getWinnersDetailsFromGmid = async (winners) => {
   }
   let thirdPrizeDetails = [];
   for (let i = 0; i < thirdPrizeIds.length; i++) {
-    let participant = await userModel.findOne({ user_id: firstPrizeIds[i] });
+    let participant = await userModel.findOne({ user_id: thirdPrizeIds[i] });
+    console.log("thirdprize " + i);
+    console.log(participant);
     thirdPrizeDetails.push({
       gmid: participant.user_id,
       name: participant.name,

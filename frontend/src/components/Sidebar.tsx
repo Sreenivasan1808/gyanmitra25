@@ -4,7 +4,8 @@ import {
   ArrowLeftStartOnRectangleIcon,
   UserPlusIcon,
   TrophyIcon,
-  UserGroupIcon
+  UserGroupIcon,
+  IdentificationIcon
 } from "@heroicons/react/24/outline";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -33,6 +34,11 @@ const navItems = [
     name: "College Participants",
     icon: <UserGroupIcon className="size-6" />,
     url: "/dashboard/participants",
+  },
+  {
+    name: "Participant Information",
+    icon: <IdentificationIcon className="size-6" />,
+    url: "/dashboard/participant-info",
   },
 ];
 

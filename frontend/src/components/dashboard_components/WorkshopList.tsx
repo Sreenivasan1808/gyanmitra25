@@ -1,63 +1,39 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getAllWorkshopListByDept } from "../../services/EventsSVC";
 
 const WorkshopList = () => {
-    const workshops = [
-        {
-          id: 0,
-          name: "Python",
-          imgSrc: "",
-        },
-        {
-          id: 1,
-          name: "Web development",
-          imgSrc: "",
-        },
-        {
-          id: 2,
-          name: "Ml basics",
-          imgSrc: "",
-        },
-        {
-          id: 3,
-          name: "Data Science",
-          imgSrc: "",
-        },
-        {
-          id: 4,
-          name: "Quantum computing",
-          imgSrc: "",
-        },
-        {
-          id: 5,
-          name: "Deep Learning",
-          imgSrc: "",
-        },
-        {
-          id: 6,
-          name: "GPT",
-          imgSrc: "",
-        },
-        {
-          id: 7,
-          name: "BERT, RAG",
-          imgSrc: "",
-        },
-      ];
-      const navigate = useNavigate();
+  
+  const navigate = useNavigate();
+  const [workshopList, setWorkshopList] = useState<any>();
+
+  const handleGetAllWorkshopList = async () => {
+    const data = await getAllWorkshopListByDept("CSE-IT-AIDS");
+    if (data.message) {
+      console.log(data);
+      return;
+    }
+    setWorkshopList(data);
+  };
+
+  useEffect(() => {
+    handleGetAllWorkshopList();
+  }, []);
+
   return (
-    <div className="px-8 py-2 text-2xl">
+    <div className="px-8 py-2">
+      <h1 className="text-xl text-text-950">Events conducted by: <span className="font-semibold">CSE-IT-AIDS</span></h1>
       <div className="flex justify-center flex-wrap gap-4 p-4 ">
-        {workshops.map((workshop) => {
+        {workshopList?.map((workshop: any) => {
           return (
             <div
-              className="h-72 w-72 border-2 flex flex-col justify-between items-center border-accent-400 rounded-lg hover:scale-95 transition-all duration-200 hover:border-accent-600 text-xl hover:cursor-pointer"
+              className="h-72 w-72 border-2 flex flex-col justify-between items-center border-accent-400 rounded-lg hover:scale-95 transition-all duration-200 hover:border-accent-600 text-lg hover:cursor-pointer"
               onClick={() => {
-                navigate(`/dashboard/workshop-attendance/${workshop.id}`)
+                navigate(`/dashboard/workshop-attendance/${workshop.workshopid}`);
               }}
-              key={workshop.id}
+              key={workshop.workshopid}
             >
-              <img src={workshop.imgSrc} alt={workshop.name} />
+              <img src={workshop.images} alt={workshop.name} className="h-full w-full rounded-t-md" />
               <p className="w-full bg-secondary-200 text-center rounded-b-md">
                 {workshop.name}
               </p>
@@ -66,7 +42,7 @@ const WorkshopList = () => {
         })}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default WorkshopList
+export default WorkshopList;

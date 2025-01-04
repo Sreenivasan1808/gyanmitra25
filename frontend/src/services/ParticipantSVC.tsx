@@ -42,7 +42,7 @@ export const markEventParticipantAttendance = async (
   }
 };
 
-export const getEventParticipantsList = async (eventId: number) => {
+export const getEventParticipantsList = async (eventId: String) => {
   try {
     const response = await axios.get(`${SERVER_URL}/participant/getAllParticipants`, {params: {event_id: eventId}});
     if(response.status == 200){
@@ -89,7 +89,7 @@ export const getAllCollegeList = async () => {
 export const markWorkshopParticipantAttendance = async (gmid: string, workshopid: string) => {
   try {
     const response = await axios.post(
-      `${SERVER_URL}/participant/markWorkshopAttendance`,
+      `${SERVER_URL}/participant/markworkshopattendance`,
       { gmId: gmid, workshopId: workshopid, status: true }
     );
     // console.log(response)
@@ -103,5 +103,25 @@ export const markWorkshopParticipantAttendance = async (gmid: string, workshopid
     }
   } catch (error) {
     return { message: "Something went wrong with the server", type: "error" };
+  }
+}
+
+export const getWorkshopParticipantsList = async (workshopId: string) => {
+  try {
+    console.log("Hii da");
+    console.log(workshopId);
+    
+    const response = await axios.get(`${SERVER_URL}/participant/getAllWorkshopParticipants`, {params: {workshopId: workshopId}});
+    if(response.status == 200){
+      console.log(response)
+      
+      return response.data;
+    }else{
+      return null;
+    }
+  } catch (error) {
+    console.log("Get workshop participants list")
+    console.log(error)
+    return null;
   }
 }
