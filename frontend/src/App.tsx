@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Login from "./components/Login"; // Your Login component
-import Dashboard from "./components/Dashboard"; // Your Dashboard component
+import Login from "./components/Login";
+import Dashboard from "./components/Dashboard";
 import EventAttendance from "./components/dashboard_components/EventAttendance";
 import EventWinners from "./components/dashboard_components/EventWinners";
 import CollegeParticipants from "./components/dashboard_components/CollegeParticipants";
@@ -8,6 +8,26 @@ import WorkshopAttendance from "./components/dashboard_components/WorkshopAttend
 import WorkshopList from "./components/dashboard_components/WorkshopList";
 import EventsList from "./components/dashboard_components/EventsList";
 import ParticipantInformation from "./components/dashboard_components/ParticipantInformation";
+import NotFound from "./components/NotFound";
+import NotAuthorized from "./components/util_components/NotAuthorized";
+import { RequireAuth } from "./services/RequireAuth";
+import useAuth from "./services/useAuth";
+
+const RoleBasedRedirect = () => {
+  const { role } = useAuth();
+
+  switch (role) {
+    case "super-admin":
+    case "event-coordinator":
+      return <Navigate to="/dashboard/event-attendance" replace />;
+    case "workshop-coordinator":
+      return <Navigate to="/dashboard/workshop-attendance" replace />;
+    case "certificate-committee":
+      return <Navigate to="/dashboard/participants" replace />;
+    default:
+      return <Navigate to="/not-authorized" replace />;
+  }
+};
 
 const App = () => {
   return (
@@ -15,9 +35,26 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Navigate to="event-attendance" replace />} /> 
-        <Route path="/dashboard/*" element={<Dashboard />}> 
-          <Route path="event-attendance" element={<EventsList targetPath="event-attendance" heading="Event Attendance"/>} />
+        {/* Role-based redirect for /dashboard */}
+        <Route
+          path="/dashboard"
+          element={
+              <RoleBasedRedirect />
+          }
+        />
+        {/* Protected dashboard routes */}
+        <Route
+          path="/dashboard/*"
+          element={
+            <RequireAuth>
+              <Dashboard />
+            </RequireAuth>
+          }
+        >
+          <Route
+            path="event-attendance"
+            element={<EventsList targetPath="event-attendance" heading="Event Attendance" />}
+          />
           <Route path="event-attendance/:event-id" element={<EventAttendance />} />
           <Route path="workshop-attendance" element={<WorkshopList />} />
           <Route path="workshop-attendance/:workshop-id" element={<WorkshopAttendance />} />
@@ -26,6 +63,8 @@ const App = () => {
           <Route path="participants" element={<CollegeParticipants />} />
           <Route path="participant-info" element={<ParticipantInformation />} />
         </Route>
+        <Route path="/not-authorized" element={<NotAuthorized />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

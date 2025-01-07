@@ -1,16 +1,48 @@
-import React from "react";
+import { useState } from "react";
+import useAuth from "../services/useAuth";
+import { useLocation, useNavigate } from "react-router-dom";
+import Snackbar from "./util_components/Snackbar";
 
 const Login = () => {
+  const [credentials, setCredentials] = useState<any>({});
+
+  const navigate = useNavigate();
+  const { authed, login } = useAuth();
+  const { state } = useLocation();
+  const [snackbar, setSnackbar] = useState({
+    isOpen: false,
+    message: "",
+    type: "info", // Default type
+  });
+
+  const showSnackbar = (message: string, type: string) => {
+    setSnackbar({ isOpen: true, message, type });
+  };
+
+  const closeSnackbar = () => {
+    setSnackbar((prev) => ({ ...prev, isOpen: false }));
+  };
+
+  const handleLogin = async (e: any) => {
+    e.preventDefault();
+    const authResponse = await login({ ...credentials });
+    if (authResponse.type == "success") {
+      navigate(state?.path || "/dashboard");
+    
+      }else
+      showSnackbar(
+        authResponse?.message || "An error occurred",
+        authResponse?.type || "error"
+      );
+  };
   return (
     <div className="h-screen md:flex">
       <div className="relative overflow-hidden md:flex w-[60%] bg-gradient-to-tr from-primary-600 to-secondary-700 i justify-around items-center hidden">
         <div>
           <h1 className="text-white font-bold text-4xl font-sans m-0 p-0">
-           Mepco Schlenk Engineering College
+            Mepco Schlenk Engineering College
           </h1>
-          <p className="text-gray-200 text-xl m-0 p-0">
-            Sivakasi
-          </p>
+          <p className="text-gray-200 text-xl m-0 p-0">Sivakasi</p>
         </div>
         <div className="absolute -bottom-32 -left-40 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8 border-accent-200"></div>
         <div className="absolute -bottom-40 -left-20 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8 border-accent-200"></div>
@@ -28,7 +60,9 @@ const Login = () => {
           </p>
         </div>
         <form className="bg-white border-2 rounded-md border-accent-400 p-8">
-          <h1 className="text-gray-800 font-bold text-2xl mb-2 text-center">Login</h1>
+          <h1 className="text-gray-800 font-bold text-2xl mb-2 text-center">
+            Login
+          </h1>
           {/* <p className="text-sm font-normal text-gray-600 mb-7">Welcome Back</p> */}
           <div className="flex items-center border-2 py-2 px-3 rounded-2xl mb-4 gap-2 focus-within:border-secondary-500">
             <svg
@@ -50,6 +84,13 @@ const Login = () => {
               id="username"
               autoFocus
               placeholder="Username"
+              value={credentials.username}
+              onChange={(e) =>
+                setCredentials((prev: any) => ({
+                  ...prev,
+                  username: e.target.value,
+                }))
+              }
             />
           </div>
 
@@ -72,12 +113,20 @@ const Login = () => {
               name="password"
               id="password"
               placeholder="Password"
+              value={credentials.password}
+              onChange={(e) =>
+                setCredentials((prev: any) => ({
+                  ...prev,
+                  password: e.target.value,
+                }))
+              }
             />
           </div>
 
           <button
             type="submit"
             className="block w-full bg-primary-500 mt-4 py-2 rounded-2xl text-white font-semibold mb-2 hover:bg-primary-600"
+            onClick={handleLogin}
           >
             Login
           </button>
@@ -85,6 +134,12 @@ const Login = () => {
           <p></p>
         </form>
       </div>
+      <Snackbar
+        message={snackbar.message}
+        isOpen={snackbar.isOpen}
+        type={snackbar.type}
+        onClose={closeSnackbar}
+      />
     </div>
   );
 };

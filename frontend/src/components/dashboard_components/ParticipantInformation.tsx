@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { getParticipantDetailsFromGMID } from "../../services/ParticipantSVC";
 
 const ParticipantInformation = () => {
