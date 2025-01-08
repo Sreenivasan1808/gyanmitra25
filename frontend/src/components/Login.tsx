@@ -2,9 +2,11 @@ import { useState } from "react";
 import useAuth from "../services/useAuth";
 import { useLocation, useNavigate } from "react-router-dom";
 import Snackbar from "./util_components/Snackbar";
+import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 
 const Login = () => {
   const [credentials, setCredentials] = useState<any>({});
+  const [showPassword, setShowPassword] = useState(false); // New state for toggling password visibility
 
   const navigate = useNavigate();
   const { authed, login } = useAuth();
@@ -26,18 +28,22 @@ const Login = () => {
   const handleLogin = async (e: any) => {
     e.preventDefault();
     const authResponse = await login({ ...credentials });
-    if (authResponse.type == "success") {
-      navigate(state?.path || "/dashboard");
-    
-      }else
+    if (authResponse.type === "success") {
+      setTimeout(() => {
+        navigate(state?.path || "/dashboard");
+      }, 0);
+    } else {
       showSnackbar(
         authResponse?.message || "An error occurred",
         authResponse?.type || "error"
       );
+    }
   };
+
   return (
     <div className="h-screen md:flex">
-      <div className="relative overflow-hidden md:flex w-[60%] bg-gradient-to-tr from-primary-600 to-secondary-700 i justify-around items-center hidden">
+      {/* Left Section */}
+      <div className="relative overflow-hidden md:flex w-[60%] bg-gradient-to-tr from-primary-600 to-secondary-700 justify-around items-center hidden">
         <div>
           <h1 className="text-white font-bold text-4xl font-sans m-0 p-0">
             Mepco Schlenk Engineering College
@@ -50,20 +56,24 @@ const Login = () => {
         <div className="absolute -top-20 -right-20 w-80 h-80 border-4 rounded-full border-opacity-30 border-t-8 border-accent-200"></div>
       </div>
 
+      {/* Right Section */}
       <div className="flex flex-col h-screen md:w-[40%] justify-center py-10 items-center gap-5 bg-background-700 md:bg-white">
-        <div className="">
+        <div>
           <h1 className="text-text-50 font-bold text-3xl font-sans m-0 p-0 text-center md:text-text-950">
             GyanMitra '25
           </h1>
-          <p className="text-text-200 text-xl m-0 p-0 text-center  md:text-text-800">
+          <p className="text-text-200 text-xl m-0 p-0 text-center md:text-text-800">
             A National level technical symposium
           </p>
         </div>
+
+        {/* Login Form */}
         <form className="bg-white border-2 rounded-md border-accent-400 p-8">
           <h1 className="text-gray-800 font-bold text-2xl mb-2 text-center">
             Login
           </h1>
-          {/* <p className="text-sm font-normal text-gray-600 mb-7">Welcome Back</p> */}
+
+          {/* Username Input */}
           <div className="flex items-center border-2 py-2 px-3 rounded-2xl mb-4 gap-2 focus-within:border-secondary-500">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -72,9 +82,9 @@ const Login = () => {
               fill="currentColor"
             >
               <path
-                fill-rule="evenodd"
+                fillRule="evenodd"
                 d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                clip-rule="evenodd"
+                clipRule="evenodd"
               />
             </svg>
             <input
@@ -94,6 +104,7 @@ const Login = () => {
             />
           </div>
 
+          {/* Password Input with Show/Hide Toggle */}
           <div className="flex items-center border-2 py-2 px-3 rounded-2xl gap-2 focus-within:border-secondary-500">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -102,14 +113,14 @@ const Login = () => {
               fill="currentColor"
             >
               <path
-                fill-rule="evenodd"
+                fillRule="evenodd"
                 d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                clip-rule="evenodd"
+                clipRule="evenodd"
               />
             </svg>
             <input
               className="pl-2 outline-none border-none focus:outline-none focus:ring-0"
-              type="password"
+              type={showPassword ? "text" : "password"}
               name="password"
               id="password"
               placeholder="Password"
@@ -121,8 +132,22 @@ const Login = () => {
                 }))
               }
             />
+            
+              {showPassword ? (
+                <EyeSlashIcon
+                  className="h-5 w-5 text-gray-400 cursor-pointer"
+                  onClick={() => setShowPassword(false)}
+                />
+              ) : (
+                <EyeIcon
+                  className="h-5 w-5 text-gray-400 cursor-pointer"
+                  onClick={() => setShowPassword(true)}
+                />
+              )}
+       
           </div>
 
+          {/* Submit Button */}
           <button
             type="submit"
             className="block w-full bg-primary-500 mt-4 py-2 rounded-2xl text-white font-semibold mb-2 hover:bg-primary-600"
@@ -130,10 +155,10 @@ const Login = () => {
           >
             Login
           </button>
-
-          <p></p>
         </form>
       </div>
+
+      {/* Snackbar for Notifications */}
       <Snackbar
         message={snackbar.message}
         isOpen={snackbar.isOpen}

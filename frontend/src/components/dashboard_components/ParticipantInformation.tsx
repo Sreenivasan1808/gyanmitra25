@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { getParticipantDetailsFromGMID } from "../../services/ParticipantSVC";
+import Snackbar from "../util_components/Snackbar";
 
 const ParticipantInformation = () => {
   const [gmid, setGmid] = useState<string>("");
@@ -7,8 +8,26 @@ const ParticipantInformation = () => {
 
   const handleGetParticipantDetails = async (e: any) => {
     e.preventDefault();
+    if(gmid == null || gmid.length == 0){
+      showSnackbar("Enter a valid GMID", "error")
+      return;
+    }
     const details = await getParticipantDetailsFromGMID(gmid);
     setParticipant(details);
+  };
+
+  const [snackbar, setSnackbar] = useState({
+    isOpen: false,
+    message: "",
+    type: "info", // Default type
+  });
+
+  const showSnackbar = (message: string, type: string) => {
+    setSnackbar({ isOpen: true, message, type });
+  };
+
+  const closeSnackbar = () => {
+    setSnackbar((prev) => ({ ...prev, isOpen: false }));
   };
   return (
     <div className="py-2 px-8 flex flex-col justify-center items-center gap-4">
@@ -34,7 +53,7 @@ const ParticipantInformation = () => {
         </button>
       </div>
 
-      <div className="border-2 border-secondary-500 p-4 rounded-lg m-2 w-full flex flex-col items-center justify-center">
+      {Object.keys(participant).length > 0 && <div className="border-2 border-secondary-500 p-4 rounded-lg m-2 w-full flex flex-col items-center justify-center">
         <table className="table w-full">
             <tbody>
                 <tr className="table-row border-2 border-gray-300 text-center">
@@ -63,7 +82,13 @@ const ParticipantInformation = () => {
                 </tr>
             </tbody>
         </table>
-      </div>
+      </div>}
+      <Snackbar
+        message={snackbar.message}
+        isOpen={snackbar.isOpen}
+        type={snackbar.type}
+        onClose={closeSnackbar}
+      />
     </div>
   );
 };

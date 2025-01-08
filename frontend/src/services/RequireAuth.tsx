@@ -18,7 +18,7 @@
 import { Navigate, useLocation } from "react-router-dom";
 import useAuth from "./useAuth";
 
-const rolePermissions = {
+const rolePermissions:any = {
   "super-admin": ["/dashboard/*"],
   "event-coordinator": [
     "/dashboard/event-attendance",

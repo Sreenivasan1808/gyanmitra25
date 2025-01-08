@@ -6,4 +6,5 @@ router.post("/uploadwinners",coordinatorController.uploadWinners)
 router.get("/getwinners",coordinatorController.getWinners)
 router.get("/get-collegewise-participants", coordinatorController.getParticipantsCollegeWise);
 router.get("/getcollegelist", coordinatorController.getCollegeList);
+router.get("/getdepartmentlist", coordinatorController.getUniqueDepartments);
 module.exports = router;

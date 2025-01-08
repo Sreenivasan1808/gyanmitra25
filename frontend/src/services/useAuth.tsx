@@ -7,16 +7,28 @@ type AuthContextType = {
   authed: boolean;
   role: string;
   dept: string;
-  login: (credentials: { username: string; password: string }) => Promise<void>;
+  login: (credentials: { username: string; password: string }) => Promise<{ message: string; type: string }>;
   logout: () => Promise<void>;
 };
 
 const authContext = React.createContext<AuthContextType | undefined>(undefined);
 
 function useAuth() {
-  const [authed, setAuthed] = React.useState(false);
-  const [role, setRole] = React.useState("");
-  const [dept, setDept] = React.useState("");
+  // Initialize state from localStorage
+  const [authed, setAuthed] = React.useState(() => {
+    const storedAuthed = localStorage.getItem("authed");
+    return storedAuthed === "true";
+  });
+
+  const [role, setRole] = React.useState(() => localStorage.getItem("role") || "");
+  const [dept, setDept] = React.useState(() => localStorage.getItem("dept") || "");
+
+  // Save state to localStorage when it changes
+  React.useEffect(() => {
+    localStorage.setItem("authed", String(authed));
+    localStorage.setItem("role", role);
+    localStorage.setItem("dept", dept);
+  }, [authed, role, dept]);
 
   return {
     authed,
@@ -33,13 +45,17 @@ function useAuth() {
         }
       } catch (error) {
         setAuthed(false);
-        return { message: error?.response.data, type: "error" };
+        return { message: error?.response?.data || "Login failed", type: "error" };
       }
     },
     logout: async () => {
+      setAuthed(false);
       setRole("");
       setDept("");
-      setAuthed(false);
+      // Clear localStorage
+      localStorage.removeItem("authed");
+      localStorage.removeItem("role");
+      localStorage.removeItem("dept");
     },
   };
 }

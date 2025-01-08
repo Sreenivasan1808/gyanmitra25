@@ -232,9 +232,26 @@ const getCollegeList = async (req, res) => {
   }
 };
 
+const getUniqueDepartments = async (req, res) => {
+  try {
+    const uniqueDepts = await eventModel.distinct("organizing_department");
+    res.status(200).json({
+      uniqueDepts
+  });
+} catch (error) {
+    console.error("Error fetching departments: ", error);
+    res.status(500).json({
+      message: "Server Error",
+    });
+    
+  }
+  
+}
+
 module.exports = {
   uploadWinners: uploadWinners,
   getWinners: getWinners,
   getParticipantsCollegeWise: getParticipantsCollegeWise,
   getCollegeList: getCollegeList,
+  getUniqueDepartments:getUniqueDepartments,
 };

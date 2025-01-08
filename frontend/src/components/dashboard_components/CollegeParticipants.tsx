@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   getAllCollegeList,
   getAllParticipantsCollegeWise,
@@ -21,11 +21,11 @@ const CollegeParticipants = () => {
     getCollegeList();
   }, []);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e:any) => {
     const value = e.target.value;
     setInputValue(value);
     setFilteredColleges(
-      collegeList.filter((college) =>
+      collegeList.filter((college:string) =>
         college.toLowerCase().includes(value.toLowerCase())
       )
     );
@@ -41,7 +41,7 @@ const CollegeParticipants = () => {
   };
 
   return (
-    <div className="p-4 md:p-8 relative">
+    <div className="p-4 md:p-8 relative h-full">
       <h1 className="p-8 text-2xl">Participants List</h1>
       <form
         action=""
