@@ -4,15 +4,18 @@ import {
   UserPlusIcon,
   TrophyIcon,
   UserGroupIcon,
-  IdentificationIcon
+  IdentificationIcon,
+  PlusCircleIcon
 } from "@heroicons/react/24/outline";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../services/useAuth";
+import Modal from "./util_components/Modal";
+import { useState } from "react";
 
 const unselectedStyle =
-  "px-4 py-2 my-1 w-full text-text-50 hover:bg-secondary-100 hover:text-text-950 rounded-lg cursor-pointer flex gap-2";
+  "px-4 py-2 my-1 w-full text-text-50 bg-secondary-100/0 hover:bg-secondary-100 hover:text-text-950 rounded-lg cursor-pointer flex gap-2";
 const selectedStyle =
-  "px-4 py-2 my-1 w-full bg-secondary-100 text-text-950 rounded-lg cursor-pointer flex gap-2";
+  "px-4 py-2 my-1 w-full bg-secondary-100/100 text-text-950 rounded-lg cursor-pointer flex gap-2";
 
 const navItems = [
   {
@@ -45,12 +48,19 @@ const navItems = [
     url: "/dashboard/participant-info",
     allowedRoles : ["super-admin", "event-coordinator", "workshop-coordinator", "certificate-committee"]
   },
+  {
+    name: "On the Spot Registration",
+    icon: <PlusCircleIcon className="size-6" />,
+    url: "/dashboard/on-spot-registration",
+    allowedRoles : ["super-admin", "registration-committee"]
+  },
 ];
 
 const Sidebar = ({ setIsOpen }: any) => {
   const navigate = useNavigate();
   const location = useLocation(); // Get the current location
   const {logout, authed} = useAuth();
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleLogout = async (e:any) => {
     e.preventDefault();
@@ -89,7 +99,7 @@ const Sidebar = ({ setIsOpen }: any) => {
                 item.allowedRoles.includes(role) && 
                 <li
                   key={idx}
-                  className={isActive ? selectedStyle : unselectedStyle}
+                  className={`transition-all duration-100 ease-in-out ${isActive ? selectedStyle : unselectedStyle}`}
                   onClick={() => {
                     navigate(item.url);
                     setIsOpen(false);
@@ -102,7 +112,7 @@ const Sidebar = ({ setIsOpen }: any) => {
             })}
             <hr />
             <li className="px-4 py-2 my-1 w-full text-text-50 hover:bg-red-500 hover:text-text-950 rounded-lg cursor-pointer flex gap-2"
-            onClick={handleLogout}>
+            onClick={() => setModalOpen(true)}>
               <span>
                 <ArrowLeftStartOnRectangleIcon className="size-6" />
               </span>{" "}
@@ -111,6 +121,29 @@ const Sidebar = ({ setIsOpen }: any) => {
           </ul>
         </nav>
       </div>
+      {/* <div className="absolute">
+
+      </div> */}
+      <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+        <div className="text-center w-56">
+          <ArrowLeftStartOnRectangleIcon className="size-32 mx-auto text-red-500" />
+          <div className="mx-auto my-4 w-48">
+            <h3 className="text-lg font-black text-gray-800">Confirm Logout</h3>
+            <p className="text-sm text-gray-500">
+              Are you sure you want to logout?
+            </p>
+          </div>
+          <div className="flex gap-4">
+            <button className="px-4 py-2 bg-red-600 rounded-lg w-full text-white" onClick={handleLogout}>Logout</button>
+            <button
+              className="px-4 py-2 bg-accent-100 rounded-lg w-full"
+              onClick={() => setModalOpen(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

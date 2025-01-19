@@ -12,6 +12,7 @@ import NotFound from "./components/NotFound";
 import NotAuthorized from "./components/util_components/NotAuthorized";
 import { RequireAuth } from "./services/RequireAuth";
 import useAuth from "./services/useAuth";
+import OnSpotRegistration from "./components/dashboard_components/OnSpotRegistration";
 
 const RoleBasedRedirect = () => {
   const { role } = useAuth();
@@ -62,6 +63,7 @@ const App = () => {
           <Route path="winners/:event-id" element={<EventWinners />} />
           <Route path="participants" element={<CollegeParticipants />} />
           <Route path="participant-info" element={<ParticipantInformation />} />
+          <Route path="on-spot-registration" element={<OnSpotRegistration />} />
         </Route>
         <Route path="/not-authorized" element={<NotAuthorized />} />
         <Route path="*" element={<NotFound />} />
