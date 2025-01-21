@@ -4,10 +4,12 @@ import Sidebar from "./Sidebar";
 // import EventAttendance from "./dashboard_components/EventAttendance";
 // import EventWinners from "./dashboard_components/EventWinners";
 import { Outlet } from "react-router-dom";
+import useAuth  from "../services/useAuth";
 
 
 const Dashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const {dept, role} = useAuth();
 
   return (
     <div className="min-h-screen bg-background-50 flex relative overflow-hidden">
@@ -34,7 +36,7 @@ const Dashboard = () => {
       <div className="w-full md:w-[80%] h-screen flex flex-col">
         {/* Header */}
         <div className="w-full bg-background-100 p-2 text-xl text-text-800 font-semibold flex justify-between items-center px-4">
-          <h2>Vipravuha</h2>
+          <h2>{dept || "Super admin"}</h2>
           <span
             className="md:hidden cursor-pointer"
             onClick={() => setIsOpen((prev) => !prev)}

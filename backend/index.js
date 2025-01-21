@@ -39,3 +39,5 @@ const eventRouter = require("./routes/eventRoutes"); //same as userRouter
 app.use("/event", eventRouter);
 const workshopRouter = require("./routes/workshopRoutes"); //same as userRouter
 app.use("/workshop", workshopRouter);
+const authRouter = require("./routes/authRoutes")
+app.use("/auth", authRouter);

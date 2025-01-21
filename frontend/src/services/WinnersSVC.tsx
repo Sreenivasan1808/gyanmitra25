@@ -20,7 +20,7 @@ export const uploadWinners = async (winnersList: any, eventId: number) => {
     }
   }
   
-  export const getWinnersList = async (eventId:number) => {
+  export const getWinnersList = async (eventId:String) => {
     try {
         const response = await axios.get(`${SERVER_URL}/coordinator/getwinners`, {params: {eventId: eventId}});
         if(response.status == 200){

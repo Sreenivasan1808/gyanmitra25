@@ -35,6 +35,27 @@ const getAllParticipants = async (req, res) => {
     console.log(e);
   }
 };
+
+const getAllWorkshopParticipants = async (req, res) => {
+  try {
+    const workshopId = req.query.workshopId;
+    console.log("workshopid");
+    console.log(workshopId);
+    const data = await workshopAttendenceModel.find({ workshopid: workshopId });
+    const data1 = [];
+    console.log(data.length);
+    for (let i = 0; i < data.length; i++) {
+      const s = await userModel.findOne({ user_id: data[i].user_id });
+      console.log(s);
+      data1.push(s);
+    }
+    res.status(200).json(data1);
+  } catch (e) {
+    res.status(500).json({ message: "Server error" });
+    console.log(e);
+  }
+};
+
 const markAttendence = async (req, res) => {
   try {
     console.log("entered");
@@ -137,4 +158,5 @@ module.exports = {
   getAllParticipants: getAllParticipants,
   getAttendanceDetails: getAttendanceDetails,
   markWorkshopAttendance: markWorkshopAttendance,
+  getAllWorkshopParticipants:getAllWorkshopParticipants,
 };

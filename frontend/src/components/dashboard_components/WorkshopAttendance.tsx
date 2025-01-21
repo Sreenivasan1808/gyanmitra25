@@ -4,6 +4,7 @@ import Snackbar from "../util_components/Snackbar";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import {
   getParticipantDetailsFromGMID,
+  getWorkshopParticipantsList,
   markWorkshopParticipantAttendance,
 } from "../../services/ParticipantSVC";
 import { getWorkshopDetails } from "../../services/EventsSVC";
@@ -11,6 +12,8 @@ import { getWorkshopDetails } from "../../services/EventsSVC";
 const WorkshopAttendance = () => {
   //   const [workshop, setWorkshop] = useState();
   const { "workshop-id": workshopId } = useParams();
+  console.log(workshopId);
+  
   if (!workshopId) {
     return (
       <div className="h-full w-full flex justify-center items-center text-2xl text-text-950">
@@ -42,15 +45,22 @@ const WorkshopAttendance = () => {
   };
 
   const [workshop, setWorkshop] = useState<any>();
-
+  
   const handleGetWorkshopDetails = async () => {
     const details = await getWorkshopDetails(workshopId);
+    
+    // console.log(details);
+    // console.log(workshopId);
+    
+    
     setWorkshop(details);
   };
-
+  
+  
   useEffect(() => {
     handleGetWorkshopDetails();
-  }, [workshopId]);
+    handleWorkshopParticipantsListTable();
+  },[]);
 
   const handleGetParticipantDetails = async (e: any) => {
     e.preventDefault();
@@ -84,8 +94,7 @@ const WorkshopAttendance = () => {
       setError("Enter the GMID");
       return;
     }
-    console.log(event);
-    if (error.length == 0 && event) {
+    if (error.length == 0) {
       let result = await markWorkshopParticipantAttendance(
         participantDetails.gmid,
         workshopId
@@ -94,8 +103,26 @@ const WorkshopAttendance = () => {
       // console.log(result);
       showSnackbar(result.message, result.type);
     }
-    // handleEventParticipantsListTable();
+    handleWorkshopParticipantsListTable();
   };
+
+  const handleWorkshopParticipantsListTable = async () => {
+    console.log(workshop)
+    if (workshop) {
+      console.log("inside")
+      const participants = await getWorkshopParticipantsList(workshopId);
+      if (participants == null || participants.length == 0) {
+        return;
+      }
+      console.log("Participants");
+      
+      console.log(participants);
+      setParticipantsList(participants);
+    }
+  };
+
+  // useEffect(() => {
+  // }, [workshopId])
 
   return (
     <div className="w-full h-full overflow-scroll pb-4">
@@ -122,9 +149,9 @@ const WorkshopAttendance = () => {
         {/* Form and table container */}
         <div className="p-4 flex flex-col gap-2">
           <h1 className="text-lg text-text-950 ">
-            Workshop name:{" "}
+            Workshop name:
             <span className="text-text-950 font-semibold">
-              {workshop?.name}
+              {" " + workshop?.name}
             </span>
           </h1>
 
@@ -150,7 +177,7 @@ const WorkshopAttendance = () => {
                 />
               </div>
               <div className="flex flex-col gap-1 w-full">
-                <label htmlFor="gmid">Full Name</label>
+                <label htmlFor="gmid">Full Name (automatically retrieved)</label>
                 <input
                   type="text"
                   id="fname"
@@ -161,7 +188,7 @@ const WorkshopAttendance = () => {
                 />
               </div>
               <div className="flex flex-col gap-1 w-full">
-                <label htmlFor="gmid">College</label>
+                <label htmlFor="gmid">College (automatically retrieved)</label>
                 <input
                   type="text"
                   id="college"

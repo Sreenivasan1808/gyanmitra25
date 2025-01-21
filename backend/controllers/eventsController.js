@@ -24,7 +24,7 @@ const getEventDetailsById = async (req, res) => {
     //req will have event id. return the event details of that id
     try{
         const eventId = req.query.eventId
-        const data = await eventModel.find({eventid:eventId})
+        const data = await eventModel.findOne({eventid:eventId})
         if(data==null){
             res.status(204).json({message:"no data found"})
         }
