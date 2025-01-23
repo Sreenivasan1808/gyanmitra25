@@ -113,6 +113,7 @@ const deleteRowsByEmails = async (req, res) => {
 
     const sheetId = sheet.properties.sheetId;
 
+    console.log(rowsToDelete);
     // Create delete requests for all rows
     const deleteRequests = rowsToDelete.map(rowIndex => ({
       deleteDimension: {
