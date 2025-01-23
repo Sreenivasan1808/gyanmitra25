@@ -11,6 +11,7 @@ router.get("/attendancedownload", excel.attendanceDownload);
 router.get("/workshopattendancedownload",excel.workshopAttendanceDownload)
 router.get("/getattendancedetails",userController.getAttendanceDetails)
 router.post("/markworkshopattendance",userController.markWorkshopAttendance)
-router.get("/getdetails",gform.getDetails)
-router.post("/deletedetails",gform.deleteRowByEmail)
+router.get("/getregistrationdetails",gform.getDetails)
+router.post("/deleteregistrationdetails",gform.deleteRowByEmail)
+router.post("/approve",gform.approveParticipants)
 module.exports = router;

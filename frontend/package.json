@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@tanstack/react-table": "^8.20.6",
     "axios": "^1.7.9",
     "file-saver": "^2.0.5",
     "react": "^18.3.1",

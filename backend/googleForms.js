@@ -49,9 +49,13 @@ const getDetails=async (req, res) => {
     }
 }  
   
-const deleteRowByEmail = async (req, res) => {
-  const email = req.body.email?.trim().toLowerCase(); // Normalize input email
+const deleteRowsByEmails = async (req, res) => {
+  const emails = req.body.emails?.map(email => email.trim().toLowerCase()); // Normalize input emails
   console.log("Request Body:", req.body);
+
+  if (!emails || emails.length === 0) {
+    return res.status(400).send({ error: "No emails provided" });
+  }
 
   const auth = new google.auth.GoogleAuth({
     keyFile: "credentials.json",
@@ -65,6 +69,7 @@ const deleteRowByEmail = async (req, res) => {
   const range = "Form Responses 1"; // Specify the sheet name or range
 
   try {
+    // Fetch all rows from the spreadsheet
     const response = await googleSheets.spreadsheets.values.get({
       spreadsheetId,
       range,
@@ -84,15 +89,19 @@ const deleteRowByEmail = async (req, res) => {
       return res.status(400).send({ error: "Email column not found" });
     }
 
-    console.log("Searching for email:", email);
-    const rowIndexToDelete = rows.findIndex((row, index) => {
-      if (index === 0) return false; // Skip the header row
-      return row[emailIndex]?.trim().toLowerCase() === email;
-    });
+    console.log("Searching for emails:", emails);
 
-    if (rowIndexToDelete === -1) {
-      console.log("Email not found in the spreadsheet");
-      return res.status(404).send({ error: "Email not found in the spreadsheet" });
+    // Find the row indices for the provided emails
+    const rowsToDelete = rows
+      .map((row, index) => {
+        if (index === 0) return -1; // Skip the header row
+        return emails.includes(row[emailIndex]?.trim().toLowerCase()) ? index : -1;
+      })
+      .filter(index => index !== -1); // Filter out invalid indices
+
+    if (rowsToDelete.length === 0) {
+      console.log("No matching emails found in the spreadsheet");
+      return res.status(404).send({ error: "No matching emails found in the spreadsheet" });
     }
 
     const sheetInfo = await googleSheets.spreadsheets.get({ spreadsheetId });
@@ -103,36 +112,40 @@ const deleteRowByEmail = async (req, res) => {
 
     const sheetId = sheet.properties.sheetId;
 
-    const deleteRequest = {
-      requests: [
-        {
-          deleteDimension: {
-            range: {
-              sheetId,
-              dimension: "ROWS",
-              startIndex: rowIndexToDelete,
-              endIndex: rowIndexToDelete + 1,
-            },
-          },
+    // Create delete requests for all rows
+    const deleteRequests = rowsToDelete.map(rowIndex => ({
+      deleteDimension: {
+        range: {
+          sheetId,
+          dimension: "ROWS",
+          startIndex: rowIndex,
+          endIndex: rowIndex + 1,
         },
-      ],
-    };
+      },
+    }));
 
     await googleSheets.spreadsheets.batchUpdate({
       spreadsheetId,
-      resource: deleteRequest,
+      resource: {
+        requests: deleteRequests,
+      },
     });
 
-    console.log("Row deleted successfully");
-    res.status(200).send({ message: "Row deleted successfully" });
+    console.log("Rows deleted successfully:", rowsToDelete);
+    res.status(200).send({ message: "Participants Rejected successfully", deletedRows: rowsToDelete });
   } catch (error) {
-    console.error("Error deleting row:", error.message);
-    res.status(500).send({ error: "Error deleting row" });
+    console.error("Error deleting rows:", error.message);
+    res.status(500).send({ error: "Error deleting rows" });
   }
 };
+
+const approveParticipants = async (req, res) => {
+  
+}
 
 
 module.exports={
   getDetails:getDetails,
-  deleteRowByEmail:deleteRowByEmail
+  deleteRowByEmail:deleteRowsByEmails,
+  approveParticipants:approveParticipants
 }
