@@ -1,8 +1,9 @@
 const { google } = require("googleapis");
 const axios = require("axios").default;
 const https = require("https");
-
-
+const bcrypt = require("bcrypt");
+const crypto =require("crypto")
+const UserModel= require("./models/user")
 
 const agent = new https.Agent({
   rejectUnauthorized: false,
@@ -140,6 +141,56 @@ const deleteRowsByEmails = async (req, res) => {
 };
 
 const approveParticipants = async (req, res) => {
+  const participant = req.body; 
+  console.log(participant)
+  
+  if (!participant || !participant.Email) {
+    return res.status(400).send({ error: "Participant details or email missing" });
+  }
+
+  try {
+    const Email = participant.Email;
+    const Name = participant.Name;
+    const gender = participant.gender;
+    const password = participant.password;
+    const mobileNo = participant.MobileNo;
+    const collegeName = participant.CollegeName;
+    const collegeCity = participant.CollegeCity;
+    // Check if the user already exists by email
+    const existingUser = await UserModel.findOne({ email: Email });
+
+    if (existingUser) {
+      // If the user already exists, return an error
+      return res.status(400).send({ error: `User with email ${Email} already exists` });
+    }
+
+    // Create a new user object
+    const newUser = new UserModel({
+      user_id: crypto.randomBytes(20).toString('hex'),  // Generate a random user ID (you can change this logic)
+      name: Name,
+      email: Email,
+      gender: gender,
+      password: password,  // You should hash the password before saving
+      phone: mobileNo,
+      cname: collegeName,
+      ccity: collegeCity,
+      eventPayed: "Paid",  // Initial status
+      workshopPayed: "Paid",  // Initial status
+    });
+
+    // Hash the password before saving it to the database
+    // const salt = await bcrypt.genSalt(10);
+    // newUser.password = await bcrypt.hash(newUser.password, salt);
+
+    // Save the new user to the database
+    await newUser.save();
+
+    res.status(201).send({ message: "New participant added successfully", user: newUser });
+  } catch (error) {
+    console.error("Error inserting new participant:", error.message);
+    res.status(500).send({ error: "Error inserting new participant" });
+  }
+
   
 }
 
