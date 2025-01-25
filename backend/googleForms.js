@@ -150,7 +150,7 @@ const deleteRowsByEmails = async (req, res) => {
 
 
 const approveParticipants = async (req, res) => {
-  const participants = req.body; 
+  const participant = req.body; 
   console.log(participant)
   
   if (!participant || !participant.Email) {
@@ -198,9 +198,7 @@ const approveParticipants = async (req, res) => {
   } catch (error) {
     console.error("Error inserting new participant:", error.message);
     res.status(500).send({ error: "Error inserting new participant" });
-  }
-
-  
+  } 
 }
 
 

@@ -72,8 +72,8 @@ const OnSpotRegistration = () => {
     );
   };
 
-  const handleFetchFormResponses = async (e: any) => {
-    e.preventDefault();
+  const handleFetchFormResponses = async () => {
+    // e.preventDefault();
     setLoading(true); // Set loading to true
     try {
       const responses = await retrieveRegistrationFormResponses();
@@ -98,12 +98,14 @@ const OnSpotRegistration = () => {
     console.log("approve: ", selectedParticipant);
     const status = await approveRegistrationRequests(selectedParticipant);
     showSnackbar(status.message, status.type);
+    handleFetchFormResponses();
   };
 
   const handleReject = async (selectedParticipant: any) => {
     console.log("reject: ", selectedParticipant);
     const status = await rejectRegistrationRequests(selectedParticipant);
     showSnackbar(status.message, status.type);
+    handleFetchFormResponses();
   };
 
   return (
@@ -126,7 +128,10 @@ const OnSpotRegistration = () => {
       <div className="w-full flex justify-end">
         <button
           className="px-4 py-2 bg-secondary-500 text-white rounded-lg hover:bg-secondary-600 transition-all duration-100 ease-in-out"
-          onClick={handleFetchFormResponses}
+          onClick={(e) => {
+            e.preventDefault();
+            handleFetchFormResponses();
+          }}
           disabled={loading} // Disable button while loading
         >
           {loading ? "Fetching..." : "Fetch Registration Requests"}
@@ -284,7 +289,10 @@ const ParticipantsTable = ({ participants, onApprove, onReject }: any) => {
           <div className="flex gap-4">
             <button
               className="px-4 py-2 bg-red-600 rounded-lg w-full text-white"
-              onClick={() => onReject(selectedParticipants)}
+              onClick={async () => {
+                await onReject(selectedParticipants);
+                setRejectModalOpen(false);
+              }}
             >
               Reject
             </button>
@@ -313,7 +321,10 @@ const ParticipantsTable = ({ participants, onApprove, onReject }: any) => {
           <div className="flex gap-4">
             <button
               className="px-4 py-2 bg-green-600 rounded-lg w-full text-white"
-              onClick={() => onApprove(selectedParticipants)}
+              onClick={async () => {
+                await onApprove(selectedParticipants);
+                setApproveModalOpen(false);
+              }}
             >
               Approve
             </button>
