@@ -2,6 +2,7 @@ const winnersModel = require("../models/winners");
 const attendanceModel = require("../models/attendence");
 const userModel = require("../models/user");
 const eventModel = require("../models/events");
+const workshopModel=require("../models/workshop")
 
 const uploadWinners = async (req, res) => {
   try {

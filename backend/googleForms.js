@@ -51,7 +51,7 @@ const getDetails=async (req, res) => {
 }  
   
 const deleteRowsByEmails = async (req, res) => {
-  console.log("hi");
+  
   const emails = req.body.emails?.map((email) => email.trim().toLowerCase()); // Normalize input emails
   console.log("Request Body:", req.body);
 
@@ -206,7 +206,7 @@ const approveParticipants = async (req, res) => {
       },
     };
     const response = await deleteRowsByEmails(req,fakeRes)
-    console.log(response.statusCode)
+    
     res.status(201).send({
       message: "New participants added successfully",
       participants: addedParticipants,
