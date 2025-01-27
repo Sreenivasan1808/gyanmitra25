@@ -44,7 +44,7 @@ const OnSpotRegistration = () => {
   const processResponse = (responses: any[]): GroupedCollege[] => {
     const groupedByCollege = responses.reduce(
       (acc: Record<string, Student[]>, student: any) => {
-        const collegeName = student["College Name"];
+        const collegeName = student["CollegeName"];
         const simplifiedStudent: Student = {
           Name: student.Name,
           Email: student.Email,
@@ -127,7 +127,7 @@ const OnSpotRegistration = () => {
       </div>
       <div className="w-full flex justify-end">
         <button
-          className="px-4 py-2 bg-secondary-500 text-white rounded-lg hover:bg-secondary-600 transition-all duration-100 ease-in-out"
+          className="px-4 py-2 bg-secondary-500 text-white rounded-lg hover:bg-secondary-600 transition-all duration-100 ease-in-out transform active:scale-90"
           onClick={(e) => {
             e.preventDefault();
             handleFetchFormResponses();

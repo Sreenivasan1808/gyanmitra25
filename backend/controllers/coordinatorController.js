@@ -2,6 +2,8 @@ const winnersModel = require("../models/winners");
 const attendanceModel = require("../models/attendence");
 const userModel = require("../models/user");
 const eventModel = require("../models/events");
+const workshopAttendanceModel = require("../models/workshopattendence");
+const workshopModel = require("../models/workshop");
 
 const uploadWinners = async (req, res) => {
   try {
@@ -169,17 +171,22 @@ const getParticipantsCollegeWise = async (req, res) => {
     const attendanceRecords = await attendanceModel.find({
       user_id: { $in: userIds },
     });
+    const workshopAttendanceRecords = await workshopAttendanceModel.find({
+      user_id: { $in: userIds },
+    });
 
     console.log("attendance record:")
     console.log(attendanceRecords)
 
     // Create an array of event IDs from the attendance records
     const eventIds = attendanceRecords.map((record) => record.event_id);
+    const workshopIds = workshopAttendanceRecords.map((record) => record.workshopid);
     console.log("Event ids");
     console.log(eventIds)
 
     // Find event details for these event IDs
     const events = await eventModel.find({ eventid: { $in: eventIds } });
+    const workshops = await workshopModel.find({ workshopid: { $in: workshopIds } });
     console.log("events")
     console.log(events)
 
@@ -198,6 +205,19 @@ const getParticipantsCollegeWise = async (req, res) => {
         console.log(eventDetails)
         return eventDetails;
       });
+      const workshopAttendance = workshopAttendanceRecords.filter(
+        (record) => record.user_id === user.user_id
+      );
+      console.log("User attendance")
+      console.log(userAttendance);
+      const participatedWorkshops = workshopAttendance.map((record) => {
+        const workshopDetails = workshops.find(
+          (event) => event.workshopid === record.workshopid
+        );
+        console.log("Workshop details")
+        console.log(workshopDetails)
+        return workshopDetails;
+      });
     
       return {
         user: {
@@ -205,6 +225,7 @@ const getParticipantsCollegeWise = async (req, res) => {
           name: user.name,
         },
         events: participatedEvents,
+        workshops: participatedWorkshops
       };
     });
     console.log("User event details")

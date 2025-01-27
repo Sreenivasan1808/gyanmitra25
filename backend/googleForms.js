@@ -206,7 +206,7 @@ const approveParticipants = async (req, res) => {
       },
     };
     const response = await deleteRowsByEmails(req,fakeRes)
-    console.log(response.statusCode)
+    // console.log(response.statusCode)
     res.status(201).send({
       message: "New participants added successfully",
       participants: addedParticipants,

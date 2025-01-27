@@ -23,6 +23,7 @@ export const rejectRegistrationRequests = async (emails: string[]) => {
 }
 export const approveRegistrationRequests = async (emails: string[]) => {
   try {
+    3
     const response = await axios.post(`${SERVER_URL}/participant/approve`, {emails: emails});
     return response.data
   } catch (error) {
