@@ -2,7 +2,9 @@ const winnersModel = require("../models/winners");
 const attendanceModel = require("../models/attendence");
 const userModel = require("../models/user");
 const eventModel = require("../models/events");
-const workshopModel=require("../models/workshop")
+const workshopAttendanceModel = require("../models/workshopattendence");
+const workshopModel = require("../models/workshop");
+
 
 const uploadWinners = async (req, res) => {
   try {
@@ -147,20 +149,27 @@ const getWinners = async (req, res) => {
     res.status(500).json({ message: "An error occurred", e });
   }
 };
-
-const getParticipantsCollegeWise = async (req, res) => {
+const triggerCollegeWiseParticipant=async (req,res)=>{
+  const data=await getParticipantsCollegeWise(req.query.cname)
+  if (data==null) {
+    res.staus(404).json({ message: "No users found for the given college name" })
+  }
+  res.status(200).json(data)
+}
+const getParticipantsCollegeWise = async (cname) => {
   //to test
   try {
-    const { cname } = req.query;
-    console.log(cname);
+    // const { cname } = req.query;
+    // console.log(cname);
 
     // Find users with the given college name
     const users = await userModel.find({ cname });
 
     if (users.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No users found for the given college name" });
+      // return res
+      //   .status(404)
+      //   .json({ message: "No users found for the given college name" });
+      return null
     }
 
     // Create an array of user IDs
@@ -170,17 +179,22 @@ const getParticipantsCollegeWise = async (req, res) => {
     const attendanceRecords = await attendanceModel.find({
       user_id: { $in: userIds },
     });
+    const workshopAttendanceRecords = await workshopAttendanceModel.find({
+      user_id: { $in: userIds },
+    });
 
     console.log("attendance record:")
     console.log(attendanceRecords)
 
     // Create an array of event IDs from the attendance records
     const eventIds = attendanceRecords.map((record) => record.event_id);
+    const workshopIds = workshopAttendanceRecords.map((record) => record.workshopid);
     console.log("Event ids");
     console.log(eventIds)
 
     // Find event details for these event IDs
     const events = await eventModel.find({ eventid: { $in: eventIds } });
+    const workshops = await workshopModel.find({ workshopid: { $in: workshopIds } });
     console.log("events")
     console.log(events)
 
@@ -199,6 +213,19 @@ const getParticipantsCollegeWise = async (req, res) => {
         console.log(eventDetails)
         return eventDetails;
       });
+      const workshopAttendance = workshopAttendanceRecords.filter(
+        (record) => record.user_id === user.user_id
+      );
+      console.log("User attendance")
+      console.log(userAttendance);
+      const participatedWorkshops = workshopAttendance.map((record) => {
+        const workshopDetails = workshops.find(
+          (event) => event.workshopid === record.workshopid
+        );
+        console.log("Workshop details")
+        console.log(workshopDetails)
+        return workshopDetails;
+      });
     
       return {
         user: {
@@ -206,12 +233,14 @@ const getParticipantsCollegeWise = async (req, res) => {
           name: user.name,
         },
         events: participatedEvents,
+        workshops: participatedWorkshops
       };
     });
     console.log("User event details")
     console.log(userEventDetails);
     console.log(userEventDetails[0].events);
-    res.status(200).json({ users: userEventDetails });
+    return userEventDetails
+    // res.status(200).json({ users: userEventDetails });
   } catch (error) {
     console.error("Error fetching users and events:", error);
     res.status(500).json({ message: "Internal server error" });
@@ -252,7 +281,8 @@ const getUniqueDepartments = async (req, res) => {
 module.exports = {
   uploadWinners: uploadWinners,
   getWinners: getWinners,
-  getParticipantsCollegeWise: getParticipantsCollegeWise,
+  getParticipantsCollegeWise: triggerCollegeWiseParticipant,
   getCollegeList: getCollegeList,
   getUniqueDepartments:getUniqueDepartments,
+  collegeWiseParticipant:getParticipantsCollegeWise
 };
