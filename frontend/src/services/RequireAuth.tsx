@@ -43,7 +43,7 @@ export function RequireAuth({ children }: any) {
   );
 
   if (!isAuthorized && role !== "super-admin") {
-    return <Navigate to={getDefaultRoute(role)} replace />;
+    return <Navigate to="/not-authorized" replace />;
   }
 
   return children;

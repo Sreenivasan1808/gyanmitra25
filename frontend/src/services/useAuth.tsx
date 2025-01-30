@@ -48,10 +48,11 @@ function useAuth() {
 
           return { message: "Login successful", type: "success" };
         }
-      } catch (error) {
+      } catch (error: any) {
         setAuthed(false);
         return { message: error?.response?.data || "Login failed", type: "error" };
       }
+      return { message: "Unexpected error", type: "error" };
     },
     logout: async () => {
       

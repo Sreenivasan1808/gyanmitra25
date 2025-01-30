@@ -1,6 +1,6 @@
 import { useState } from "react";
 import useAuth from "../services/useAuth";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Snackbar from "./util_components/Snackbar";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
 
@@ -22,8 +22,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false); // New state for toggling password visibility
 
   const navigate = useNavigate();
-  const { authed, login, role } = useAuth();
-  const { state } = useLocation();
+  const { login, role } = useAuth();
   const [snackbar, setSnackbar] = useState({
     isOpen: false,
     message: "",

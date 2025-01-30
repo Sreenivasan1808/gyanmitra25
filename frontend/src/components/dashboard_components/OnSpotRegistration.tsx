@@ -5,7 +5,6 @@ import {
   rejectRegistrationRequests,
   retrieveRegistrationFormResponses,
 } from "../../services/RegistrationSVC";
-import { useTable, useRowSelect } from "@tanstack/react-table";
 import Snackbar from "../util_components/Snackbar";
 import Modal from "../util_components/Modal";
 import { XMarkIcon, CheckIcon } from "@heroicons/react/24/solid";

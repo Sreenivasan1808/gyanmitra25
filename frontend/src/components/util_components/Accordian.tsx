@@ -1,7 +1,11 @@
 import { createContext, useContext, useRef, useEffect, useState } from "react"
 import { ChevronDownIcon } from "@heroicons/react/24/outline"
+interface AccordianContextType {
+  selected: any
+  setSelected: (value: any) => void
+}
 
-const AccordianContext = createContext()
+const AccordianContext = createContext<AccordianContextType | null>(null)
 
 export default function Accordian({ children, value, onChange, ...props }: any) {
   const [selected, setSelected] = useState(value)
@@ -20,10 +24,10 @@ export default function Accordian({ children, value, onChange, ...props }: any) 
 }
 
 export function AccordianItem({ children, value, trigger, ...props }: any) {
-  const { selected, setSelected } = useContext(AccordianContext)
+  const { selected, setSelected }: any = useContext(AccordianContext)
   const open = selected === value
 
-  const ref = useRef(null)
+  const ref:any = useRef(null)
 
   return (
     <li className="border-b bg-white" {...props}>
