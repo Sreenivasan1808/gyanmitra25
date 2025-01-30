@@ -9,4 +9,5 @@ router.get("/get-collegewise-participants", coordinatorController.getParticipant
 router.get("/getcollegelist", coordinatorController.getCollegeList);
 router.get("/getdepartmentlist", coordinatorController.getUniqueDepartments);
 router.get("/participants-pdf",pdf.getCollegeWisePdf)
+router.get("/getdepartmentlist-workshop", coordinatorController.getUniqueDepartmentsWorkshop);
 module.exports = router;

@@ -278,6 +278,21 @@ const getUniqueDepartments = async (req, res) => {
   }
   
 }
+const getUniqueDepartmentsWorkshop = async (req, res) => {
+  try {
+    const uniqueDepts = await workshopModel.distinct("organizing_department");
+    res.status(200).json({
+      uniqueDepts
+  });
+} catch (error) {
+    console.error("Error fetching departments: ", error);
+    res.status(500).json({
+      message: "Server Error",
+    });
+    
+  }
+  
+}
 
 module.exports = {
   uploadWinners: uploadWinners,
@@ -285,5 +300,6 @@ module.exports = {
   getParticipantsCollegeWise: triggerCollegeWiseParticipant,
   getCollegeList: getCollegeList,
   getUniqueDepartments:getUniqueDepartments,
-  collegeWiseParticipant:participantsCollegeWise
+  collegeWiseParticipant:participantsCollegeWise,
+  getUniqueDepartmentsWorkshop:getUniqueDepartmentsWorkshop
 };

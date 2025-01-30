@@ -155,3 +155,17 @@ export const getAllDepartmentList = async () => {
     return { message: "Internal server error", type: "error" };
   }
 };
+export const getAllDepartmentListWorkshop = async () => {
+  try {
+    const response = await axios.get(
+      `${SERVER_URL}/coordinator/getdepartmentlist-workshop`
+    );
+    if (response.status == 200) {
+      return response.data.uniqueDepts;
+    } else {
+      return { message: "Couldn't retreive college list", type: "error" };
+    }
+  } catch (error) {
+    return { message: "Internal server error", type: "error" };
+  }
+};
