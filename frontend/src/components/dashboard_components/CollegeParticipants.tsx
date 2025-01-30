@@ -4,13 +4,26 @@ import {
   getAllParticipantsCollegeWise,
 } from "../../services/ParticipantSVC";
 import UserTable from "../util_components/UserTable";
+import { downloadParticipantsCollegeWisePdf } from "../../services/DownloadsSVC";
+import Snackbar from "../util_components/Snackbar";
 
 const CollegeParticipants = () => {
   const [collegeList, setCollegeList] = useState([]);
   const [inputValue, setInputValue] = useState("");
-  const [filteredColleges, setFilteredColleges] = useState([]);
-  const [showDropdown, setShowDropdown] = useState(false);
-  const [participantsList, setParticicpantsList] = useState();
+  const [participantsList, setParticipantsList] = useState();
+  const [snackbar, setSnackbar] = useState({
+    isOpen: false,
+    message: "",
+    type: "info", // Default type
+  });
+
+  const showSnackbar = (message: string, type: string) => {
+    setSnackbar({ isOpen: true, message, type });
+  };
+
+  const closeSnackbar = () => {
+    setSnackbar((prev) => ({ ...prev, isOpen: false }));
+  };
 
   const getCollegeList = async () => {
     const college = await getAllCollegeList();
@@ -21,23 +34,15 @@ const CollegeParticipants = () => {
     getCollegeList();
   }, []);
 
-  const handleInputChange = (e:any) => {
-    const value = e.target.value;
-    setInputValue(value);
-    setFilteredColleges(
-      collegeList.filter((college:string) =>
-        college.toLowerCase().includes(value.toLowerCase())
-      )
-    );
-    setShowDropdown(value.length > 0 && filteredColleges.length > 0);
-  };
-
-  const handleOptionClick = async (item: any) => {
-    setInputValue(item);
-    setShowDropdown(false); // Hide dropdown after selection
-    const participants = await getAllParticipantsCollegeWise(item);
+  const handleGetCollegeWiseParticipants = async (e: any) => {
+    e.preventDefault();
+    const participants = await getAllParticipantsCollegeWise(inputValue);
+    if (participants.message) {
+      showSnackbar(participants.message, participants.type);
+      return;
+    }
     console.log(participants);
-    setParticicpantsList(participants);
+    setParticipantsList(participants);
   };
 
   return (
@@ -45,46 +50,53 @@ const CollegeParticipants = () => {
       <h1 className="p-8 text-2xl">Participants List</h1>
       <form
         action=""
-        className="p-4 border-2 border-accent-400 rounded-lg flex justify-center"
+        className="p-4 border-2 border-accent-400 rounded-lg flex flex-col items-center gap-4 justify-center"
       >
         <div className="flex flex-col gap-2 items-center">
           <label htmlFor="college" className="text-text-900 text-lg">
             College name
           </label>
           <div className="relative w-full md:w-72">
-            <input
+            <select
               id="college"
               name="college"
               value={inputValue}
-              onChange={handleInputChange}
-              autoComplete="off"
-              className="p-2 rounded-lg bg-white w-72"
-            />
-            {showDropdown && (
-              <ul className="absolute bg-white border border-gray-300 rounded-lg mt-1 z-10 w-full max-h-52 overflow-y-scroll">
-                {filteredColleges.map((item, idx) => (
-                  <li
-                    key={idx}
-                    className="p-2 hover:bg-gray-200 cursor-pointer list-item list-disc"
-                    onClick={() => handleOptionClick(item)}
-                  >
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            )}
+              onChange={(e) => setInputValue(e.target.value)}
+              className="p-2 rounded-lg bg-white w-72 border-2 border-accent-100"
+            >
+              <option value="" disabled>Select a college</option>
+              {collegeList.map((college, idx) => (
+                <option key={idx} value={college}>{college}</option>
+              ))}
+            </select>
           </div>
         </div>
+        <button onClick={handleGetCollegeWiseParticipants} className="px-4 py-2 bg-green-500 hover:bg-green-600 rounded-lg">Get Details</button>
       </form>
       {participantsList && (
         <>
           <h1 className="text-xl mt-4 px-8 py-2">
-            Participants from{" "}
-            <span className="font-semibold text-text-900">{inputValue}</span>
+            Participants from <span className="font-semibold text-text-900">{inputValue}</span>
           </h1>
+          <div className="w-full flex justify-end">
+            <button
+              onClick={() => {
+                downloadParticipantsCollegeWisePdf(inputValue);
+              }}
+              className="px-4 py-2 bg-secondary-400 hover:bg-secondary-500 transition-all duration-100 rounded-lg"
+            >
+              Download as PDF
+            </button>
+          </div>
           <UserTable users={participantsList} />
         </>
       )}
+      <Snackbar
+        message={snackbar.message}
+        isOpen={snackbar.isOpen}
+        type={snackbar.type}
+        onClose={closeSnackbar}
+      />
     </div>
   );
 };

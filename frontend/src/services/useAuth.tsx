@@ -14,16 +14,11 @@ type AuthContextType = {
 const authContext = React.createContext<AuthContextType | undefined>(undefined);
 
 function useAuth() {
-  // Initialize state from localStorage
-  const [authed, setAuthed] = React.useState(() => {
-    const storedAuthed = localStorage.getItem("authed");
-    return storedAuthed === "true";
-  });
-
+  
+  const [authed, setAuthed] = React.useState(() => localStorage.getItem("authed") === "true");
   const [role, setRole] = React.useState(() => localStorage.getItem("role") || "");
   const [dept, setDept] = React.useState(() => localStorage.getItem("dept") || "");
 
-  // Save state to localStorage when it changes
   React.useEffect(() => {
     localStorage.setItem("authed", String(authed));
     localStorage.setItem("role", role);
@@ -35,12 +30,22 @@ function useAuth() {
     role,
     dept,
     login: async ({ username, password }: { username: string; password: string }) => {
+
       try {
         const response = await axios.post(`${SERVER_URL}/auth/login`, { username, password });
         if (response.status === 200) {
+          const { role, dept } = response.data;
+
+          // Update state and localStorage
           setAuthed(true);
-          setRole(response.data.role);
-          setDept(response.data.dept);
+          setRole(role);
+          setDept(dept);
+          localStorage.setItem("authed", "true");
+          localStorage.setItem("role", role);
+          localStorage.setItem("dept", dept);
+          localStorage.removeItem("lastVisitedPage");
+
+
           return { message: "Login successful", type: "success" };
         }
       } catch (error) {
@@ -49,16 +54,21 @@ function useAuth() {
       }
     },
     logout: async () => {
+      
       setAuthed(false);
       setRole("");
       setDept("");
-      // Clear localStorage
+
+      // Clear stored session
       localStorage.removeItem("authed");
       localStorage.removeItem("role");
       localStorage.removeItem("dept");
+      localStorage.removeItem("lastVisitedPage"); // Remove last visited page
+
     },
   };
 }
+
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const auth = useAuth();

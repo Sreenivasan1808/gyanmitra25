@@ -61,6 +61,7 @@ const WorkshopList = () => {
             value={department}
             onChange={handleSelect}
           >
+            <option value="">Select the department</option>
             {deptList.length > 0 ? (
               deptList.map((item: any) => (
                 <option value={item} key={item}>

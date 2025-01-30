@@ -150,13 +150,14 @@ const getWinners = async (req, res) => {
   }
 };
 const triggerCollegeWiseParticipant=async (req,res)=>{
-  const data=await getParticipantsCollegeWise(req.query.cname)
+  const data=await participantsCollegeWise(req.query.cname)
   if (data==null) {
-    res.staus(404).json({ message: "No users found for the given college name" })
+    res.status(201).json({ message: "No users found for the given college name" })
+  }else{
+    res.status(200).json(data)
   }
-  res.status(200).json(data)
 }
-const getParticipantsCollegeWise = async (cname) => {
+const participantsCollegeWise = async (cname) => {
   //to test
   try {
     // const { cname } = req.query;
@@ -284,5 +285,5 @@ module.exports = {
   getParticipantsCollegeWise: triggerCollegeWiseParticipant,
   getCollegeList: getCollegeList,
   getUniqueDepartments:getUniqueDepartments,
-  collegeWiseParticipant:getParticipantsCollegeWise
+  collegeWiseParticipant:participantsCollegeWise
 };

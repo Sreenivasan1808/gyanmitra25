@@ -42,8 +42,8 @@ const getDetails=async (req, res) => {
         });
         return entry;
       });
-  
-      res.json(data); // Send the structured data as JSON
+      console.log(data);
+      res.status(200).json(data); // Send the structured data as JSON
     } catch (error) {
       console.error("Error fetching spreadsheet data:", error.message);
       res.status(500).send({ error: "Error fetching spreadsheet data" });
@@ -152,6 +152,7 @@ const deleteRowsByEmails = async (req, res) => {
 const approveParticipants = async (req, res) => {
   try {
     const participants = await getRowsByEmails(req.body.emails); // Fetch participant data based on emails
+    const approvedFor=req.body.approvedFor
     if (!participants || participants.length === 0) {
       return res.status(400).send({ error: "No participants found for the provided emails" });
     }
@@ -176,6 +177,8 @@ const approveParticipants = async (req, res) => {
       if (existingUser) {
         return res.status(400).send({ error: `User with email ${Email} already exists` });
       }
+      let epay= approvedFor == 1 || approvedFor == 2 ? "Paid" : "Not Paid"; 
+      let wpay= approvedFor == 0 || approvedFor == 2 ? "Paid" : "Not Paid"; 
 
       // Create a new user object
       const newUser = new UserModel({
@@ -187,8 +190,8 @@ const approveParticipants = async (req, res) => {
         phone: MobileNo,
         cname: CollegeName,
         ccity: CollegeCity,
-        eventPayed: "Paid",
-        workshopPayed: "Paid",
+        eventPayed: epay,
+        workshopPayed: wpay,
       });
 
       // Save the new user to the database
@@ -206,7 +209,7 @@ const approveParticipants = async (req, res) => {
       },
     };
     const response = await deleteRowsByEmails(req,fakeRes)
-    console.log(response.statusCode)
+    // console.log(response.statusCode)
     res.status(201).send({
       message: "New participants added successfully",
       participants: addedParticipants,

@@ -50,8 +50,8 @@ const OnSpotRegistration = () => {
           Email: student.Email,
           gender: student.gender,
           CollegeName: collegeName,
-          MobileNo: student["Mobile No."],
-          CollegeCity: student["College City"],
+          MobileNo: student["MobileNo"],
+          CollegeCity: student["CollegeCity"],
         };
 
         if (!acc[collegeName]) {
@@ -77,6 +77,7 @@ const OnSpotRegistration = () => {
     setLoading(true); // Set loading to true
     try {
       const responses = await retrieveRegistrationFormResponses();
+      console.log(responses)
       if (responses === null) {
         console.log("No responses found");
         showSnackbar("No requests available", "info");
@@ -94,9 +95,10 @@ const OnSpotRegistration = () => {
     }
   };
 
-  const handleApprove = async (selectedParticipant: any) => {
+  const handleApprove = async (selectedParticipant: any, approvalFor: number) => {
     console.log("approve: ", selectedParticipant);
-    const status = await approveRegistrationRequests(selectedParticipant);
+    const status = await approveRegistrationRequests(selectedParticipant, approvalFor);
+
     showSnackbar(status.message, status.type);
     handleFetchFormResponses();
   };
@@ -308,7 +310,7 @@ const ParticipantsTable = ({ participants, onApprove, onReject }: any) => {
 
       {/* Approval Modal */}
       <Modal open={approveModalOpen} onClose={() => setApproveModalOpen(false)}>
-        <div className="text-center w-56">
+        <div className="text-center min-w-56">
           <CheckIcon className="size-32 mx-auto text-green-500" />
           <div className="mx-auto my-4 w-48">
             <h3 className="text-lg font-black text-gray-800">
@@ -320,13 +322,31 @@ const ParticipantsTable = ({ participants, onApprove, onReject }: any) => {
           </div>
           <div className="flex gap-4">
             <button
-              className="px-4 py-2 bg-green-600 rounded-lg w-full text-white"
+              className="px-4 py-2 bg-green-500 rounded-lg w-full hover:bg-green-600 text-white"
               onClick={async () => {
-                await onApprove(selectedParticipants);
+                await onApprove(selectedParticipants, 0);
                 setApproveModalOpen(false);
               }}
             >
-              Approve
+              Approve for Workshops alone
+            </button>
+            <button
+              className="px-4 py-2 bg-green-500 rounded-lg w-full hover:bg-green-600 text-white"
+              onClick={async () => {
+                await onApprove(selectedParticipants, 1);
+                setApproveModalOpen(false);
+              }}
+            >
+              Approve for Events alone
+            </button>
+            <button
+              className="px-4 py-2 bg-green-500 rounded-lg w-full hover:bg-green-600 text-white"
+              onClick={async () => {
+                await onApprove(selectedParticipants, 2);
+                setApproveModalOpen(false);
+              }}
+            >
+              Approve for both
             </button>
             <button
               className="px-4 py-2 bg-accent-100 rounded-lg w-full"

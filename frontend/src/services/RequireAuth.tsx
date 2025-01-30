@@ -1,24 +1,7 @@
-// import { Navigate, useLocation } from "react-router-dom";
-// import useAuth from "./useAuth";
-
-// export function RequireAuth({ children }: any) {
-//   const { authed, role } = useAuth();
-//   const location = useLocation();
-
-  
-
-//   return authed === true ? (
-//     children
-//   ) : (
-//     <Navigate to="/login" replace state={{ path: location.pathname }} />
-//   );
-// }
-
-
 import { Navigate, useLocation } from "react-router-dom";
 import useAuth from "./useAuth";
 
-const rolePermissions:any = {
+const rolePermissions: any = {
   "super-admin": ["/dashboard/*"],
   "event-coordinator": [
     "/dashboard/event-attendance",
@@ -36,6 +19,9 @@ const rolePermissions:any = {
     "/dashboard/participant-info",
     "/dashboard/participants",
   ],
+  "registration-committee": [
+    "/dashboard/on-spot-registration",
+  ],
 };
 
 export function RequireAuth({ children }: any) {
@@ -48,8 +34,8 @@ export function RequireAuth({ children }: any) {
 
   const allowedRoutes = rolePermissions[role] || [];
 
-  console.log(location.pathname);
-  
+  // Save last visited page in localStorage
+  localStorage.setItem("lastVisitedPage", location.pathname);
 
   // Check if the current path matches any allowed routes
   const isAuthorized = allowedRoutes.some((route: any) =>
@@ -57,7 +43,7 @@ export function RequireAuth({ children }: any) {
   );
 
   if (!isAuthorized && role !== "super-admin") {
-    return <Navigate to="/not-authorized" replace />;
+    return <Navigate to={getDefaultRoute(role)} replace />;
   }
 
   return children;
