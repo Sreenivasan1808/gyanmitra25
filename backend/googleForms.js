@@ -168,7 +168,7 @@ const approveParticipants = async (req, res) => {
       const Email=participant.Email
       const Name=participant.Name
       const gender=participant.gender
-      const password=participant.password
+      const password="participant.password"
       const MobileNo=participant.MobileNo
       const CollegeName=participant.CollegeName
       const CollegeCity=participant.CollegeCity
@@ -210,6 +210,7 @@ const approveParticipants = async (req, res) => {
     };
     const response = await deleteRowsByEmails(req,fakeRes)
     // console.log(response.statusCode)
+    console.log("added",addedParticipants)
     res.status(201).send({
       message: "New participants added successfully",
       participants: addedParticipants,

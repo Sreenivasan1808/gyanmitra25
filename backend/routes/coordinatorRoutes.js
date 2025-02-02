@@ -3,6 +3,7 @@ const express = require("express");
 const pdf=require("../pdf")
 
 const router = express.Router();
+router.patch("/editwinners",coordinatorController.editWinners)
 router.post("/uploadwinners",coordinatorController.uploadWinners)
 router.get("/getwinners",coordinatorController.getWinners)
 router.get("/get-collegewise-participants", coordinatorController.getParticipantsCollegeWise);

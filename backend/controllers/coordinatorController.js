@@ -6,6 +6,74 @@ const workshopAttendanceModel = require("../models/workshopattendence");
 const workshopModel = require("../models/workshop");
 
 
+const editWinners = async (req, res) => {
+  try {
+    const { eventId, firstPrize, secondPrize, thirdPrize,fname,sname,tname } = req.body;
+    if (!eventId) {
+      return res.status(400).json({ message: "Event ID is required" });
+    }
+    const existingWinners = await winnersModel.findOne({ event_id: eventId });
+
+    if (!existingWinners) {
+      return res.status(404).json({ message: "Winners data not found for this event" });
+    }
+    if (firstPrize && Array.isArray(firstPrize)) {
+      for (let i = 0; i < firstPrize.length; i++) {
+        if (firstPrize[i] && firstPrize[i].length !== 0) {
+          const verify = await attendanceModel.findOne({
+            user_id: firstPrize[i],
+            event_id: eventId,
+          });
+          if (!verify) {
+            return res.status(204).json({ message: `${firstPrize[i]} did not participate in this event` });
+          }
+        }
+      }
+      existingWinners.first_prize = firstPrize;
+    }
+    if (secondPrize && Array.isArray(secondPrize)) {
+      for (let i = 0; i < secondPrize.length; i++) {
+        if (secondPrize[i] && secondPrize[i].length !== 0) {
+          const verify = await attendanceModel.findOne({
+            user_id: secondPrize[i],
+            event_id: eventId,
+          });
+          if (!verify) {
+            return res.status(204).json({ message: `${secondPrize[i]} did not participate in this event` });
+          }
+        }
+      }
+      existingWinners.second_prize = secondPrize;
+    }
+    if (thirdPrize && Array.isArray(thirdPrize)) {
+      for (let i = 0; i < thirdPrize.length; i++) {
+        if (thirdPrize[i] && thirdPrize[i].length !== 0) {
+          const verify = await attendanceModel.findOne({
+            user_id: thirdPrize[i],
+            event_id: eventId,
+          });
+          if (!verify) {
+            return res.status(204).json({ message: `${thirdPrize[i]} did not participate in this event` });
+          }
+        }
+      }
+      existingWinners.third_prize = thirdPrize;
+    }
+    existingWinners.fname=fname
+    existingWinners.sname=sname
+    existingWinners.tname=tname
+    const updatedWinners = await existingWinners.save();
+
+    if (updatedWinners) {
+      return res.status(200).json({ message: "Winners updated successfully" });
+    } else {
+      return res.status(500).json({ message: "Failed to update winners" });
+    }
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ message: "An error occurred", error: e.message });
+  }
+};
 const uploadWinners = async (req, res) => {
   try {
     console.log("body");
@@ -71,6 +139,9 @@ const uploadWinners = async (req, res) => {
       second_prize: second_prize,
       third_prize: third_prize,
       event_id: event_id,
+      fname:req.body.fname,
+      sname:req.body.sname,
+      tname:req.body.tname
     });
 
     const s = await newData.save(); // Ensure to await the save operation
@@ -295,6 +366,7 @@ const getUniqueDepartmentsWorkshop = async (req, res) => {
 }
 
 module.exports = {
+  editWinners:editWinners,
   uploadWinners: uploadWinners,
   getWinners: getWinners,
   getParticipantsCollegeWise: triggerCollegeWiseParticipant,

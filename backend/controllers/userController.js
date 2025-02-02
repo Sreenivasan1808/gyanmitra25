@@ -58,7 +58,7 @@ const getAllWorkshopParticipants = async (req, res) => {
 
 const markAttendence = async (req, res) => {
   try {
-    console.log("entered");
+    console.log("entered hi");
     console.log(req.body);
     const user_id = req.body.gmId;
     const event_id = req.body.eventId;
@@ -67,7 +67,14 @@ const markAttendence = async (req, res) => {
       user_id: user_id,
       event_id: event_id,
     });
-    if (verification == null) {
+    const dataVerify= await userModel.findOne({user_id:user_id})
+    console.log(dataVerify)
+    if (verification == null && dataVerify!=null ) {
+      if(dataVerify.eventPayed!="Paid"){
+        console.log("error")
+        res.status(400).json({message:"participant not paid for event"})
+        return
+      }
       const newdata = new attendenceModel({
         user_id: user_id,
         event_id: event_id,
@@ -129,7 +136,12 @@ const markWorkshopAttendance = async (req, res) => {
       user_id: user_id,
       workshopid: workshopid,
     });
-    if (verification == null) {
+    const dataVerify= await userModel.findOne({user_id:user_id,})
+    if (verification == null && dataVerify!=null) {
+      if(dataVerify.workshopPayed!="Paid"){
+        res.status(400).json({message:"participant not paid for workshop"})
+        return
+      }
       const newdata = new workshopAttendenceModel({
         user_id: user_id,
         workshopid: workshopid,

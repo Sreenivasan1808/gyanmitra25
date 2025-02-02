@@ -17,6 +17,18 @@ const winnersSchema = mongoose.Schema({
         unique:true,
         type:String,
         required:true,
-    }
+    },
+    fname:{
+        type:String,
+        required:true,
+    },
+    sname:{
+        type:String,
+        required:true,
+    },
+    tname:{
+        type:String,
+        required:true,
+    },
 }) 
 module.exports=mongoose.model("winners",winnersSchema)
