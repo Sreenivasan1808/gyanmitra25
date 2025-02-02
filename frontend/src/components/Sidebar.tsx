@@ -11,6 +11,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../services/useAuth";
 import Modal from "./util_components/Modal";
 import { useState } from "react";
+import { rolePermissions } from "../services/RequireAuth";
 
 const unselectedStyle =
   "px-4 py-2 my-1 w-full text-text-50 bg-secondary-100/0 hover:bg-secondary-100 hover:text-text-950 rounded-lg cursor-pointer flex gap-2";
@@ -64,8 +65,8 @@ const Sidebar = ({ setIsOpen }: any) => {
 
   const handleLogout = async (e:any) => {
     e.preventDefault();
-    console.log("Authed");
-    console.log(authed);
+    // console.log("Authed");
+    // console.log(authed);
     
     
     if(authed){
@@ -91,14 +92,19 @@ const Sidebar = ({ setIsOpen }: any) => {
 
         {/* Menu Items */}
         <nav className="flex-grow min-h-full">
-          <h1 className="p-4 text-xl">Admin Dashboard</h1>
+          <h1 className="p-4 text-xl">GyanMitra' 25</h1>
           <ul className="space-y-4 mt-8 p-2 md:mr-8">
             {navItems.map((item, idx) => {
               const isActive = location.pathname.includes(item.url); // Check if the current path matches the item's URL
-              console.log(item.allowedRoles.includes(role));
+              // console.log(item.allowedRoles.includes(role));
+              // console.log("permission");              
+              // console.log(rolePermissions[role]);
+              // console.log(rolePermissions[role].includes(item.url));
+              // console.log(item.url);
               
               return (
-                item.allowedRoles.includes(role) && 
+                // item.allowedRoles.includes(role) && 
+                (rolePermissions[role].includes(item.url) || role == "super-admin") && 
                 <li
                   key={idx}
                   className={`transition-all duration-100 ease-in-out ${isActive ? selectedStyle : unselectedStyle}`}
