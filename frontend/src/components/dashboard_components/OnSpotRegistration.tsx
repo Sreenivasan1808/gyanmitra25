@@ -76,7 +76,7 @@ const OnSpotRegistration = () => {
     setLoading(true); // Set loading to true
     try {
       const responses = await retrieveRegistrationFormResponses();
-      console.log(responses)
+      console.log(responses);
       if (responses === null) {
         console.log("No responses found");
         showSnackbar("No requests available", "info");
@@ -94,9 +94,15 @@ const OnSpotRegistration = () => {
     }
   };
 
-  const handleApprove = async (selectedParticipant: any, approvalFor: number) => {
+  const handleApprove = async (
+    selectedParticipant: any,
+    approvalFor: number
+  ) => {
     console.log("approve: ", selectedParticipant);
-    const status = await approveRegistrationRequests(selectedParticipant, approvalFor);
+    const status = await approveRegistrationRequests(
+      selectedParticipant,
+      approvalFor
+    );
 
     showSnackbar(status.message, status.type);
     handleFetchFormResponses();
@@ -114,6 +120,11 @@ const OnSpotRegistration = () => {
       <div className="p-4 border-2 border-accent-300 rounded-lg w-full mt-2">
         <h2 className="text-lg font-semibold">Instructions</h2>
         <ul className="list-disc px-2">
+          <li>Ask the participant to fill the Google form</li>
+          <li>
+            Any changes to information before approval of the participant can be
+            changed within the Google form. Inform the same to the participant
+          </li>
           <li>
             Press the button{" "}
             <span className="font-semibold">Fetch Registration Requests</span>

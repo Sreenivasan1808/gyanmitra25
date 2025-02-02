@@ -1,7 +1,7 @@
 import { Navigate, useLocation } from "react-router-dom";
 import useAuth from "./useAuth";
 
-const rolePermissions: any = {
+export const rolePermissions: any = {
   "super-admin": ["/dashboard/*"],
   "event-coordinator": [
     "/dashboard/event-attendance",
@@ -22,6 +22,18 @@ const rolePermissions: any = {
   "registration-committee": [
     "/dashboard/on-spot-registration",
   ],
+  "registration-coordinator": [
+
+  ],
+  "domain-coordinator": [
+    "/dashboard/event-attendance",
+    "/dashboard/event-attendance/*",
+    "/dashboard/winners",
+    "/dashboard/winners/*",
+    "/dashboard/participant-info",
+    "/dashboard/workshop-attendance",
+    "/dashboard/workshop-attendance/*",
+  ]
 };
 
 export function RequireAuth({ children }: any) {

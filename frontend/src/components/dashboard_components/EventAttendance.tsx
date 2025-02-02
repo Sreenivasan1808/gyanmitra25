@@ -91,7 +91,7 @@ const EventAttendance = () => {
     if (error.length == 0 && event) {
       let result = await markEventParticipantAttendance(
         participantDetails.gmid,
-        event.eventid+""
+        event.eventid + ""
       );
       //display message
       // console.log(result);
@@ -126,22 +126,27 @@ const EventAttendance = () => {
       }
       console.log("Event participants list");
       console.log(participants);
-      
+
       setParticipantsList(participants);
     }
   };
 
-
   const handleGetEventDetails = async () => {
-    const eventDetails = await getEventDetails(eventId);  
+    const eventDetails = await getEventDetails(eventId);
     setEvent(eventDetails);
-  }
+  };
 
   //Use effect for handleEventParticipantsListTable
   useEffect(() => {
     handleGetEventDetails();
     handleEventParticipantsListTable();
   }, []);
+
+  useEffect(() => {
+    if (error.length == 0) return;
+    showSnackbar(error, "error");
+    setError("");
+  }, [error]);
 
   return (
     <div className="w-full h-full overflow-scroll">
@@ -166,13 +171,33 @@ const EventAttendance = () => {
             </span>
             Back
           </button>
+          <h1 className="text-xl text-text-950 text-center">
+            Event name:{" "}
+            <span className="text-text-950 font-semibold">{event.name}</span>
+          </h1>
+          {/* Instructions  */}
+          <div className="p-4 m-4 border-2 border-accent-400 rounded-lg">
+            <h2 className="text-lg font-semibold">Instructions</h2>
+            <ul className="list-disc text-md px-4">
+              <li>
+                Make sure you are entering{" "}
+                <span className="font-semibold">
+                  attendance for the right event
+                </span>
+              </li>
+              <li>Enter the GMID of the participant in the given text box</li>
+              <li>
+                The name and college of the participant will be displayed in the
+                corresponding text boxes if the GMID is valid{" "}
+              </li>
+              <li>Press the <span className="font-semibold"> 'Mark as Present'</span> button to mark attendance for the participant</li>
+              <li>Once attendance is marked for a participant their details are displayed in the table below</li>
+              <li>You can download the list of participants using the <span className="font-semibold">Download</span> button</li>
+            </ul>
+          </div>
+
           {/* Form and table container */}
           <div className="p-4 flex flex-col gap-2">
-            <h1 className="text-lg text-text-950 ">
-              Event name:{" "}
-              <span className="text-text-950 font-semibold">{event.name}</span>
-            </h1>
-
             {/* Attendance form */}
             <form className="flex flex-col  border-2 rounded-lg border-accent-300 p-4">
               <div className="md:flex gap-4 p-4 justify-between">
@@ -224,7 +249,7 @@ const EventAttendance = () => {
                 >
                   Get Details
                 </button> */}
-              <p className="text-center text-red-600 p-4  ">{error}</p>
+              {/* <p className="text-center text-red-600 p-4  ">{error}</p> */}
               <div className="w-full flex justify-center">
                 <button
                   className={`${

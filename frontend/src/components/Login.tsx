@@ -12,6 +12,7 @@ function getDefaultRoute(role: string) {
     "workshop-coordinator": "/dashboard/workshop-attendance",
     "certificate-committee": "/dashboard/participant-info",
     "registration-committee": "/dashboard/on-spot-registration",
+    "domain-coordinator": "/dashboard/event-attendance",
   };
   return defaultRoutes[role] || "/dashboard";
 }

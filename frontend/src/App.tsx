@@ -31,6 +31,8 @@ const RoleBasedRedirect = () => {
       return <Navigate to="/dashboard/participants" replace />;
     case "registration-committee":
         return <Navigate to="/dashboard/on-spot-registration" replace />;
+    case "domain-coordinator":
+      return <Navigate to="/dashboard/event-attendance" replace />;
     default:
       return <Navigate to="/not-authorized" replace />;
   }
