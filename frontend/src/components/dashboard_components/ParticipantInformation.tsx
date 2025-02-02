@@ -13,6 +13,10 @@ const ParticipantInformation = () => {
       return;
     }
     const details = await getParticipantDetailsFromGMID(gmid);
+    if(details == null){
+      showSnackbar("Invalid GMID", "error")
+      return;
+    }
     setParticipant(details);
   };
 

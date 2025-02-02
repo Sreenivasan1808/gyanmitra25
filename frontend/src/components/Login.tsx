@@ -1,16 +1,28 @@
 import { useState } from "react";
 import useAuth from "../services/useAuth";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Snackbar from "./util_components/Snackbar";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/solid";
+
+// Function to get the default route based on role
+function getDefaultRoute(role: string) {
+  const defaultRoutes: any = {
+    "super-admin": "/dashboard",
+    "event-coordinator": "/dashboard/event-attendance",
+    "workshop-coordinator": "/dashboard/workshop-attendance",
+    "certificate-committee": "/dashboard/participant-info",
+    "registration-committee": "/dashboard/on-spot-registration",
+  };
+  return defaultRoutes[role] || "/dashboard";
+}
+
 
 const Login = () => {
   const [credentials, setCredentials] = useState<any>({});
   const [showPassword, setShowPassword] = useState(false); // New state for toggling password visibility
 
   const navigate = useNavigate();
-  const { authed, login } = useAuth();
-  const { state } = useLocation();
+  const { login, role } = useAuth();
   const [snackbar, setSnackbar] = useState({
     isOpen: false,
     message: "",
@@ -30,7 +42,8 @@ const Login = () => {
     const authResponse = await login({ ...credentials });
     if (authResponse.type === "success") {
       setTimeout(() => {
-        navigate(state?.path || "/dashboard");
+        navigate(getDefaultRoute(role), { replace: true });
+        // navigate(state?.path || "/dashboard");
       }, 0);
     } else {
       showSnackbar(

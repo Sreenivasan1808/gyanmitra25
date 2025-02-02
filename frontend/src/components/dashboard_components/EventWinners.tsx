@@ -187,11 +187,12 @@ const EventWinners = () => {
   ) => {
     const gmid = formData[prizeCategory][index].gmid;
     if (gmid == null || gmid.length == 0) {
+
       return;
     }
     let participantDetails = await getParticipantDetailsFromGMID(gmid);
 
-    if(participantDetails == null){
+    if(participantDetails == null || gmid.length == 0){
       showSnackbar("Invalid GMID", "error");
       setFormData((prevFormData: any) => {
         const updatedPrizes = [...prevFormData[prizeCategory]];

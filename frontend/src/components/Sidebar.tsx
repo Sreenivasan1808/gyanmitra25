@@ -95,6 +95,8 @@ const Sidebar = ({ setIsOpen }: any) => {
           <ul className="space-y-4 mt-8 p-2 md:mr-8">
             {navItems.map((item, idx) => {
               const isActive = location.pathname.includes(item.url); // Check if the current path matches the item's URL
+              console.log(item.allowedRoles.includes(role));
+              
               return (
                 item.allowedRoles.includes(role) && 
                 <li

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 const Snackbar = ({ 
   message, 
@@ -6,7 +6,7 @@ const Snackbar = ({
   type = 'info', 
   duration = 3000, 
   onClose 
-}) => {
+}: any) => {
   // Auto-dismiss logic
   useEffect(() => {
     if (isOpen) {
@@ -18,7 +18,7 @@ const Snackbar = ({
   }, [isOpen, duration, onClose]);
 
   // Color classes based on type
-  const colorClasses = {
+  const colorClasses: any = {
     success: 'bg-green-500',
     error: 'bg-red-500',
     warning: 'bg-yellow-500',

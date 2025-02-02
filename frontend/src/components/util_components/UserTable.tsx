@@ -1,6 +1,5 @@
-import React from 'react';
 
-const UserTable = ({ users }) => {
+const UserTable = ({ users }: any) => {
   return (
     <div className="p-4 md:p-8">
       <table className="min-w-full border-collapse border border-gray-300">
@@ -21,7 +20,7 @@ const UserTable = ({ users }) => {
               <td className="border border-gray-300 p-2">{userObj.user.phone}</td> */}
               <td className="border border-gray-300 p-2">
                 <ul className='ml-4 list-disc'>
-                  {userObj.events.map((event: any, eventIndex: any) => (
+                  {userObj?.events.map((event: any, eventIndex: any) => (
                     <li key={eventIndex}>
                       {/* Event ID: {event.event_id}, Status: {event.status ? 'Active' : 'Inactive'} */}
                       {event.name}
@@ -31,7 +30,7 @@ const UserTable = ({ users }) => {
               </td>
               <td className="border border-gray-300 p-2">
                 <ul className='ml-4 list-disc'>
-                  {userObj.workshops.map((workshop: any, workshopIndex: any) => (
+                  {userObj?.workshops.map((workshop: any, workshopIndex: any) => (
                     <li key={workshopIndex}>
                       {/* Event ID: {event.event_id}, Status: {event.status ? 'Active' : 'Inactive'} */}
                       {workshop.name}

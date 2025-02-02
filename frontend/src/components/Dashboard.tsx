@@ -9,7 +9,7 @@ import useAuth  from "../services/useAuth";
 
 const Dashboard = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const {dept, role} = useAuth();
+  const {dept} = useAuth();
 
   return (
     <div className="min-h-screen bg-background-50 flex relative overflow-hidden">

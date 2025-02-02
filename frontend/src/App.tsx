@@ -16,6 +16,10 @@ import OnSpotRegistration from "./components/dashboard_components/OnSpotRegistra
 
 const RoleBasedRedirect = () => {
   const { role } = useAuth();
+  console.log("role");
+  
+  console.log(role);
+  
 
   switch (role) {
     case "super-admin":
@@ -25,6 +29,8 @@ const RoleBasedRedirect = () => {
       return <Navigate to="/dashboard/workshop-attendance" replace />;
     case "certificate-committee":
       return <Navigate to="/dashboard/participants" replace />;
+    case "registration-committee":
+        return <Navigate to="/dashboard/on-spot-registration" replace />;
     default:
       return <Navigate to="/not-authorized" replace />;
   }
