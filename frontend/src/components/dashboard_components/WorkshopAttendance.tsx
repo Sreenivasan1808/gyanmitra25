@@ -3,11 +3,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import Snackbar from "../util_components/Snackbar";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import {
+  deleteWorkshopAttendance,
   getParticipantDetailsFromGMID,
   getWorkshopParticipantsList,
   markWorkshopParticipantAttendance,
 } from "../../services/ParticipantSVC";
 import { getWorkshopDetails } from "../../services/EventsSVC";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 const WorkshopAttendance = () => {
   //   const [workshop, setWorkshop] = useState();
@@ -87,6 +89,12 @@ const WorkshopAttendance = () => {
       setError("Invalid GMID");
     }
   };
+
+  const handleDeleteAttendance =async (user_id:string) => {
+    const status = await deleteWorkshopAttendance(user_id, workshopId);
+    showSnackbar(status.message, status.type);
+  }
+
 
   const handleMarkAsPresent = async (e: any) => {
     e.preventDefault();
@@ -249,6 +257,9 @@ const WorkshopAttendance = () => {
                 <th scope="col" className="px-6 py-3 w-full">
                   College
                 </th>
+                <th scope="col" className="px-6 py-3 w-full">
+                  Delete
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -274,6 +285,18 @@ const WorkshopAttendance = () => {
                         className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-fit text-center"
                       >
                         {participant.cname}
+                      </td>
+                      <td
+                        scope="row"
+                        className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-fit text-center"
+                      >
+                        <TrashIcon
+                            className="size-6 text-red-500 hover:cursor-pointer hover:scale-95"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleDeleteAttendance(participant.user_id);
+                            }}
+                          />
                       </td>
                     </tr>
                   );

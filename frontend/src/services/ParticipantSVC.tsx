@@ -36,8 +36,12 @@ export const markEventParticipantAttendance = async (
     } else {
       return { message: "Attendance not marked", type: "error" };
     }
-  } catch (error) {
-    return { message: "Something went wrong with the server", type: "error" };
+  } catch (error: any) {
+    if (error.response.status == 400) {
+      return { message: "Participant has not paid for events", type: "error" };
+    } else {
+      return { message: "Something went wrong with the server", type: "error" };
+    }
   }
 };
 
@@ -155,6 +159,7 @@ export const getAllDepartmentList = async () => {
     return { message: "Internal server error", type: "error" };
   }
 };
+
 export const getAllDepartmentListWorkshop = async () => {
   try {
     const response = await axios.get(
@@ -166,6 +171,40 @@ export const getAllDepartmentListWorkshop = async () => {
       return { message: "Couldn't retreive college list", type: "error" };
     }
   } catch (error) {
+    return { message: "Internal server error", type: "error" };
+  }
+};
+
+export const deleteEventAttendance = async (user_id: string, event_id: any) => {
+  try {
+    const response = await axios.post(
+      `${SERVER_URL}/participant/removeEventAttendance`,
+      { user_id: user_id, event_id: event_id }
+    );
+    if (response.status == 200) {
+      return { message: "Successfully removed", type: "success" };
+    } else {
+      return { message: "Action failed", type: "error" };
+    }
+  } catch (error) {
+    console.error(error);
+    return { message: "Internal server error", type: "error" };
+  }
+};
+
+export const deleteWorkshopAttendance = async (user_id: string, workshop_id: any) => {
+  try {
+    const response = await axios.post(
+      `${SERVER_URL}/participant/removeWorkshopAttendance`,
+      { user_id: user_id, workshop_id: workshop_id }
+    );
+    if (response.status == 200) {
+      return { message: "Successfully removed", type: "success" };
+    } else {
+      return { message: "Action failed", type: "error" };
+    }
+  } catch (error) {
+    console.error(error);
     return { message: "Internal server error", type: "error" };
   }
 };

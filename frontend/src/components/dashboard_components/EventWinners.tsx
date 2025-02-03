@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { getParticipantDetailsFromGMID } from "../../services/ParticipantSVC";
 import Snackbar from "../util_components/Snackbar";
-import { getWinnersList, uploadWinners } from "../../services/WinnersSVC";
+import { editWinners, getWinnersList, uploadWinners } from "../../services/WinnersSVC";
 import { useNavigate, useParams } from "react-router-dom";
 import { getEventDetails } from "../../services/EventsSVC";
 import useAuth from "../../services/useAuth";
@@ -22,7 +22,7 @@ const EventWinners = () => {
 
   const navigate = useNavigate();
 
-  const {role} = useAuth()
+  const { role } = useAuth();
 
   const [snackbar, setSnackbar] = useState({
     isOpen: false,
@@ -57,6 +57,8 @@ const EventWinners = () => {
     thirdPrizeTeamName: "",
   });
 
+  const [isUpdate, setIsUpdate] = useState<boolean>(false);
+
   //Upload the winners list for this event
   const handleWinnersUpload = async (e: any) => {
     e.preventDefault();
@@ -67,9 +69,14 @@ const EventWinners = () => {
         thirdPrize: formData.thirdPrize.map((item: any) => item.gmid),
         firstPrizeTeamName: formData.firstPrizeTeamName,
         secondPrizeTeamName: formData.secondPrizeTeamName,
-        thirdPrizeTeamName: formData.thirdPrizeTeamName
+        thirdPrizeTeamName: formData.thirdPrizeTeamName,
       };
-      let status = await uploadWinners(winnersIds, event?.eventid);
+      let status;
+      if(isUpdate){
+        status = await editWinners(winnersIds, event?.eventid);
+      }else{
+        status = await uploadWinners(winnersIds, event?.eventid);
+      }
       showSnackbar(status?.message, status?.type);
     }
   };
@@ -133,13 +140,14 @@ const EventWinners = () => {
             thirdPrize: eventWinners.thirdPrize || prev.thirdPrize,
             firstPrizeTeamName: eventWinners.fname || prev.firstPrizeTeamName,
             secondPrizeTeamName: eventWinners.sname || prev.secondPrizeTeamName,
-            thirdPrizeTeamName: eventWinners.tname || prev.thirdPrizeTeamName
+            thirdPrizeTeamName: eventWinners.tname || prev.thirdPrizeTeamName,
           }));
           let editable = false;
-          if(role == "domain-coordinator" || role == "super-admin"){
+          if (role == "domain-coordinator" || role == "super-admin") {
             editable = true;
           }
           setEditable(editable);
+          setIsUpdate(true);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -302,7 +310,7 @@ const EventWinners = () => {
                           }))
                         }
                         disabled={!editable}
-                        value={formData.firstPrizeTeamName}
+                        defaultValue={formData.firstPrizeTeamName}
                       />
                     </div>
                     <div className="flex gap-2 text-lg items-center">
@@ -313,31 +321,30 @@ const EventWinners = () => {
                         id="firstPrizeTeamCount"
                         className="border-2 rounded-lg outline-none focus:ring-0 focus:border-accent-500 p-1 md:p-2"
                         onChange={(e: any) => {
-                          let length = e.target.value;
-                          let winners = formData.firstPrize;
-                          if (length == 0 || length == null) {
+                          let newLength = parseInt(e.target.value, 10) || 0; // Ensure it's a valid integer
+                          let currentLength = formData.firstPrize.length;
+                          let winners = [...formData.firstPrize];
+
+                          if (newLength <= 0) {
                             winners = [];
-                          } else if (winners.length < length) {
-                            let n = length - winners.length;
-                            for (let i = 1; i <= n; i++) {
-                              winners = winners.concat({
-                                gmid: "",
-                                college: "",
-                                name: "",
-                              });
+                          } else if (newLength > currentLength) {
+                            // Add missing entries
+                            for (let i = currentLength; i < newLength; i++) {
+                              winners.push({ gmid: "", college: "", name: "" });
                             }
-                          } else {
-                            winners = winners.slice(0, length - 1);
+                          } else if (newLength < currentLength) {
+                            // Remove only one extra element at a time
+                            winners = winners.slice(0, newLength);
                           }
-                          setFormData((prev: any) => {
-                            return {
-                              ...prev,
-                              firstPrize: winners,
-                            };
-                          });
+
+                          setFormData((prev: any) => ({
+                            ...prev,
+                            firstPrize: winners,
+                          }));
                         }}
                         value={formData.firstPrize.length}
                         disabled={!editable}
+                        step={1}
                       />
                     </div>
                   </div>
@@ -443,38 +450,26 @@ const EventWinners = () => {
                         id="secondPrizeTeamCount"
                         className="border-2 rounded-lg outline-none focus:ring-0 focus:border-accent-500 p-1 md:p-2"
                         onChange={(e: any) => {
-                          let length = e.target.value;
-                          let winners = formData.secondPrize;
-                          if (
-                            length == 0 ||
-                            length == null ||
-                            length == undefined
-                          ) {
-                            winners = [
-                              {
-                                gmid: "",
-                                college: "",
-                                name: "",
-                              },
-                            ];
-                          } else if (winners.length < length) {
-                            let n = length - winners.length;
-                            for (let i = 1; i <= n; i++) {
-                              winners = winners.concat({
-                                gmid: "",
-                                college: "",
-                                name: "",
-                              });
+                          let newLength = parseInt(e.target.value, 10) || 0; // Ensure it's a valid integer
+                          let currentLength = formData.secondPrize.length;
+                          let winners = [...formData.secondPrize];
+
+                          if (newLength <= 0) {
+                            winners = [];
+                          } else if (newLength > currentLength) {
+                            // Add missing entries
+                            for (let i = currentLength; i < newLength; i++) {
+                              winners.push({ gmid: "", college: "", name: "" });
                             }
-                          } else {
-                            winners = winners.slice(0, length - 1);
+                          } else if (newLength < currentLength) {
+                            // Remove only one extra element at a time
+                            winners = winners.slice(0, newLength);
                           }
-                          setFormData((prev: any) => {
-                            return {
-                              ...prev,
-                              secondPrize: winners,
-                            };
-                          });
+
+                          setFormData((prev: any) => ({
+                            ...prev,
+                            secondPrize: winners,
+                          }));
                         }}
                         disabled={!editable}
                         value={formData.secondPrize.length}
@@ -580,28 +575,26 @@ const EventWinners = () => {
                         id="firstPrizeTeamCount"
                         className="border-2 rounded-lg outline-none focus:ring-0 focus:border-accent-500 p-1 md:p-2"
                         onChange={(e: any) => {
-                          let length = e.target.value;
-                          let winners = formData.thirdPrize;
-                          if (length == 0 || length == null) {
+                          let newLength = parseInt(e.target.value, 10) || 0; // Ensure it's a valid integer
+                          let currentLength = formData.thirdPrize.length;
+                          let winners = [...formData.thirdPrize];
+
+                          if (newLength <= 0) {
                             winners = [];
-                          } else if (winners.length < length) {
-                            let n = length - winners.length;
-                            for (let i = 1; i <= n; i++) {
-                              winners = winners.concat({
-                                gmid: "",
-                                college: "",
-                                name: "",
-                              });
+                          } else if (newLength > currentLength) {
+                            // Add missing entries
+                            for (let i = currentLength; i < newLength; i++) {
+                              winners.push({ gmid: "", college: "", name: "" });
                             }
-                          } else {
-                            winners = winners.slice(0, length - 1);
+                          } else if (newLength < currentLength) {
+                            // Remove only one extra element at a time
+                            winners = winners.slice(0, newLength);
                           }
-                          setFormData((prev: any) => {
-                            return {
-                              ...prev,
-                              thirdPrize: winners,
-                            };
-                          });
+
+                          setFormData((prev: any) => ({
+                            ...prev,
+                            thirdPrize: winners,
+                          }));
                         }}
                         disabled={!editable}
                         value={formData.thirdPrize.length}
