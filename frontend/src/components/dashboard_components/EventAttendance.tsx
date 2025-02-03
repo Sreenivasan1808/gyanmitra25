@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { ArrowLeftIcon, TrashIcon } from "@heroicons/react/24/outline";
 import {
+  deleteEventAttendance,
   getEventParticipantsList,
   getParticipantDetailsFromGMID,
   markEventParticipantAttendance,
@@ -136,6 +137,11 @@ const EventAttendance = () => {
     setEvent(eventDetails);
   };
 
+  const handleDeleteAttendance =async (user_id:string) => {
+    const status = await deleteEventAttendance(user_id, eventId);
+    showSnackbar(status.message, status.type);
+  }
+
   //Use effect for handleEventParticipantsListTable
   useEffect(() => {
     handleGetEventDetails();
@@ -174,6 +180,7 @@ const EventAttendance = () => {
           <h1 className="text-xl text-text-950 text-center">
             Event name:{" "}
             <span className="text-text-950 font-semibold">{event.name}</span>
+            {" "}({event.eventtype} event)
           </h1>
           {/* Instructions  */}
           <div className="p-4 m-4 border-2 border-accent-400 rounded-lg">
@@ -190,9 +197,19 @@ const EventAttendance = () => {
                 The name and college of the participant will be displayed in the
                 corresponding text boxes if the GMID is valid{" "}
               </li>
-              <li>Press the <span className="font-semibold"> 'Mark as Present'</span> button to mark attendance for the participant</li>
-              <li>Once attendance is marked for a participant their details are displayed in the table below</li>
-              <li>You can download the list of participants using the <span className="font-semibold">Download</span> button</li>
+              <li>
+                Press the{" "}
+                <span className="font-semibold"> 'Mark as Present'</span> button
+                to mark attendance for the participant
+              </li>
+              <li>
+                Once attendance is marked for a participant their details are
+                displayed in the table below
+              </li>
+              <li>
+                You can download the list of participants using the{" "}
+                <span className="font-semibold">Download</span> button
+              </li>
             </ul>
           </div>
 
@@ -292,6 +309,9 @@ const EventAttendance = () => {
                   <th scope="col" className="px-6 py-3 w-full">
                     College
                   </th>
+                  <th scope="col" className="px-6 py-3 w-full">
+                    Delete
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -317,6 +337,18 @@ const EventAttendance = () => {
                           className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-fit text-center"
                         >
                           {participant.cname}
+                        </td>
+                        <td
+                          scope="row"
+                          className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-full text-center flex justify-center"
+                        >
+                          <TrashIcon
+                            className="size-6 text-red-500 hover:cursor-pointer hover:scale-95"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              handleDeleteAttendance(participant.user_id);
+                            }}
+                          />
                         </td>
                       </tr>
                     );

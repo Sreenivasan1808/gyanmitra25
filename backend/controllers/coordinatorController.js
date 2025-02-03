@@ -48,7 +48,10 @@ const updatePayment = async (req, res) => {
 
 const editWinners = async (req, res) => {
   try {
-    const { eventId, firstPrize, secondPrize, thirdPrize,fname,sname,tname } = req.body;
+    const { eventId, firstPrize, secondPrize, thirdPrize,firstPrizeTeamName,secondPrizeTeamName,thirdPrizeTeamName } = req.body;
+    let fname = firstPrizeTeamName;
+    let sname = secondPrizeTeamName;
+    let tname = thirdPrizeTeamName;
     if (!eventId) {
       return res.status(400).json({ message: "Event ID is required" });
     }
@@ -179,9 +182,9 @@ const uploadWinners = async (req, res) => {
       second_prize: second_prize,
       third_prize: third_prize,
       event_id: event_id,
-      fname:req.body.fname,
-      sname:req.body.sname,
-      tname:req.body.tname
+      fname:req.body.firstPrizeTeamName,
+      sname:req.body.secondPrizeTeamName,
+      tname:req.body.thirdPrizeTeamName
     });
 
     const s = await newData.save(); // Ensure to await the save operation
@@ -242,6 +245,9 @@ const getWinnersDetailsFromGmid = async (winners) => {
     firstPrize: firstPrizeDetails,
     secondPrize: secondPrizeDetails,
     thirdPrize: thirdPrizeDetails,
+    fname: winners.fname,
+    sname: winners.sname,
+    tname: winners.tname
   };
 };
 
