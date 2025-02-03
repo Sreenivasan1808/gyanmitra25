@@ -1,6 +1,43 @@
 const userModel = require("../models/user");
 const attendenceModel = require("../models/attendence");
 const workshopAttendenceModel = require("../models/workshopattendence");
+const updateParticipantData = async (req, res) => {
+  try {
+    const { user_id, email, name, gender, phone, collegeName, collegeCity } = req.body;
+
+    
+    if (!user_id) {
+      return res.status(400).send({ error: "User Id is required" });
+    }
+
+  
+    const participant = await userModel.findOne({user_id:user_id });
+    if (!participant) {
+      return res.status(404).send({ error: "Participant not found" });
+    }
+
+    // Update participant data with the provided fields
+    if (name) participant.name = name;
+    if (gender) participant.gender = gender;
+    if (phone) participant.phone = phone;
+    if (collegeName) participant.cname = collegeName;
+    if (collegeCity) participant.ccity = collegeCity;
+    if (email)participant.email=email
+
+    // Save the updated participant record
+    const updatedParticipant = await participant.save();
+
+    // Return success response
+    res.status(200).send({
+      message: "Participant details updated successfully",
+      participant: updatedParticipant,
+    });
+  } catch (error) {
+    console.error("Error updating participant:", error.message);
+    res.status(500).send({ error: "Error updating participant" });
+  }
+};
+
 const getDetails = async (req, res) => {
   try {
     console.log("entered");
@@ -171,4 +208,5 @@ module.exports = {
   getAttendanceDetails: getAttendanceDetails,
   markWorkshopAttendance: markWorkshopAttendance,
   getAllWorkshopParticipants:getAllWorkshopParticipants,
+  updateParticipantData:updateParticipantData
 };
