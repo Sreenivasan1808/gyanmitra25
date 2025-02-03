@@ -5,6 +5,7 @@ import Snackbar from "../util_components/Snackbar";
 import { getWinnersList, uploadWinners } from "../../services/WinnersSVC";
 import { useNavigate, useParams } from "react-router-dom";
 import { getEventDetails } from "../../services/EventsSVC";
+import useAuth from "../../services/useAuth";
 
 const EventWinners = () => {
   const { "event-id": eventId } = useParams();
@@ -20,6 +21,8 @@ const EventWinners = () => {
   const [event, setEvent] = useState<any>();
 
   const navigate = useNavigate();
+
+  const {role} = useAuth()
 
   const [snackbar, setSnackbar] = useState({
     isOpen: false,
@@ -128,8 +131,15 @@ const EventWinners = () => {
             firstPrize: eventWinners.firstPrize || prev.firstPrize,
             secondPrize: eventWinners.secondPrize || prev.secondPrize,
             thirdPrize: eventWinners.thirdPrize || prev.thirdPrize,
+            firstPrizeTeamName: eventWinners.fname || prev.firstPrizeTeamName,
+            secondPrizeTeamName: eventWinners.sname || prev.secondPrizeTeamName,
+            thirdPrizeTeamName: eventWinners.tname || prev.thirdPrizeTeamName
           }));
-          setEditable(false);
+          let editable = false;
+          if(role == "domain-coordinator" || role == "super-admin"){
+            editable = true;
+          }
+          setEditable(editable);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -291,6 +301,8 @@ const EventWinners = () => {
                             firstPrizeTeamName: e.target.value,
                           }))
                         }
+                        disabled={!editable}
+                        value={formData.firstPrizeTeamName}
                       />
                     </div>
                     <div className="flex gap-2 text-lg items-center">
@@ -324,6 +336,8 @@ const EventWinners = () => {
                             };
                           });
                         }}
+                        value={formData.firstPrize.length}
+                        disabled={!editable}
                       />
                     </div>
                   </div>
@@ -417,6 +431,8 @@ const EventWinners = () => {
                             secondPrizeTeamName: e.target.value,
                           }))
                         }
+                        disabled={!editable}
+                        value={formData.secondPrizeTeamName}
                       />
                     </div>
                     <div className="flex gap-2 text-lg items-center">
@@ -460,6 +476,8 @@ const EventWinners = () => {
                             };
                           });
                         }}
+                        disabled={!editable}
+                        value={formData.secondPrize.length}
                       />
                     </div>
                   </div>
@@ -550,6 +568,8 @@ const EventWinners = () => {
                             thirdPrizeTeamName: e.target.value,
                           }))
                         }
+                        disabled={!editable}
+                        value={formData.thirdPrizeTeamName}
                       />
                     </div>
                     <div className="flex gap-2 text-lg items-center">
@@ -583,6 +603,8 @@ const EventWinners = () => {
                             };
                           });
                         }}
+                        disabled={!editable}
+                        value={formData.thirdPrize.length}
                       />
                     </div>
                   </div>
