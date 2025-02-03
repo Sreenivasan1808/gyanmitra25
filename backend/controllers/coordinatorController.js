@@ -5,6 +5,46 @@ const eventModel = require("../models/events");
 const workshopAttendanceModel = require("../models/workshopattendence");
 const workshopModel = require("../models/workshop");
 
+const updatePayment = async (req, res) => {
+  try {
+    const { user_id, update } = req.body;
+
+    // Validate inputs
+    if (!user_id || update === undefined) {
+      return res.status(400).send({ error: "user_id and update are required" });
+    }
+
+    // Find participant by user_id
+    const participant = await userModel.findOne({ user_id: user_id });
+    if (!participant) {
+      return res.status(404).send({ error: "Participant not found" });
+    }
+
+    // Update payment status based on the 'update' value
+    if (update === 1) {
+      participant.eventPayed = "Paid";
+    } else if (update === 2) {
+      participant.workshopPayed = "Paid";
+    } else if (update === 3) {
+      participant.workshopPayed = "Paid";
+      participant.eventPayed = "Paid";
+    } else {
+      return res.status(400).send({ error: "Invalid update value" });
+    }
+
+    // Save the updated participant
+    const updatedParticipant = await participant.save();
+
+    // Return success response
+    res.status(200).send({
+      message: "Participant payment details updated successfully",
+      participant: updatedParticipant,
+    });
+  } catch (error) {
+    console.error("Error updating participant:", error.message);
+    res.status(500).send({ error: "Error updating participant" });
+  }
+};
 
 const editWinners = async (req, res) => {
   try {
@@ -373,5 +413,6 @@ module.exports = {
   getCollegeList: getCollegeList,
   getUniqueDepartments:getUniqueDepartments,
   collegeWiseParticipant:participantsCollegeWise,
-  getUniqueDepartmentsWorkshop:getUniqueDepartmentsWorkshop
+  getUniqueDepartmentsWorkshop:getUniqueDepartmentsWorkshop,
+  updatePayment:updatePayment
 };
