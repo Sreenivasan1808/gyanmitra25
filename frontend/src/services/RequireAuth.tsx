@@ -21,9 +21,12 @@ export const rolePermissions: any = {
   ],
   "registration-committee": [
     "/dashboard/on-spot-registration",
+    "/dashboard/payment",
   ],
   "registration-coordinator": [
-
+    "/dashboard/on-spot-registration",
+    "/dashboard/participant-info",
+    "/dashboard/payment",
   ],
   "domain-coordinator": [
     "/dashboard/event-attendance",
@@ -33,7 +36,7 @@ export const rolePermissions: any = {
     "/dashboard/participant-info",
     "/dashboard/workshop-attendance",
     "/dashboard/workshop-attendance/*",
-  ]
+  ],
 };
 
 export function RequireAuth({ children }: any) {

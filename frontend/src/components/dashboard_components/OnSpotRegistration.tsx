@@ -31,6 +31,9 @@ const OnSpotRegistration = () => {
     message: "",
     type: "info", // Default type
   });
+  const [approvedParticipantsList, setApprovedParticipantsList] = useState<any>(
+    []
+  );
 
   const showSnackbar = (message: string, type: string) => {
     setSnackbar({ isOpen: true, message, type });
@@ -103,7 +106,7 @@ const OnSpotRegistration = () => {
       selectedParticipant,
       approvalFor
     );
-
+    setApprovedParticipantsList(status.participants);
     showSnackbar(status.message, status.type);
     handleFetchFormResponses();
   };
@@ -173,6 +176,62 @@ const OnSpotRegistration = () => {
           </Accordian>
         </>
       )}
+
+      <table className="w-full text-base rtl:text-right m-2 text-center overflow-x-scroll">
+        <thead className=" text-text-900 uppercase bg-secondary-500">
+          <tr>
+            <th scope="col" className="px-6 py-3">
+              S.No
+            </th>
+            <th scope="col" className="px-6 py-3 w-fit">
+              GMID
+            </th>
+            <th scope="col" className="px-6 py-3 w-full">
+              Full Name
+            </th>
+            <th scope="col" className="px-6 py-3 w-full">
+              College
+            </th>
+            <th scope="col" className="px-6 py-3 w-full">
+              Email
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {approvedParticipantsList &&
+            approvedParticipantsList.map((participant: any, idx: number) => {
+              return (
+                <tr className="bg-white border-b" key={idx}>
+                  <td className="px-4 py-4 w-fit">{idx + 1}</td>
+                  <td
+                    scope="row"
+                    className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-fit text-center"
+                  >
+                    {participant.user_id}
+                  </td>
+                  <td
+                    scope="row"
+                    className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-fit text-center"
+                  >
+                    {participant.name}
+                  </td>
+                  <td
+                    scope="row"
+                    className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-fit text-center"
+                  >
+                    {participant.cname}
+                  </td>
+                  <td
+                    scope="row"
+                    className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-full text-center flex justify-center"
+                  >
+                    {participant.email}
+                  </td>
+                </tr>
+              );
+            })}
+        </tbody>
+      </table>
       <Snackbar
         message={snackbar.message}
         isOpen={snackbar.isOpen}

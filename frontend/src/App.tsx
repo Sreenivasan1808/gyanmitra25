@@ -13,6 +13,7 @@ import NotAuthorized from "./components/util_components/NotAuthorized";
 import { RequireAuth } from "./services/RequireAuth";
 import useAuth from "./services/useAuth";
 import OnSpotRegistration from "./components/dashboard_components/OnSpotRegistration";
+import PaymentUpdate from "./components/dashboard_components/PaymentUpdate";
 
 const RoleBasedRedirect = () => {
   const { role } = useAuth();
@@ -33,6 +34,8 @@ const RoleBasedRedirect = () => {
         return <Navigate to="/dashboard/on-spot-registration" replace />;
     case "domain-coordinator":
       return <Navigate to="/dashboard/event-attendance" replace />;
+    case "registration-coordinator":
+      return <Navigate to="/dashboard/on-spot-registration" replace />;
     default:
       return <Navigate to="/not-authorized" replace />;
   }
@@ -71,6 +74,7 @@ const App = () => {
           <Route path="winners/:event-id" element={<EventWinners />} />
           <Route path="participants" element={<CollegeParticipants />} />
           <Route path="participant-info" element={<ParticipantInformation />} />
+          <Route path="payment" element={<PaymentUpdate />} />
           <Route path="on-spot-registration" element={<OnSpotRegistration />} />
         </Route>
         <Route path="/not-authorized" element={<NotAuthorized />} />

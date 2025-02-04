@@ -5,7 +5,8 @@ import {
   TrophyIcon,
   UserGroupIcon,
   IdentificationIcon,
-  PlusCircleIcon
+  PlusCircleIcon,
+  CurrencyRupeeIcon
 } from "@heroicons/react/24/outline";
 import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../services/useAuth";
@@ -55,6 +56,11 @@ const navItems = [
     url: "/dashboard/on-spot-registration",
     allowedRoles : ["super-admin", "registration-committee"]
   },
+  {
+    name: "Payment Update",
+    icon: <CurrencyRupeeIcon className="size-6" />,
+    url: "/dashboard/payment",
+  },
 ];
 
 const Sidebar = ({ setIsOpen }: any) => {
@@ -64,10 +70,7 @@ const Sidebar = ({ setIsOpen }: any) => {
   const [modalOpen, setModalOpen] = useState(false);
 
   const handleLogout = async (e:any) => {
-    e.preventDefault();
-    // console.log("Authed");
-    // console.log(authed);
-    
+    e.preventDefault();  
     
     if(authed){
       logout();
@@ -129,9 +132,7 @@ const Sidebar = ({ setIsOpen }: any) => {
           </ul>
         </nav>
       </div>
-      {/* <div className="absolute">
 
-      </div> */}
       <Modal open={modalOpen} onClose={() => setModalOpen(false)}>
         <div className="text-center w-56">
           <ArrowLeftStartOnRectangleIcon className="size-32 mx-auto text-red-500" />

@@ -192,7 +192,10 @@ export const deleteEventAttendance = async (user_id: string, event_id: any) => {
   }
 };
 
-export const deleteWorkshopAttendance = async (user_id: string, workshop_id: any) => {
+export const deleteWorkshopAttendance = async (
+  user_id: string,
+  workshop_id: any
+) => {
   try {
     const response = await axios.post(
       `${SERVER_URL}/participant/removeWorkshopAttendance`,
@@ -206,5 +209,20 @@ export const deleteWorkshopAttendance = async (user_id: string, workshop_id: any
   } catch (error) {
     console.error(error);
     return { message: "Internal server error", type: "error" };
+  }
+};
+
+export const updateParticipantDetails = async (participantDetails: any) => {
+  try {
+    const response = await axios.put(
+      `${SERVER_URL}/participant/updateParticipantData`,
+      { ...participantDetails }
+    );
+    if (response.status == 200) {
+      return { message: response.data.message, type: "success" };
+    }
+  } catch (error: any) {
+    console.error(error);
+    return { message: error.response.data.message, type: "error" };
   }
 };
