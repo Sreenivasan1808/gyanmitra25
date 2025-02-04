@@ -4,7 +4,8 @@ const userModel = require("../models/user");
 const eventModel = require("../models/events");
 const workshopAttendanceModel = require("../models/workshopattendence");
 const workshopModel = require("../models/workshop");
-const PaymentDetailsModel=require("../models/payment_details")
+const PaymentDetailsModel=require("../models/payment_details");
+const UserModel = require("../models/user");
 const updatePayment = async (req, res) => {
   console.log("enterd")
   try {
@@ -124,10 +125,11 @@ const deleteAttendance = async (req, res) => {
 const deleteWorkshopAttendance = async (req, res) => {
   try {
     const { user_id, workshop_id } = req.body;
+    
 
     // Validate that user_id and event_id are provided
-    if (!user_id || !event_id) {
-      return res.status(400).json({ message: "user_id and event_id are required" });
+    if (!user_id || !workshop_id) {
+      return res.status(400).json({ message: "user_id and workshop_id are required" });
     }
 
     // Attempt to delete the attendance record
@@ -511,6 +513,50 @@ const getUniqueDepartmentsWorkshop = async (req, res) => {
   
 }
 
+const getDayWisePaymentDetails = async (req, res) => {
+  try {
+    const {day} = req.query;
+
+    if(!day){
+      res.status(400).json({
+        message: "Day parameter required",
+      })
+    }
+    const payment_details = await PaymentDetailsModel.find({date: day});
+
+    let userDetails = [];
+    for(let payment of payment_details){
+      let user_id = payment.user_id;
+
+      const userData = await UserModel.findOne({user_id: user_id}).exec();
+      console.log(userData);
+      if(!userData){
+        res.status(400).json({
+          message: `User data not found for GMID: ${user_id}`
+        })
+      }
+      console.log("payment");
+      console.log(payment);
+      let amount = payment.amount;
+      userDetails.push({
+        user_id: user_id,
+        name: userData.name,
+        college: userData.cname,
+        email: userData.email,
+        amount: amount,
+      })
+    }
+    console.log("user details: ");
+    console.log(userDetails);
+    res.status(200).json({message: "Success", userDetails: userDetails});
+  } catch (error) {
+    res.status(500).json({
+      message:"Internal server error",
+      error: error
+    })
+  } 
+}
+
 module.exports = {
   editWinners:editWinners,
   uploadWinners: uploadWinners,
@@ -522,5 +568,6 @@ module.exports = {
   getUniqueDepartmentsWorkshop:getUniqueDepartmentsWorkshop,
   updatePayment:updatePayment,
   deleteAttendance:deleteAttendance,
-  deleteWorkshopAttendance:deleteWorkshopAttendance
+  deleteWorkshopAttendance:deleteWorkshopAttendance,
+  getDayWisePaymentDetails:getDayWisePaymentDetails
 };

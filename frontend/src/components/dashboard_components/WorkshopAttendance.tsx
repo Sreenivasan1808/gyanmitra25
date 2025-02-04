@@ -15,7 +15,7 @@ const WorkshopAttendance = () => {
   //   const [workshop, setWorkshop] = useState();
   const { "workshop-id": workshopId } = useParams();
   console.log(workshopId);
-  
+
   if (!workshopId) {
     return (
       <div className="h-full w-full flex justify-center items-center text-2xl text-text-950">
@@ -47,22 +47,20 @@ const WorkshopAttendance = () => {
   };
 
   const [workshop, setWorkshop] = useState<any>();
-  
+
   const handleGetWorkshopDetails = async () => {
     const details = await getWorkshopDetails(workshopId);
-    
+
     // console.log(details);
     // console.log(workshopId);
-    
-    
+
     setWorkshop(details);
   };
-  
-  
+
   useEffect(() => {
     handleGetWorkshopDetails();
     handleWorkshopParticipantsListTable();
-  },[]);
+  }, []);
 
   const handleGetParticipantDetails = async (e: any) => {
     e.preventDefault();
@@ -90,11 +88,11 @@ const WorkshopAttendance = () => {
     }
   };
 
-  const handleDeleteAttendance =async (user_id:string) => {
+  const handleDeleteAttendance = async (user_id: string) => {
     const status = await deleteWorkshopAttendance(user_id, workshopId);
     showSnackbar(status.message, status.type);
-  }
-
+    handleWorkshopParticipantsListTable();
+  };
 
   const handleMarkAsPresent = async (e: any) => {
     e.preventDefault();
@@ -115,15 +113,15 @@ const WorkshopAttendance = () => {
   };
 
   const handleWorkshopParticipantsListTable = async () => {
-    console.log(workshop)
+    console.log(workshop);
     if (workshop) {
-      console.log("inside")
+      console.log("inside");
       const participants = await getWorkshopParticipantsList(workshopId);
       if (participants == null || participants.length == 0) {
         return;
       }
       console.log("Participants");
-      
+
       console.log(participants);
       setParticipantsList(participants);
     }
@@ -185,7 +183,9 @@ const WorkshopAttendance = () => {
                 />
               </div>
               <div className="flex flex-col gap-1 w-full">
-                <label htmlFor="gmid">Full Name (automatically retrieved)</label>
+                <label htmlFor="gmid">
+                  Full Name (automatically retrieved)
+                </label>
                 <input
                   type="text"
                   id="fname"
@@ -263,7 +263,7 @@ const WorkshopAttendance = () => {
               </tr>
             </thead>
             <tbody>
-              {participantsList != null &&
+              {participantsList != null && participantsList.length > 0 ? (
                 participantsList.map((participant: any, idx) => {
                   return (
                     <tr className="bg-white border-b" key={idx}>
@@ -291,16 +291,19 @@ const WorkshopAttendance = () => {
                         className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-fit text-center"
                       >
                         <TrashIcon
-                            className="size-6 text-red-500 hover:cursor-pointer hover:scale-95"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              handleDeleteAttendance(participant.user_id);
-                            }}
-                          />
+                          className="size-6 text-red-500 hover:cursor-pointer hover:scale-95"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleDeleteAttendance(participant.user_id);
+                          }}
+                        />
                       </td>
                     </tr>
                   );
-                })}
+                })
+              ) : (
+                <></>
+              )}
             </tbody>
           </table>
         </div>

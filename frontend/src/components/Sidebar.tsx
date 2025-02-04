@@ -59,7 +59,12 @@ const navItems = [
   {
     name: "Payment Update",
     icon: <CurrencyRupeeIcon className="size-6" />,
-    url: "/dashboard/payment",
+    url: "/dashboard/payment-update",
+  },
+  {
+    name: "Payment Details",
+    icon: <CurrencyRupeeIcon className="size-6" />,
+    url: "/dashboard/payment-details",
   },
 ];
 

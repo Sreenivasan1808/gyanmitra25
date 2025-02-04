@@ -11,7 +11,8 @@ router.get("/getcollegelist", coordinatorController.getCollegeList);
 router.get("/getdepartmentlist", coordinatorController.getUniqueDepartments);
 router.get("/participants-pdf",pdf.getCollegeWisePdf)
 router.get("/getdepartmentlist-workshop", coordinatorController.getUniqueDepartmentsWorkshop);
-router.patch("/updatePayment",coordinatorController.updatePayment)
-router.put("/deleteAttendance",coordinatorController.deleteAttendance)
-router.put("/deleteWorkshopAttendace",coordinatorController.deleteWorkshopAttendance)
+router.put("/updatePayment",coordinatorController.updatePayment)
+router.put("/deleteEventAttendance",coordinatorController.deleteAttendance)
+router.put("/deleteWorkshopAttendance",coordinatorController.deleteWorkshopAttendance)
+router.get("/daywise-payment",coordinatorController.getDayWisePaymentDetails)
 module.exports = router;

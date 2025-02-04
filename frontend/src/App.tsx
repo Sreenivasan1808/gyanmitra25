@@ -14,6 +14,7 @@ import { RequireAuth } from "./services/RequireAuth";
 import useAuth from "./services/useAuth";
 import OnSpotRegistration from "./components/dashboard_components/OnSpotRegistration";
 import PaymentUpdate from "./components/dashboard_components/PaymentUpdate";
+import PaymentDetails from "./components/dashboard_components/PaymentDetails";
 
 const RoleBasedRedirect = () => {
   const { role } = useAuth();
@@ -74,7 +75,8 @@ const App = () => {
           <Route path="winners/:event-id" element={<EventWinners />} />
           <Route path="participants" element={<CollegeParticipants />} />
           <Route path="participant-info" element={<ParticipantInformation />} />
-          <Route path="payment" element={<PaymentUpdate />} />
+          <Route path="payment-update" element={<PaymentUpdate />} />
+          <Route path="payment-details" element={<PaymentDetails />} />
           <Route path="on-spot-registration" element={<OnSpotRegistration />} />
         </Route>
         <Route path="/not-authorized" element={<NotAuthorized />} />

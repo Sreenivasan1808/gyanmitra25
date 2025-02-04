@@ -137,10 +137,11 @@ const EventAttendance = () => {
     setEvent(eventDetails);
   };
 
-  const handleDeleteAttendance =async (user_id:string) => {
+  const handleDeleteAttendance = async (user_id: string) => {
     const status = await deleteEventAttendance(user_id, eventId);
     showSnackbar(status.message, status.type);
-  }
+    handleEventParticipantsListTable();
+  };
 
   //Use effect for handleEventParticipantsListTable
   useEffect(() => {
@@ -179,8 +180,8 @@ const EventAttendance = () => {
           </button>
           <h1 className="text-xl text-text-950 text-center">
             Event name:{" "}
-            <span className="text-text-950 font-semibold">{event.name}</span>
-            {" "}({event.eventtype} event)
+            <span className="text-text-950 font-semibold">{event.name}</span> (
+            {event.eventtype} event)
           </h1>
           {/* Instructions  */}
           <div className="p-4 m-4 border-2 border-accent-400 rounded-lg">
@@ -315,7 +316,7 @@ const EventAttendance = () => {
                 </tr>
               </thead>
               <tbody>
-                {participantsList != null &&
+                {participantsList != null && participantsList.length > 0 ? (
                   participantsList.map((participant: any, idx) => {
                     return (
                       <tr className="bg-white border-b" key={idx}>
@@ -352,7 +353,10 @@ const EventAttendance = () => {
                         </td>
                       </tr>
                     );
-                  })}
+                  })
+                ) : (
+                  <></>
+                )}
               </tbody>
             </table>
           </div>

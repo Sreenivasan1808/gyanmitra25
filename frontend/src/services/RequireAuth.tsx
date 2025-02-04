@@ -21,12 +21,14 @@ export const rolePermissions: any = {
   ],
   "registration-committee": [
     "/dashboard/on-spot-registration",
-    "/dashboard/payment",
+    "/dashboard/payment-update",
+    "/dashboard/payment-details",
   ],
   "registration-coordinator": [
     "/dashboard/on-spot-registration",
     "/dashboard/participant-info",
-    "/dashboard/payment",
+    "/dashboard/payment-update",
+    "/dashboard/payment-details",
   ],
   "domain-coordinator": [
     "/dashboard/event-attendance",
