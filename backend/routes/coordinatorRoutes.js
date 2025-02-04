@@ -11,5 +11,5 @@ router.get("/getcollegelist", coordinatorController.getCollegeList);
 router.get("/getdepartmentlist", coordinatorController.getUniqueDepartments);
 router.get("/participants-pdf",pdf.getCollegeWisePdf)
 router.get("/getdepartmentlist-workshop", coordinatorController.getUniqueDepartmentsWorkshop);
-router.patch("/updatePayment",coordinatorController.updatePayment)
+router.put("/updatePayment",coordinatorController.updatePayment)
 module.exports = router;

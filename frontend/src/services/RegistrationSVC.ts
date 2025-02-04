@@ -34,3 +34,16 @@ export const approveRegistrationRequests = async (emails: string[], approvedFor:
     
   }
 }
+
+export const updatePaymentStatus = async (gmid:string, type: number) => {
+  try {
+    const response = await axios.put(`${SERVER_URL}/coordinator/updatePayment`, {user_id: gmid, update: type});
+    if(response.status == 200){
+      return {message: response.data.message, type: "success"}
+    }
+  } catch (error: any) {
+    console.error(error);
+    return {message: error.response.data.message, type: "error"}
+    
+  }
+}

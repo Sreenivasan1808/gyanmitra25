@@ -43,7 +43,7 @@ const getDetails = async (req, res) => {
     console.log("entered");
     const user_id = req.query.gmId;
     console.log(user_id);
-    const data = await userModel.findOne({ email: user_id });
+    const data = await userModel.findOne({ user_id: user_id });
     if (data) {
       console.log("sent");
       res.status(200).json(data);
