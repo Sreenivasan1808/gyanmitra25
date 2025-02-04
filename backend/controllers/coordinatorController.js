@@ -4,8 +4,9 @@ const userModel = require("../models/user");
 const eventModel = require("../models/events");
 const workshopAttendanceModel = require("../models/workshopattendence");
 const workshopModel = require("../models/workshop");
-
+const PaymentDetailsModel=require("../models/payment_details")
 const updatePayment = async (req, res) => {
+  console.log("enterd")
   try {
     const { user_id, update } = req.body;
 
@@ -19,15 +20,65 @@ const updatePayment = async (req, res) => {
     if (!participant) {
       return res.status(404).send({ error: "Participant not found" });
     }
-
+    var amount=0
+    var day="other day"
+    const currdate=new Date()
+      const day1=new Date("2025-02-19")
+      const day2=new Date("2025-02-20")
+      if(currdate==day1){
+        day="Day 1"
+      }
+      else if(currdate==day2)
+      {
+        day="Day 2"
+      }
     // Update payment status based on the 'update' value
     if (update === 1) {
       participant.eventPayed = "Paid";
+      const verifyPaydetail = await PaymentDetailsModel.findOne({user_id:user_id,date:day})
+      if (verifyPaydetail==null){
+        const newPayDetail=new PaymentDetailsModel({
+          user_id:user_id,
+          amount:250,
+          date:day
+        })
+        const s=await newPayDetail.save()
+      }
+      else{
+        verifyPaydetail.amount+=250
+        const s=await verifyPaydetail.save()
+      }
     } else if (update === 2) {
       participant.workshopPayed = "Paid";
+      const verifyPaydetail = await PaymentDetailsModel.findOne({user_id:user_id,date:day})
+      if (verifyPaydetail==null){
+        const newPayDetail=new PaymentDetailsModel({
+          user_id:user_id,
+          amount:400,
+          date:day
+        })
+        const s=await newPayDetail.save()
+      }
+      else{
+        verifyPaydetail.amount+=400
+        const s=await verifyPaydetail.save()
+      }
     } else if (update === 3) {
       participant.workshopPayed = "Paid";
       participant.eventPayed = "Paid";
+      const verifyPaydetail = await PaymentDetailsModel.findOne({user_id:user_id,date:day})
+      if (verifyPaydetail==null){
+        const newPayDetail=new PaymentDetailsModel({
+          user_id:user_id,
+          amount:650,
+          date:day
+        })
+        const s=await newPayDetail.save()
+      }
+      else{
+        verifyPaydetail.amount+=650
+        const s=await verifyPaydetail.save()
+      }
     } else {
       return res.status(400).send({ error: "Invalid update value" });
     }
@@ -45,7 +96,56 @@ const updatePayment = async (req, res) => {
     res.status(500).send({ error: "Error updating participant" });
   }
 };
+const deleteAttendance = async (req, res) => {
+  try {
+    const { user_id, event_id } = req.body;
 
+    // Validate that user_id and event_id are provided
+    if (!user_id || !event_id) {
+      return res.status(400).json({ message: "user_id and event_id are required" });
+    }
+
+    // Attempt to delete the attendance record
+    const deletedData = await attendanceModel.deleteOne({ user_id: user_id, event_id: event_id });
+
+    // Check if the record was found and deleted
+    if (deletedData.deletedCount === 0) {
+      return res.status(404).json({ message: "Attendance record not found" });
+    }
+
+    // Send a success response
+    res.status(200).json({ message: "Attendance record deleted successfully" });
+  } catch (error) {
+    // Handle any unexpected errors
+    console.error("Error deleting attendance record:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+const deleteWorkshopAttendance = async (req, res) => {
+  try {
+    const { user_id, workshop_id } = req.body;
+
+    // Validate that user_id and event_id are provided
+    if (!user_id || !event_id) {
+      return res.status(400).json({ message: "user_id and event_id are required" });
+    }
+
+    // Attempt to delete the attendance record
+    const deletedData = await workshopAttendanceModel.deleteOne({ user_id: user_id, workshopid: workshop_id });
+
+    // Check if the record was found and deleted
+    if (deletedData.deletedCount === 0) {
+      return res.status(404).json({ message: "Attendance record not found" });
+    }
+
+    // Send a success response
+    res.status(200).json({ message: "Attendance record deleted successfully" });
+  } catch (error) {
+    // Handle any unexpected errors
+    console.error("Error deleting attendance record:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 const editWinners = async (req, res) => {
   try {
     const { eventId, firstPrize, secondPrize, thirdPrize,firstPrizeTeamName,secondPrizeTeamName,thirdPrizeTeamName } = req.body;
@@ -420,5 +520,7 @@ module.exports = {
   getUniqueDepartments:getUniqueDepartments,
   collegeWiseParticipant:participantsCollegeWise,
   getUniqueDepartmentsWorkshop:getUniqueDepartmentsWorkshop,
-  updatePayment:updatePayment
+  updatePayment:updatePayment,
+  deleteAttendance:deleteAttendance,
+  deleteWorkshopAttendance:deleteWorkshopAttendance
 };

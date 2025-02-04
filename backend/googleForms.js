@@ -4,7 +4,7 @@ const https = require("https");
 const bcrypt = require("bcrypt");
 const crypto =require("crypto")
 const UserModel= require("./models/user")
-
+const PaymentDetailsModel = require("./models/payment_details")
 const agent = new https.Agent({
   rejectUnauthorized: false,
 });
@@ -196,6 +196,33 @@ const approveParticipants = async (req, res) => {
 
       // Save the new user to the database
       const savedUser = await newUser.save();
+      const verifyPaydetail = await PaymentDetailsModel.findOne({user_id:savedUser.user_id})
+      var day="Other Date"
+      const currdate=new Date()
+      const day1=new Date("2025-02-19")
+      const day2=new Date("2025-02-20")
+      if(currdate==day1){
+        day="Day 1"
+      }
+      else if(currdate==day2)
+      {
+        day="Day 2"
+      }
+      var amount=0
+      if(savedUser.eventPayed=="Paid"){
+        amount+=250
+      }
+      if(savedUser.workshopPayed=="Paid"){
+        amount+=400
+      }
+      if (verifyPaydetail==null){
+        const newPayDetail=new PaymentDetailsModel({
+          user_id:savedUser.user_id,
+          date:day,
+          amount:amount
+        })
+        const s=await newPayDetail.save()
+      }
       addedParticipants.push(savedUser);
     }
     const fakeRes = {
