@@ -286,7 +286,8 @@ const uploadWinners = async (req, res) => {
       event_id: event_id,
       fname:req.body.firstPrizeTeamName,
       sname:req.body.secondPrizeTeamName,
-      tname:req.body.thirdPrizeTeamName
+      tname:req.body.thirdPrizeTeamName,
+      approved:false
     });
 
     const s = await newData.save(); // Ensure to await the save operation
@@ -556,6 +557,107 @@ const getDayWisePaymentDetails = async (req, res) => {
     })
   } 
 }
+const approveEventWinner = async (req, res) => {
+  try {
+    const { event_id } = req.body;
+
+    // Find the event by event_id
+    const event = await winnersModel.findOne({ event_id: event_id });
+
+    // Check if the event exists
+    if (!event) {
+      return res.status(404).json({ message: 'Event not found' });
+    }
+
+    // Approve the event
+    event.approved = true;
+
+    // Save the updated event
+    await event.save();
+
+    // Send a success response
+    res.status(200).json({ message: 'Event approved successfully', event });
+  } catch (err) {
+    // Handle any errors
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+const getDomainWiseWinnersData = async (req, res) => {
+  try {
+      const { domain_name } = req.query;
+
+      if (!domain_name) {
+          return res.status(400).send("Domain name (domain_name) is required");
+      }
+
+      const events = await eventModel.find({ organizing_department: domain_name });
+      if (!events.length) return res.status(404).send("No events found for the given domain");
+
+      const eventIds = events.map(event => event.eventid);
+      const winners = await winnersModel.find({ event_id: { $in: eventIds } });
+      if (!winners.length) return res.status(404).send("No winners found for the events in the given domain");
+
+      const responseData = [];
+
+      for (const event of events) {
+          const eventWinners = winners.filter(w => w.event_id === event.eventid);
+          if (!eventWinners.length) continue;
+
+          const eventData = {
+              eventName: event.name,
+              organizingDepartment: event.organizing_department,
+              winners: []
+          };
+
+          for (const winner of eventWinners) {
+              const firstPrizeWinners = await Promise.all(
+                  winner.first_prize.map(userId => userModel.findOne({ user_id: userId }))
+              );
+              const secondPrizeWinners = await Promise.all(
+                  winner.second_prize.map(userId => userModel.findOne({ user_id: userId }))
+              );
+              const thirdPrizeWinners = await Promise.all(
+                  winner.third_prize.map(userId => userModel.findOne({ user_id: userId }))
+              );
+
+              const winnersData = [
+                  { prize: "First Prize", users: firstPrizeWinners, team: winner.fname },
+                  { prize: "Second Prize", users: secondPrizeWinners, team: winner.sname },
+                  { prize: "Third Prize", users: thirdPrizeWinners, team: winner.tname },
+              ];
+
+              for (const winnerData of winnersData) {
+                  const winnerNames = winnerData.users.map(u => u?.name || "N/A").join(", ");
+                  const collegeNames = winnerData.users.map(u => u?.cname || "N/A").join(", ");
+
+                  const winnerInfo = {
+                      prize: winnerData.prize,
+                      winnerNames: winnerNames,
+                      collegeNames: collegeNames,
+                  };
+
+                  if (event.eventtype !== "Individual") {
+                      winnerInfo.teamName = winnerData.team;
+                  }
+
+                  eventData.winners.push(winnerInfo);
+              }
+          }
+
+          responseData.push(eventData);
+      }
+
+      res.status(200).json({
+          success: true,
+          domain: domain_name,
+          data: responseData,
+      });
+  } catch (error) {
+      console.error("Error fetching data:", error);
+      res.status(500).send("Internal Server Error");
+  }
+};
 
 module.exports = {
   editWinners:editWinners,
@@ -569,5 +671,7 @@ module.exports = {
   updatePayment:updatePayment,
   deleteAttendance:deleteAttendance,
   deleteWorkshopAttendance:deleteWorkshopAttendance,
-  getDayWisePaymentDetails:getDayWisePaymentDetails
+  getDayWisePaymentDetails:getDayWisePaymentDetails,
+  approveEventWinner:approveEventWinner,
+  getDomainWiseWinnersData:getDomainWiseWinnersData
 };

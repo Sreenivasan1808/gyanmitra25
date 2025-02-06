@@ -30,5 +30,9 @@ const winnersSchema = mongoose.Schema({
         type:String,
         required:true,
     },
+    approved:{
+        type:Boolean,
+        required:true
+    }
 }) 
 module.exports=mongoose.model("winners",winnersSchema)
