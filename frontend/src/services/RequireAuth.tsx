@@ -18,6 +18,8 @@ export const rolePermissions: any = {
   "certificate-committee": [
     "/dashboard/participant-info",
     "/dashboard/participants",
+    "/dashboard/winners",
+    "/dashboard/winners/*",
   ],
   "registration-committee": [
     "/dashboard/on-spot-registration",

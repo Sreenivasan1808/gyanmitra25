@@ -319,6 +319,7 @@ const getWinnersDetailsFromGmid = async (winners) => {
       gmid: participant.user_id,
       name: participant.name,
       college: participant.cname,
+      mobileNo:participant.phone
     });
   }
   let secondPrizeDetails = [];
@@ -330,6 +331,7 @@ const getWinnersDetailsFromGmid = async (winners) => {
       gmid: participant.user_id,
       name: participant.name,
       college: participant.cname,
+      mobileNo:participant.phone
     });
   }
   let thirdPrizeDetails = [];
@@ -341,6 +343,7 @@ const getWinnersDetailsFromGmid = async (winners) => {
       gmid: participant.user_id,
       name: participant.name,
       college: participant.cname,
+      mobileNo:participant.phone
     });
   }
 
@@ -361,6 +364,7 @@ const getWinners = async (req, res) => {
       res.status(204).json({ message: "no details found" });
     } else {
       const winnersDetails = await getWinnersDetailsFromGmid(data);
+      winnersDetails.approved = data.approved;
       console.log(winnersDetails);
       res.status(200).json(winnersDetails);
     }
@@ -452,6 +456,7 @@ const participantsCollegeWise = async (cname) => {
         user: {
           user_id: user.user_id,
           name: user.name,
+          phone: user.phone
         },
         events: participatedEvents,
         workshops: participatedWorkshops

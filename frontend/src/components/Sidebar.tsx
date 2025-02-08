@@ -39,7 +39,7 @@ const navItems = [
     allowedRoles : ["super-admin", "workshop-coordinator"]
   },
   {
-    name: "College Participants",
+    name: "Certificate Committee Participants List",
     icon: <UserGroupIcon className="size-6" />,
     url: "/dashboard/participants",
     allowedRoles : ["super-admin", "certificate-committee"]

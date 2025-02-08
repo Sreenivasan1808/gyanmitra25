@@ -10,6 +10,8 @@ import {
 } from "../../services/ParticipantSVC";
 import { getWorkshopDetails } from "../../services/EventsSVC";
 import { TrashIcon } from "@heroicons/react/24/outline";
+import saveAs from "file-saver";
+import { downloadAttendanceExcelByWorkshop } from "../../services/DownloadsSVC";
 
 const WorkshopAttendance = () => {
   //   const [workshop, setWorkshop] = useState();
@@ -55,11 +57,12 @@ const WorkshopAttendance = () => {
     // console.log(workshopId);
 
     setWorkshop(details);
+    handleWorkshopParticipantsListTable();
   };
 
   useEffect(() => {
     handleGetWorkshopDetails();
-    handleWorkshopParticipantsListTable();
+    
   }, []);
 
   const handleGetParticipantDetails = async (e: any) => {
@@ -112,9 +115,27 @@ const WorkshopAttendance = () => {
     handleWorkshopParticipantsListTable();
   };
 
-  const handleWorkshopParticipantsListTable = async () => {
-    console.log(workshop);
+  const handleAttendanceExcelDownload = async (e: any) => {
+    e.preventDefault();
     if (workshop) {
+      const excel_blob = await downloadAttendanceExcelByWorkshop(workshopId);
+      if (excel_blob != null) {
+        saveAs(excel_blob, `${workshop.name} Participants List.xlsx`);
+        showSnackbar("Downloading...", "info");
+      } else {
+        showSnackbar(
+          "Something went wrong. Couldn't download the file",
+          "error"
+        );
+      }
+    }
+  }
+
+  const handleWorkshopParticipantsListTable = async () => {
+    console.log("workshop");
+    
+    console.log(workshop);
+    if (workshopId) {
       console.log("inside");
       const participants = await getWorkshopParticipantsList(workshopId);
       if (participants == null || participants.length == 0) {
@@ -237,7 +258,7 @@ const WorkshopAttendance = () => {
             <h1 className="text-lg mt-4">List of present participants</h1>
             <button
               className="rounded-lg px-4 py-2 bg-primary-600 hover:bg-primary-700 hover:scale-95 text-white"
-              // onClick={handleAttendanceExcelDownload}
+              onClick={handleAttendanceExcelDownload}
             >
               Download
             </button>
@@ -256,6 +277,9 @@ const WorkshopAttendance = () => {
                 </th>
                 <th scope="col" className="px-6 py-3 w-full">
                   College
+                </th>
+                <th scope="col" className="px-6 py-3 w-full">
+                  Mobile No.
                 </th>
                 <th scope="col" className="px-6 py-3 w-full">
                   Delete
@@ -285,6 +309,12 @@ const WorkshopAttendance = () => {
                         className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-fit text-center"
                       >
                         {participant.cname}
+                      </td>
+                      <td
+                        scope="row"
+                        className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-fit text-center"
+                      >
+                        {participant.phone}
                       </td>
                       <td
                         scope="row"

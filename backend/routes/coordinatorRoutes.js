@@ -15,8 +15,5 @@ router.put("/updatePayment",coordinatorController.updatePayment)
 router.put("/deleteEventAttendance",coordinatorController.deleteAttendance)
 router.put("/deleteWorkshopAttendance",coordinatorController.deleteWorkshopAttendance)
 router.get("/daywise-payment",coordinatorController.getDayWisePaymentDetails)
-router.post("/approvewinners",coordinatorController.approveEventWinner)
-router.get("/getdomainwisewinners",pdf.getDomainWiseWinnersPdf)
-router.get("/getallwinners",pdf.getAllPdf)
-router.get("/getdomainwisewinnersdata",coordinatorController.getDomainWiseWinnersData)
+
 module.exports = router;

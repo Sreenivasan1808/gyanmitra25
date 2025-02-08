@@ -4,6 +4,7 @@ import { getAllEventListByDept } from "../../services/EventsSVC";
 import useAuth from "../../services/useAuth";
 import { getAllDepartmentList } from "../../services/ParticipantSVC";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { downloadAllEventWinnersDeptPdf } from "../../services/DownloadsSVC";
 
 const EventsList = ({ targetPath, heading }: any) => {
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ const EventsList = ({ targetPath, heading }: any) => {
   // First useEffect: Set department based on role
   useEffect(() => {
     const handleGetDepartmentList = async () => {
-      if (role === "super-admin") {
+      if (!dept) {
         const departments = await getAllDepartmentList();
         setDeptList(departments || []);
       } else {
@@ -68,9 +69,15 @@ const EventsList = ({ targetPath, heading }: any) => {
     filterEvents();
   }, [searchQuery, eventList]);
 
+  const handleAllWinnersDownload = async (e:any) => {
+    e.preventDefault();
+    const response = await downloadAllEventWinnersDeptPdf(department);
+    
+  }
+
   return (
     <div className="px-8 py-2">
-      {role === "super-admin" && (
+      {!dept && (
         <div className="flex flex-col justify-between mb-4 gap-2">
           <label htmlFor="dept">Department</label>
           <select
@@ -114,6 +121,13 @@ const EventsList = ({ targetPath, heading }: any) => {
 
       {/* Display filtered events */}
       <div className="flex justify-center flex-wrap gap-4 p-4">
+        {
+          filteredEvents.length > 0 && (
+            <div className="w-full flex justify-end">
+              <button className="px-4 py-2 bg-primary-500 text-white rounded-lg" onClick={handleAllWinnersDownload}>Download All Winners</button>
+            </div>
+          )
+        }
         {filteredEvents.length > 0 ? (
           filteredEvents.map((event: any) => (
             <div

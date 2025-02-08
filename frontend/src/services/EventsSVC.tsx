@@ -68,3 +68,16 @@ export const getAllEventListByDept = async (dept: string) => {
     return { message: "Server error", type: "error" };
   }
 };
+
+export const approveEventWinners =async (eventId:string) => {
+  try {
+    const response = await axios.post(`${SERVER_URL}/event/approvewinners`, {event_id: eventId});
+    if(response.status == 200){
+      return {message: "Approved successfully", type: "success"}
+    }
+  } catch (error) {
+    console.error(error);
+    return {message: "Internal server error", type: "error"}
+    
+  }
+} 

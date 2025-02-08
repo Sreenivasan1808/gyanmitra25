@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllWorkshopListByDept } from "../../services/EventsSVC";
-import { getAllDepartmentList, getAllDepartmentListWorkshop } from "../../services/ParticipantSVC";
+import { getAllDepartmentListWorkshop } from "../../services/ParticipantSVC";
 import useAuth from "../../services/useAuth";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
@@ -19,7 +19,7 @@ const WorkshopList = () => {
   };
 
   const handleGetDepartmentAndWorkshopsList = async () => {
-    if (role === "super-admin") {
+    if (!dept) {
       const departments = await getAllDepartmentListWorkshop();
       setDeptList(departments || []);
     } else {
@@ -51,7 +51,7 @@ const WorkshopList = () => {
 
   return (
     <div className="px-8 py-2">
-      {role === "super-admin" && (
+      {!dept && (
         <div className="flex flex-col justify-between mb-4 gap-2">
           <label htmlFor="dept">Department</label>
           <select

@@ -117,8 +117,12 @@ export const markWorkshopParticipantAttendance = async (
     } else {
       return { message: "Attendance not marked", type: "error" };
     }
-  } catch (error) {
-    return { message: "Something went wrong with the server", type: "error" };
+  } catch (error: any) {
+    if (error.response.status == 400) {
+      return { message: "Participant has not paid for workshops", type: "error" };
+    } else {
+      return { message: "Something went wrong with the server", type: "error" };
+    }
   }
 };
 

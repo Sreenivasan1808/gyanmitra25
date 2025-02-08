@@ -266,36 +266,26 @@ const ParticipantsTable = ({ participants, onApprove, onReject }: any) => {
 
   const data = participants;
 
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedParticipants(participants.map((p: any) => p.Email)); // Assuming email is unique
-    } else {
-      setSelectedParticipants([]);
-    }
-  };
+
 
   const handleRowSelect = (email: string, checked: boolean) => {
-    setSelectedParticipants((prev) =>
-      checked ? [...prev, email] : prev.filter((e) => e !== email)
-    );
+    setSelectedParticipants((prev) => (checked ? [email] : []));
   };
+  
 
-  const isAllSelected =
-    participants.length > 0 &&
-    selectedParticipants.length === participants.length;
 
   return (
     <div className="w-full">
       <table className="table-auto border-collapse border border-gray-200 w-full">
         <thead>
           <tr>
-            <th className="border border-gray-200 px-4 py-2">
+            {/* <th className="border border-gray-200 px-4 py-2">
               <input
                 type="checkbox"
                 checked={isAllSelected}
                 onChange={(e) => handleSelectAll(e.target.checked)}
               />
-            </th>
+            </th> */}
             {columns.map((col) => (
               <th
                 key={col.accessor}
@@ -313,7 +303,7 @@ const ParticipantsTable = ({ participants, onApprove, onReject }: any) => {
                 <input
                   type="checkbox"
                   checked={selectedParticipants.includes(row.Email)}
-                  onChange={(e) => handleRowSelect(row.Email, e.target.checked)}
+                  onChange={(e: any) => handleRowSelect(row.Email, e.target.checked)} // Remove the checked param
                 />
               </td>
               {columns.map((col) => (
@@ -379,52 +369,76 @@ const ParticipantsTable = ({ participants, onApprove, onReject }: any) => {
 
       {/* Approval Modal */}
       <Modal open={approveModalOpen} onClose={() => setApproveModalOpen(false)}>
-        <div className="text-center min-w-56">
-          <CheckIcon className="size-32 mx-auto text-green-500" />
-          <div className="mx-auto my-4 w-48">
-            <h3 className="text-lg font-black text-gray-800">
-              Confirm Approval
-            </h3>
-            <p className="text-sm text-gray-500">
-              Are you sure you want to approve these participants?
-            </p>
-          </div>
-          <div className="flex gap-4">
-            <button
-              className="px-4 py-2 bg-green-500 rounded-lg w-full hover:bg-green-600 text-white"
-              onClick={async () => {
-                await onApprove(selectedParticipants, 0);
-                setApproveModalOpen(false);
-              }}
-            >
-              Approve for Workshops alone
-            </button>
-            <button
-              className="px-4 py-2 bg-green-500 rounded-lg w-full hover:bg-green-600 text-white"
-              onClick={async () => {
-                await onApprove(selectedParticipants, 1);
-                setApproveModalOpen(false);
-              }}
-            >
-              Approve for Events alone
-            </button>
-            <button
-              className="px-4 py-2 bg-green-500 rounded-lg w-full hover:bg-green-600 text-white"
-              onClick={async () => {
-                await onApprove(selectedParticipants, 2);
-                setApproveModalOpen(false);
-              }}
-            >
-              Approve for both
-            </button>
-            <button
-              className="px-4 py-2 bg-accent-100 rounded-lg w-full"
-              onClick={() => setApproveModalOpen(false)}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
+        {
+          // Ensure we have a selected participant before displaying details
+          selectedParticipants.length > 0 &&
+            (() => {
+              const selectedParticipant = participants.find(
+                (p: any) => p.Email === selectedParticipants[0]
+              );
+
+              return (
+                <div className="text-center min-w-56">
+                  <CheckIcon className="size-32 mx-auto text-green-500" />
+                  <div className="mx-auto my-4 w-48">
+                    <h3 className="text-lg font-black text-gray-800">
+                      Confirm Approval
+                    </h3>
+                    <p className="text text-gray-500">
+                      Are you sure you want to approve this participant?
+                      <ul>
+                        <li>
+                          <strong>Name:</strong> {selectedParticipant?.Name}
+                        </li>
+                        <li>
+                          <strong>College:</strong>{" "}
+                          {selectedParticipant?.CollegeName}
+                        </li>
+                        <li>
+                          <strong>Email:</strong> {selectedParticipant?.Email}
+                        </li>
+                      </ul>
+                    </p>
+                  </div>
+                  <div className="flex gap-4">
+                    <button
+                      className="px-4 py-2 bg-green-500 rounded-lg w-full hover:bg-green-600 text-white"
+                      onClick={async () => {
+                        await onApprove(selectedParticipants, 0);
+                        setApproveModalOpen(false);
+                      }}
+                    >
+                      Approve for Workshops alone
+                    </button>
+                    <button
+                      className="px-4 py-2 bg-green-500 rounded-lg w-full hover:bg-green-600 text-white"
+                      onClick={async () => {
+                        await onApprove(selectedParticipants, 1);
+                        setApproveModalOpen(false);
+                      }}
+                    >
+                      Approve for Events alone
+                    </button>
+                    <button
+                      className="px-4 py-2 bg-green-500 rounded-lg w-full hover:bg-green-600 text-white"
+                      onClick={async () => {
+                        await onApprove(selectedParticipants, 2);
+                        setApproveModalOpen(false);
+                      }}
+                    >
+                      Approve for both
+                    </button>
+                    <button
+                      className="px-4 py-2 bg-accent-100 rounded-lg w-full"
+                      onClick={() => setApproveModalOpen(false)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              );
+            })()
+        }
       </Modal>
     </div>
   );
