@@ -304,7 +304,8 @@ const drawTable = (doc, columnHeaders, rowDataList, tableLeft, maxPageWidth) => 
 
 const getAllPdf = async (req, res) => {
     try {
-        const events = await eventModel.find({}).sort({ organizing_department: 1 });
+        
+        const events = await eventModel.find({}).sort({ organizing_department: 1 });;
         if (!events.length) return res.status(404).send("No events found for the given domain");
 
         const eventIds = events.map(event => event.eventid);
@@ -312,11 +313,11 @@ const getAllPdf = async (req, res) => {
         if (!winners.length) return res.status(404).send("No winners found for the events in the given domain");
 
         const doc = new PDFDocument({ margin: 50 });
-        const filePath = `./${domain_name}_winners.pdf`;
+        const filePath = `./all_winners.pdf`;
         const writeStream = fs.createWriteStream(filePath);
         doc.pipe(writeStream);
 
-        doc.fontSize(18).text(`Winners from ${domain_name}`, { align: "center" }).moveDown(2);
+        //doc.fontSize(18).text(`Winners from ${domain_name}`, { align: "center" }).moveDown(2);
 
         const maxPageWidth = doc.page.width - 100;
         const tableLeft = 50;
@@ -327,9 +328,9 @@ const getAllPdf = async (req, res) => {
 
             doc.moveDown(2);
 
-            const eventTitle = doc.widthOfString(event.name.toUpperCase()) > maxPageWidth 
-                ? event.name.toUpperCase().replace(/(.{25})/g, "$1\n") 
-                : event.name.toUpperCase();
+            const eventTitle = doc.widthOfString(event.name.toUpperCase() + " - " + event.organizing_department.toUpperCase()) > maxPageWidth 
+    ? (event.name.toUpperCase() + " - " + event.organizing_department.toUpperCase()).replace(/(.{25})/g, "$1\n") 
+    : event.name.toUpperCase() + " - " + event.organizing_department.toUpperCase();
 
             doc.x = tableLeft; // Ensures event name starts at left margin
             doc.fontSize(16).text(eventTitle, {
@@ -367,7 +368,7 @@ const getAllPdf = async (req, res) => {
                             const collegeName = user?.cname || "N/A";
                             const gmid = user?.user_id || "N/A";
 
-                            let rowData = [domain_name, winnerData.prize, winnerName, collegeName, gmid];
+                            let rowData = [event.organizing_department, winnerData.prize, winnerName, collegeName, gmid];
                             rowDataList.push(rowData);
                         }
                     }
@@ -396,7 +397,7 @@ const getAllPdf = async (req, res) => {
                             const collegeName = user?.cname || "N/A";
                             const gmid = user?.user_id || "N/A";
 
-                            let rowData = [domain_name, prizeType.prize, winnerName, collegeName, gmid];
+                            let rowData = [event.organizing_department, prizeType.prize, winnerName, collegeName, gmid];
                             rowDataList.push(rowData);
                         }
                     }
@@ -416,7 +417,7 @@ const getAllPdf = async (req, res) => {
         doc.end();
 
         writeStream.on("finish", () => {
-            res.download(filePath, `${domain_name}_winners.pdf`, (err) => {
+            res.download(filePath, `all_winners.pdf`, (err) => {
                 if (err) console.error("Error sending file:", err);
                 fs.unlinkSync(filePath);
             });
