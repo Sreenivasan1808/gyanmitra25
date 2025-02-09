@@ -169,24 +169,16 @@ const getDomainWiseWinnersPdf = async (req, res) => {
 
       doc.moveDown(2);
 
-      // Properly wrap event name if too long
-      const eventTitle =
-        doc.widthOfString(event.name.toUpperCase()) > maxPageWidth
-          ? event.name.toUpperCase().replace(/(.{25})/g, "$1\n")
-          : event.name.toUpperCase();
+            const eventTitle = doc.widthOfString(event.name.toUpperCase()) > maxPageWidth 
+                ? event.name.toUpperCase().replace(/(.{25})/g, "$1\n") 
+                : event.name.toUpperCase();
 
-      // Move cursor to the left for proper alignment of event name
-      doc.x = tableLeft;
-
-      // Display event name with proper wrapping, now aligned to the left
-      doc
-        .fontSize(16)
-        .text(eventTitle, {
-          align: "left",
-          underline: true,
-          width: maxPageWidth,
-        })
-        .moveDown(1);
+            doc.x = tableLeft; // Ensures event name starts at left margin
+            doc.fontSize(16).text(eventTitle, {
+                align: "left",
+                underline: true,
+                width: maxPageWidth
+            }).moveDown(1);
 
       doc
         .moveTo(tableLeft, doc.y)
@@ -194,25 +186,20 @@ const getDomainWiseWinnersPdf = async (req, res) => {
         .stroke()
         .moveDown(1);
 
-      let columnHeaders = ["Domain", "Prize", "Winner Name", "College"];
-      let rowDataList = [];
+            if (event.eventtype === "Individual") {
+                let columnHeaders = ["Domain", "Prize", "Winner Name", "College", "GMID"];
+                let rowDataList = [];
 
-      for (const winner of eventWinners) {
-        const firstPrizeWinners = await Promise.all(
-          winner.first_prize.map((userId) =>
-            userModel.findOne({ user_id: userId })
-          )
-        );
-        const secondPrizeWinners = await Promise.all(
-          winner.second_prize.map((userId) =>
-            userModel.findOne({ user_id: userId })
-          )
-        );
-        const thirdPrizeWinners = await Promise.all(
-          winner.third_prize.map((userId) =>
-            userModel.findOne({ user_id: userId })
-          )
-        );
+                for (const winner of eventWinners) {
+                    const firstPrizeWinners = await Promise.all(
+                        winner.first_prize.map(userId => userModel.findOne({ user_id: userId }))
+                    );
+                    const secondPrizeWinners = await Promise.all(
+                        winner.second_prize.map(userId => userModel.findOne({ user_id: userId }))
+                    );
+                    const thirdPrizeWinners = await Promise.all(
+                        winner.third_prize.map(userId => userModel.findOne({ user_id: userId }))
+                    );
 
         const winnersData = [
           {
@@ -231,94 +218,59 @@ const getDomainWiseWinnersPdf = async (req, res) => {
             team: winner.tname,
           },
         ];
+                    const winnersData = [
+                        { prize: "First Prize", users: firstPrizeWinners },
+                        { prize: "Second Prize", users: secondPrizeWinners },
+                        { prize: "Third Prize", users: thirdPrizeWinners },
+                    ];
 
-        for (const winnerData of winnersData) {
-          const winnerNames = winnerData.users
-            .map((u) => u?.name || "N/A")
-            .join(", ");
-          const collegeNames = winnerData.users
-            .map((u) => u?.cname || "N/A")
-            .join(", ");
+                    for (const winnerData of winnersData) {
+                        for (const user of winnerData.users) {
+                            const winnerName = user?.name || "N/A";
+                            const collegeName = user?.cname || "N/A";
+                            const gmid = user?.user_id || "N/A";
 
-          let rowData = [
-            domain_name,
-            winnerData.prize,
-            winnerNames,
-            collegeNames,
-          ];
+                            let rowData = [domain_name, winnerData.prize, winnerName, collegeName, gmid];
+                            rowDataList.push(rowData);
+                        }
+                    }
+                }
 
-          if (event.eventtype !== "Individual") {
-            if (!columnHeaders.includes("Team Name"))
-              columnHeaders.push("Team Name");
-            rowData.push(winnerData.team);
-          }
+                drawTable(doc, columnHeaders, rowDataList, tableLeft, maxPageWidth);
+                doc.x = tableLeft; // **Reset alignment to left after table**
+            } else {
+                const prizeTypes = [
+                    { prize: "First Prize", usersKey: "first_prize" },
+                    { prize: "Second Prize", usersKey: "second_prize" },
+                    { prize: "Third Prize", usersKey: "third_prize" },
+                ];
 
-          rowDataList.push(rowData);
-        }
-      }
+                for (const prizeType of prizeTypes) {
+                    let columnHeaders = ["Domain", "Prize", "Winner Name", "College", "GMID"];
+                    let rowDataList = [];
 
-      let columnWidths = columnHeaders.map((header, i) => {
-        let maxWidth = doc.widthOfString(header, { fontSize: 12 }) + 20;
-        rowDataList.forEach((row) => {
-          const cellWidth =
-            doc.widthOfString(row[i] || "N/A", { fontSize: 10 }) + 20;
-          if (cellWidth > maxWidth) maxWidth = cellWidth;
-        });
-        return maxWidth;
-      });
+                    for (const winner of eventWinners) {
+                        const prizeWinners = await Promise.all(
+                            winner[prizeType.usersKey].map(userId => userModel.findOne({ user_id: userId }))
+                        );
 
-      const totalTableWidth = columnWidths.reduce((sum, w) => sum + w, 0);
-      if (totalTableWidth > maxPageWidth) {
-        const scaleFactor = maxPageWidth / totalTableWidth;
-        columnWidths = columnWidths.map((w) => w * scaleFactor);
-      }
+                        for (const user of prizeWinners) {
+                            const winnerName = user?.name || "N/A";
+                            const collegeName = user?.cname || "N/A";
+                            const gmid = user?.user_id || "N/A";
 
-      let currentY = doc.y;
+                            let rowData = [domain_name, prizeType.prize, winnerName, collegeName, gmid];
+                            rowDataList.push(rowData);
+                        }
+                    }
 
-      const tableStartX = tableLeft;
-
-      // Draw Table Header
-      columnHeaders.forEach((column, i) => {
-        const x =
-          tableStartX + columnWidths.slice(0, i).reduce((a, b) => a + b, 0);
-        doc.rect(x, currentY, columnWidths[i], 30).stroke();
-        doc.fontSize(12).text(column, x + 5, currentY + 10, {
-          width: columnWidths[i] - 10,
-          align: "center",
-        });
-      });
-
-      currentY += 30;
-
-      // Draw Rows
-      for (const rowData of rowDataList) {
-        const rowHeight =
-          Math.max(
-            ...rowData.map((text, i) =>
-              doc.heightOfString(text, {
-                width: columnWidths[i] - 10,
-                fontSize: 10,
-              })
-            )
-          ) + 10;
-
-        rowData.forEach((text, i) => {
-          const x =
-            tableStartX + columnWidths.slice(0, i).reduce((a, b) => a + b, 0);
-          doc.rect(x, currentY, columnWidths[i], rowHeight).stroke();
-          doc.fontSize(10).text(text, x + 5, currentY + 5, {
-            width: columnWidths[i] - 10,
-            align: "left",
-          });
-        });
-
-        currentY += rowHeight;
-
-        if (currentY + rowHeight > doc.page.height - 50) {
-          doc.addPage();
-          currentY = doc.y;
-        }
-      }
+                    doc.moveDown(2);
+                    doc.x = tableLeft; // **Ensure prize title starts at left**
+                    doc.fontSize(14).text(`${prizeType.prize} Winners`, { align: "left" }).moveDown(1);
+                    drawTable(doc, columnHeaders, rowDataList, tableLeft, maxPageWidth);
+                    doc.x = tableLeft; // **Reset alignment to left after table**
+                }
+            }
 
       doc.moveDown(2);
     }
@@ -609,67 +561,171 @@ const getAllWinnersPdf = async (req, res) => {
         return maxWidth;
       });
 
-      const totalTableWidth = columnWidths.reduce((sum, w) => sum + w, 0);
-      if (totalTableWidth > maxPageWidth) {
+    const totalTableWidth = columnWidths.reduce((sum, w) => sum + w, 0);
+    if (totalTableWidth > maxPageWidth) {
         const scaleFactor = maxPageWidth / totalTableWidth;
-        columnWidths = columnWidths.map((w) => w * scaleFactor);
-      }
+        columnWidths = columnWidths.map(w => w * scaleFactor);
+    }
 
-      let currentY = doc.y;
-      const tableStartX = tableLeft;
+    let currentY = doc.y;
+    const tableStartX = tableLeft;
 
-      columnHeaders.forEach((column, i) => {
-        const x =
-          tableStartX + columnWidths.slice(0, i).reduce((a, b) => a + b, 0);
+    columnHeaders.forEach((column, i) => {
+        const x = tableStartX + columnWidths.slice(0, i).reduce((a, b) => a + b, 0);
         doc.rect(x, currentY, columnWidths[i], 30).stroke();
         doc.fontSize(12).text(column, x + 5, currentY + 10, {
-          width: columnWidths[i] - 10,
-          align: "center",
+            width: columnWidths[i] - 10,
+            align: "center"
         });
-      });
+    });
 
-      currentY += 30;
+    currentY += 30;
 
-      for (const rowData of rowDataList) {
-        const rowHeight =
-          Math.max(
-            ...rowData.map((text, i) =>
-              doc.heightOfString(text, {
-                width: columnWidths[i] - 10,
-                fontSize: 10,
-              })
-            )
-          ) + 10;
+    for (const rowData of rowDataList) {
+        const rowHeight = Math.max(...rowData.map((text, i) =>
+            doc.heightOfString(text, { width: columnWidths[i] - 10, fontSize: 10 })
+        )) + 10;
 
         rowData.forEach((text, i) => {
-          const x =
-            tableStartX + columnWidths.slice(0, i).reduce((a, b) => a + b, 0);
-          doc.rect(x, currentY, columnWidths[i], rowHeight).stroke();
-          doc.fontSize(10).text(text, x + 5, currentY + 5, {
-            width: columnWidths[i] - 10,
-            align: "left",
-          });
+            const x = tableStartX + columnWidths.slice(0, i).reduce((a, b) => a + b, 0);
+            doc.rect(x, currentY, columnWidths[i], rowHeight).stroke();
+            doc.fontSize(10).text(text, x + 5, currentY + 5, {
+                width: columnWidths[i] - 10,
+                align: "left"
+            });
         });
 
         currentY += rowHeight;
 
         if (currentY + rowHeight > doc.page.height - 50) {
-          doc.addPage();
-          currentY = doc.y;
-        }
-      }
-
-      doc.moveDown(2);
+            doc.addPage();
+            currentY = doc.y;
+        }   
     }
+    
+    doc.x = tableLeft; // **Ensure left alignment after table**
+};
+
+const getAllPdf = async (req, res) => {
+    try {
+        
+        const events = await eventModel.find({}).sort({ organizing_department: 1 });;
+        if (!events.length) return res.status(404).send("No events found for the given domain");
+
+        const eventIds = events.map(event => event.eventid);
+        const winners = await winnersModel.find({ event_id: { $in: eventIds } });
+        if (!winners.length) return res.status(404).send("No winners found for the events in the given domain");
+
+        const doc = new PDFDocument({ margin: 50 });
+        const filePath = `./all_winners.pdf`;
+        const writeStream = fs.createWriteStream(filePath);
+        doc.pipe(writeStream);
+
+        //doc.fontSize(18).text(`Winners from ${domain_name}`, { align: "center" }).moveDown(2);
+
+        const maxPageWidth = doc.page.width - 100;
+        const tableLeft = 50;
+
+        for (const event of events) {
+            const eventWinners = winners.filter(w => w.event_id === event.eventid);
+            if (!eventWinners.length) continue;
+
+            doc.moveDown(2);
+
+            const eventTitle = doc.widthOfString(event.name.toUpperCase() + " - " + event.organizing_department.toUpperCase()) > maxPageWidth 
+    ? (event.name.toUpperCase() + " - " + event.organizing_department.toUpperCase()).replace(/(.{25})/g, "$1\n") 
+    : event.name.toUpperCase() + " - " + event.organizing_department.toUpperCase();
+
+            doc.x = tableLeft; // Ensures event name starts at left margin
+            doc.fontSize(16).text(eventTitle, {
+                align: "left",
+                underline: true,
+                width: maxPageWidth
+            }).moveDown(1);
+
+            doc.moveTo(tableLeft, doc.y).lineTo(doc.page.width - tableLeft, doc.y).stroke().moveDown(1);
+
+            if (event.eventtype === "Individual") {
+                let columnHeaders = ["Domain", "Prize", "Winner Name", "College", "GMID"];
+                let rowDataList = [];
+
+                for (const winner of eventWinners) {
+                    const firstPrizeWinners = await Promise.all(
+                        winner.first_prize.map(userId => userModel.findOne({ user_id: userId }))
+                    );
+                    const secondPrizeWinners = await Promise.all(
+                        winner.second_prize.map(userId => userModel.findOne({ user_id: userId }))
+                    );
+                    const thirdPrizeWinners = await Promise.all(
+                        winner.third_prize.map(userId => userModel.findOne({ user_id: userId }))
+                    );
+
+                    const winnersData = [
+                        { prize: "First Prize", users: firstPrizeWinners },
+                        { prize: "Second Prize", users: secondPrizeWinners },
+                        { prize: "Third Prize", users: thirdPrizeWinners },
+                    ];
+
+                    for (const winnerData of winnersData) {
+                        for (const user of winnerData.users) {
+                            const winnerName = user?.name || "N/A";
+                            const collegeName = user?.cname || "N/A";
+                            const gmid = user?.user_id || "N/A";
+
+                            let rowData = [event.organizing_department, winnerData.prize, winnerName, collegeName, gmid];
+                            rowDataList.push(rowData);
+                        }
+                    }
+                }
+
+                drawTable(doc, columnHeaders, rowDataList, tableLeft, maxPageWidth);
+                doc.x = tableLeft; // **Reset alignment to left after table**
+            } else {
+                const prizeTypes = [
+                    { prize: "First Prize", usersKey: "first_prize" },
+                    { prize: "Second Prize", usersKey: "second_prize" },
+                    { prize: "Third Prize", usersKey: "third_prize" },
+                ];
+
+                for (const prizeType of prizeTypes) {
+                    let columnHeaders = ["Domain", "Prize", "Winner Name", "College", "GMID"];
+                    let rowDataList = [];
+
+                    for (const winner of eventWinners) {
+                        const prizeWinners = await Promise.all(
+                            winner[prizeType.usersKey].map(userId => userModel.findOne({ user_id: userId }))
+                        );
+
+                        for (const user of prizeWinners) {
+                            const winnerName = user?.name || "N/A";
+                            const collegeName = user?.cname || "N/A";
+                            const gmid = user?.user_id || "N/A";
+
+                            let rowData = [event.organizing_department, prizeType.prize, winnerName, collegeName, gmid];
+                            rowDataList.push(rowData);
+                        }
+                    }
+
+                    doc.moveDown(2);
+                    doc.x = tableLeft; // **Ensure prize title starts at left**
+                    doc.fontSize(14).text(`${prizeType.prize} Winners`, { align: "left" }).moveDown(1);
+                    drawTable(doc, columnHeaders, rowDataList, tableLeft, maxPageWidth);
+                    doc.x = tableLeft; // **Reset alignment to left after table**
+                }
+            }
+
+            doc.moveDown(2);
+            doc.x = tableLeft; // **Reset alignment to left after section**
+        }
 
     doc.end();
 
-    writeStream.on("finish", () => {
-      res.download(filePath, `all_events_winners.pdf`, (err) => {
-        if (err) console.error("Error sending file:", err);
-        fs.unlinkSync(filePath);
-      });
-    });
+        writeStream.on("finish", () => {
+            res.download(filePath, `all_winners.pdf`, (err) => {
+                if (err) console.error("Error sending file:", err);
+                fs.unlinkSync(filePath);
+            });
+        });
 
     writeStream.on("error", (err) => {
       console.error("Error writing file:", err);
