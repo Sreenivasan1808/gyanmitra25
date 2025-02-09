@@ -349,6 +349,8 @@ async function generatePdfFromHtml(htmlContent) {
   const page = await browser.newPage();
   await page.setContent(htmlContent, { waitUntil: "networkidle0" });
   const pdfBuffer = await page.pdf({ format: "A4" });
+  fs.writeFileSync("debug_output.pdf", pdfBuffer);
+
   await browser.close();
   return pdfBuffer;
 }
@@ -410,24 +412,16 @@ const domainWinnersPdf = async (req, res) => {
       tableHeaders += `</tr>`;
       htmlContent += `<table>${tableHeaders}`;
 
+      const fetchUsers = async (userIds) => {
+        return await Promise.all(userIds.map(async (userId) => userModel.findOne({ user_id: userId })));
+      };
+
       // Process winners for each prize level
       for (const winner of eventWinners) {
         // Get winners for each prize category
-        const firstPrizeWinners = await Promise.all(
-          winner.first_prize.map((userId) =>
-            userModel.findOne({ user_id: userId })
-          )
-        );
-        const secondPrizeWinners = await Promise.all(
-          winner.second_prize.map((userId) =>
-            userModel.findOne({ user_id: userId })
-          )
-        );
-        const thirdPrizeWinners = await Promise.all(
-          winner.third_prize.map((userId) =>
-            userModel.findOne({ user_id: userId })
-          )
-        );
+        const firstPrizeWinners =  await fetchUsers(winner.first_prize);
+        const secondPrizeWinners =  await fetchUsers(winner.second_prize);
+        const thirdPrizeWinners =  await fetchUsers(winner.third_prize);
 
         const winnersData = [
           {
@@ -472,7 +466,7 @@ const domainWinnersPdf = async (req, res) => {
             </body>
           </html>
         `;
-
+console.log(htmlContent);
     // Use Puppeteer to generate the PDF from the HTML content
     const pdfBuffer = await generatePdfFromHtml(htmlContent);
 
@@ -482,7 +476,7 @@ const domainWinnersPdf = async (req, res) => {
       "Content-Disposition",
       `attachment; filename="${domain_name}_winners.pdf"`
     );
-    res.send(pdfBuffer);
+    res.end(pdfBuffer);
   } catch (error) {
     console.error("Error generating PDF:", error);
     res.status(500).send("Internal Server Error");

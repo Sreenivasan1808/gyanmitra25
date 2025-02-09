@@ -41,3 +41,5 @@ const workshopRouter = require("./routes/workshopRoutes"); //same as userRouter
 app.use("/workshop", workshopRouter);
 const authRouter = require("./routes/authRoutes")
 app.use("/auth", authRouter);
+app.use("/event/getdomainwisewinners", express.raw({ type: "application/pdf" }));
+
