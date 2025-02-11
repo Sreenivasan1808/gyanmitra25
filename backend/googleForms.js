@@ -177,8 +177,8 @@ const approveParticipants = async (req, res) => {
       if (existingUser) {
         return res.status(400).send({ error: `User with email ${Email} already exists` });
       }
-      let epay= approvedFor == 1 || approvedFor == 2 ? "Paid" : "Not Paid"; 
-      let wpay= approvedFor == 0 || approvedFor == 2 ? "Paid" : "Not Paid"; 
+      let epay= approvedFor == 1 || approvedFor == 2 ? "Payed" : "Not Payed"; 
+      let wpay= approvedFor == 0 || approvedFor == 2 ? "Payed" : "Not Payed"; 
 
       // Create a new user object
       const newUser = new UserModel({
@@ -209,10 +209,10 @@ const approveParticipants = async (req, res) => {
         day="Day 2"
       }
       var amount=0
-      if(savedUser.eventPayed=="Paid"){
+      if(savedUser.eventPayed=="Payed"){
         amount+=250
       }
-      if(savedUser.workshopPayed=="Paid"){
+      if(savedUser.workshopPayed=="Payed"){
         amount+=400
       }
       if (verifyPaydetail==null){
