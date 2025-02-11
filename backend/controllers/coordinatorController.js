@@ -35,7 +35,7 @@ const updatePayment = async (req, res) => {
       }
     // Update payment status based on the 'update' value
     if (update === 1) {
-      participant.eventPayed = "Paid";
+      participant.eventPayed = "Payed";
       const verifyPaydetail = await PaymentDetailsModel.findOne({user_id:user_id,date:day})
       if (verifyPaydetail==null){
         const newPayDetail=new PaymentDetailsModel({
@@ -50,7 +50,7 @@ const updatePayment = async (req, res) => {
         const s=await verifyPaydetail.save()
       }
     } else if (update === 2) {
-      participant.workshopPayed = "Paid";
+      participant.workshopPayed = "Payed";
       const verifyPaydetail = await PaymentDetailsModel.findOne({user_id:user_id,date:day})
       if (verifyPaydetail==null){
         const newPayDetail=new PaymentDetailsModel({
@@ -65,8 +65,8 @@ const updatePayment = async (req, res) => {
         const s=await verifyPaydetail.save()
       }
     } else if (update === 3) {
-      participant.workshopPayed = "Paid";
-      participant.eventPayed = "Paid";
+      participant.workshopPayed = "Payed";
+      participant.eventPayed = "Payed";
       const verifyPaydetail = await PaymentDetailsModel.findOne({user_id:user_id,date:day})
       if (verifyPaydetail==null){
         const newPayDetail=new PaymentDetailsModel({
@@ -319,7 +319,8 @@ const getWinnersDetailsFromGmid = async (winners) => {
       gmid: participant.user_id,
       name: participant.name,
       college: participant.cname,
-      mobileNo:participant.phone
+      mobileNo:participant.phone,
+      ccity:participant.ccity
     });
   }
   let secondPrizeDetails = [];
@@ -331,7 +332,8 @@ const getWinnersDetailsFromGmid = async (winners) => {
       gmid: participant.user_id,
       name: participant.name,
       college: participant.cname,
-      mobileNo:participant.phone
+      mobileNo:participant.phone,
+      ccity:participant.ccity
     });
   }
   let thirdPrizeDetails = [];
@@ -343,7 +345,8 @@ const getWinnersDetailsFromGmid = async (winners) => {
       gmid: participant.user_id,
       name: participant.name,
       college: participant.cname,
-      mobileNo:participant.phone
+      mobileNo:participant.phone,
+      ccity:participant.ccity
     });
   }
 

@@ -107,7 +107,7 @@ const markAttendence = async (req, res) => {
     const dataVerify= await userModel.findOne({user_id:user_id})
     console.log(dataVerify)
     if (verification == null && dataVerify!=null ) {
-      if(dataVerify.eventPayed!="Paid"){
+      if(dataVerify.eventPayed!="Payed"){
         console.log("error")
         res.status(400).json({message:"participant not paid for event"})
         return
@@ -175,7 +175,7 @@ const markWorkshopAttendance = async (req, res) => {
     });
     const dataVerify= await userModel.findOne({user_id:user_id,})
     if (verification == null && dataVerify!=null) {
-      if(dataVerify.workshopPayed!="Paid"){
+      if(dataVerify.workshopPayed!="Payed"){
         res.status(400).json({message:"participant not paid for workshop"})
         return
       }
