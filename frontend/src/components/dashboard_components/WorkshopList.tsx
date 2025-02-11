@@ -12,7 +12,7 @@ const WorkshopList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [deptList, setDeptList] = useState<any[]>([]);
   const [department, setDepartment] = useState("");
-  const { dept, role } = useAuth();
+  const { dept } = useAuth();
 
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setDepartment(event.target.value);
