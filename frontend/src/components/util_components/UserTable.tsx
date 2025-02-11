@@ -9,6 +9,7 @@ const UserTable = ({ users }: any) => {
             <th className="border border-gray-300 p-2">Name</th>
             <th className="border border-gray-300 p-2">Participated Events</th>
             <th className="border border-gray-300 p-2">Participated Workshops</th>
+            <th className="border border-gray-300 p-2">Year and Department</th>
             <th className="border border-gray-300 p-2">Mobile No.</th>
           </tr>
         </thead>
@@ -39,6 +40,7 @@ const UserTable = ({ users }: any) => {
                   ))}
                 </ul>
               </td>
+              <td className="border border-gray-300 p-2">{userObj.user.ccity}</td>
               <td className="border border-gray-300 p-2">{userObj.user.phone}</td>
             </tr>
           ))}

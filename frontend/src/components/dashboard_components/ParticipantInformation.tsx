@@ -96,12 +96,12 @@ const ParticipantInformation = () => {
                 { label: "Gender", key: "gender" },
                 {
                   label: "College",
-                  key: "cname",
-                  extra: ", " + participant.ccity,
+                  key: "cname"
                 },
+                { label: "Department", key: "ccity" },
                 { label: "Email", key: "email" },
                 { label: "Phone", key: "phone" },
-              ].map(({ label, key, extra = "" }) => (
+              ].map(({ label, key}) => (
                 <tr
                   key={key}
                   className="table-row border-2 border-gray-300 text-center"
@@ -117,7 +117,7 @@ const ParticipantInformation = () => {
                         className="border-2 rounded-lg outline-none focus:ring-0 focus:border-accent-500 p-1"
                       />
                     ) : (
-                      participant[key] + extra
+                      participant[key] 
                     )}
                   </td>
                 </tr>

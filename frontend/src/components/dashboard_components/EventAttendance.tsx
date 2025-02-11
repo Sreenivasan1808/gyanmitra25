@@ -308,6 +308,9 @@ const EventAttendance = () => {
                     Full Name
                   </th>
                   <th scope="col" className="px-6 py-3 w-full">
+                    Department
+                  </th>
+                  <th scope="col" className="px-6 py-3 w-full">
                     College
                   </th>
                   <th scope="col" className="px-6 py-3 w-full">
@@ -335,6 +338,12 @@ const EventAttendance = () => {
                           className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-fit text-center"
                         >
                           {participant.name}
+                        </td>
+                        <td
+                          scope="row"
+                          className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-fit text-center"
+                        >
+                          {participant.ccity}
                         </td>
                         <td
                           scope="row"

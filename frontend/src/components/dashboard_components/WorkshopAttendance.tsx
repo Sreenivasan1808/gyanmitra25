@@ -276,6 +276,9 @@ const WorkshopAttendance = () => {
                   Full Name
                 </th>
                 <th scope="col" className="px-6 py-3 w-full">
+                  Year and Department
+                </th>
+                <th scope="col" className="px-6 py-3 w-full">
                   College
                 </th>
                 <th scope="col" className="px-6 py-3 w-full">
@@ -308,6 +311,12 @@ const WorkshopAttendance = () => {
                         scope="row"
                         className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-fit text-center"
                       >
+                        {participant.ccity}
+                      </td>
+                      <td
+                        scope="row"
+                        className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-fit text-center"
+                      >
                         {participant.cname}
                       </td>
                       <td
@@ -318,7 +327,7 @@ const WorkshopAttendance = () => {
                       </td>
                       <td
                         scope="row"
-                        className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-fit text-center"
+                        className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-full text-center flex justify-center"
                       >
                         <TrashIcon
                           className="size-6 text-red-500 hover:cursor-pointer hover:scale-95"
