@@ -459,7 +459,8 @@ const participantsCollegeWise = async (cname) => {
         user: {
           user_id: user.user_id,
           name: user.name,
-          phone: user.phone
+          phone: user.phone,
+          ccity: user.ccity
         },
         events: participatedEvents,
         workshops: participatedWorkshops

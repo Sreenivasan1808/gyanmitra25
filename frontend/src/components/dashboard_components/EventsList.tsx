@@ -122,7 +122,7 @@ const EventsList = ({ targetPath, heading }: any) => {
       {/* Display filtered events */}
       <div className="flex justify-center flex-wrap gap-4 p-4">
         {
-          filteredEvents.length > 0 && (
+          filteredEvents.length > 0 && heading == "Event Winners" && (
             <div className="w-full flex justify-end">
               <button className="px-4 py-2 bg-primary-500 text-white rounded-lg" onClick={handleAllWinnersDownload}>Download All Winners</button>
             </div>

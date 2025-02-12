@@ -132,7 +132,7 @@ const PaymentUpdate = () => {
                   scope="col"
                   className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-full text-center flex gap-2 justify-center items-center"
                 >
-                  {participant.eventPayed}
+                  {participant.eventPayed == "Payed" ? "Paid" : "Not Paid"}
                   {participant.eventPayed.toLowerCase() !== "paid" && participant.eventPayed.toLowerCase() !== "payed" ? (
                     <button
                       className="px-4 py-2 rounded-lg text-white bg-primary-400 hover:scale-95"
@@ -150,7 +150,7 @@ const PaymentUpdate = () => {
                   scope="col"
                   className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-full text-center "
                 >
-                  {participant.workshopPayed}
+                  {participant.workshopPayed == "Payed" ? "Paid" : "Not Paid"}
                   {participant.workshopPayed.toLowerCase() !== "paid" && participant.eventPayed.toLowerCase() !== "payed"? (
                     <button
                       className="px-4 py-2 rounded-lg text-white bg-primary-400 hover:scale-95 ml-2"

@@ -155,6 +155,8 @@ const EventWinners = () => {
 
         // Fetch winners after event details are set
         const eventWinners = await getWinnersList(eventId);
+        console.log("Event winners");
+        
         console.log(eventWinners);
 
         if (eventWinners) {
@@ -253,6 +255,8 @@ const EventWinners = () => {
     }
     let participantDetails = await getParticipantDetailsFromGMID(gmid);
 
+
+
     if (participantDetails == null || gmid.length == 0) {
       showSnackbar("Invalid GMID", "error");
       setFormData((prevFormData: any) => {
@@ -265,6 +269,7 @@ const EventWinners = () => {
           college: "",
         };
 
+        
         return {
           ...prevFormData,
 
@@ -283,6 +288,8 @@ const EventWinners = () => {
 
         name: participantDetails.name,
         college: participantDetails.cname,
+        ccity:participantDetails.ccity,
+        mobileNo:participantDetails.phone
       };
 
       return {

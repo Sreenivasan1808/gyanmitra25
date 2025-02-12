@@ -1,5 +1,7 @@
 
 const UserTable = ({ users }: any) => {
+  console.log(users);
+  
   return (
     <div className="p-4 md:p-8">
       <table className="min-w-full border-collapse border border-gray-300">

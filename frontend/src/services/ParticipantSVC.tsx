@@ -109,7 +109,9 @@ export const markWorkshopParticipantAttendance = async (
       `${SERVER_URL}/participant/markworkshopattendance`,
       { gmId: gmid, workshopId: workshopid, status: true }
     );
-    // console.log(response)
+    console.log("response");
+    
+    console.log(response)
     if (response.status == 200) {
       return { message: "Successfully marked as present", type: "success" };
     } else if (response.status == 204) {
@@ -118,6 +120,10 @@ export const markWorkshopParticipantAttendance = async (
       return { message: "Attendance not marked", type: "error" };
     }
   } catch (error: any) {
+    console.log("Error");
+    
+    console.error(error);
+    
     if (error.response.status == 400) {
       return { message: "Participant has not paid for workshops", type: "error" };
     } else {

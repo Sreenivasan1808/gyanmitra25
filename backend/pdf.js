@@ -569,11 +569,6 @@ const getAllPdf = async (req, res) => {
   }
 };
 
-module.exports = {
-  getCollegeWisePdf: getCollegeWisePdf,
-  getDomainWiseWinnersPdf: getDomainWiseWinnersPdf,
-  getAllPdf: getAllPdf,
-};
 
 const puppeteer = require("puppeteer");
 
@@ -716,4 +711,12 @@ const domainWinnersPdf = async (req, res) => {
     console.error("Error generating PDF:", error);
     res.status(500).send("Internal Server Error");
   }
+};
+
+
+
+module.exports = {
+  getCollegeWisePdf: getCollegeWisePdf,
+  getDomainWiseWinnersPdf: domainWinnersPdf,
+  getAllPdf: getAllPdf,
 };
