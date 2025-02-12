@@ -712,6 +712,154 @@ const domainWinnersPdf = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
+const updatecode=async (req, res) => {
+  try {
+    const { domain_name } = req.query;
+    if (!domain_name) {
+      return res.status(400).send("Domain name (domain_name) is required");
+    }
+
+    const events = await eventModel.find({
+      organizing_department: domain_name,
+    });
+    if (!events.length)
+      return res.status(404).send("No events found for the given domain");
+
+    const eventIds = events.map((event) => event.eventid);
+    const winners = await winnersModel.find({ event_id: { $in: eventIds } });
+    if (!winners.length)
+      return res
+        .status(404)
+        .send("No winners found for the events in the given domain");
+
+    let htmlContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>${domain_name} Winners List</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 20px; }
+            h1 { text-align: center; }
+            h2 { margin-top: 40px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+            th, td { border: 1px solid #333; padding: 8px; text-align: left; }
+            th { background-color: #eee; }
+          </style>
+        </head>
+        <body>
+          <h1>Winners from ${domain_name}</h1>
+    `;
+
+    for (const event of events) {
+      const eventWinners = winners.filter((w) => w.event_id === event.eventid);
+      if (!eventWinners.length) continue;
+
+      htmlContent += `<h2>${event.name.toUpperCase()}</h2>`;
+
+      const fetchUsers = async (userIds) => {
+        return await Promise.all(
+          userIds.map(async (userId) => userModel.findOne({ user_id: userId }))
+        );
+      };
+
+      for (const winner of eventWinners) {
+        const firstPrizeWinners = await fetchUsers(winner.first_prize);
+        const secondPrizeWinners = await fetchUsers(winner.second_prize);
+        const thirdPrizeWinners = await fetchUsers(winner.third_prize);
+
+        if (event.eventtype === "Individual") {
+          htmlContent += `<table>
+            <tr>
+              <th>Prize</th>
+              <th>Winner Name</th>
+              <th>College</th>
+              <th>GMID</th>
+            </tr>`;
+
+          const winnersData = [
+            { prize: "First Prize", users: firstPrizeWinners },
+            { prize: "Second Prize", users: secondPrizeWinners },
+            { prize: "Third Prize", users: thirdPrizeWinners },
+          ];
+
+          for (const prizeData of winnersData) {
+            const winnerNames = prizeData.users
+              .map((u) => (u && u.name ? u.name : "N/A"))
+              .join(", ");
+            const collegeNames = prizeData.users
+              .map((u) => (u && u.cname ? u.cname : "N/A"))
+              .join(", ");
+              const winnerId= prizeData.users
+              .map((u) => (u && u.user_id ? u.user_id : "N/A"))
+              .join(", ");
+            htmlContent += `<tr>
+              <td>${prizeData.prize}</td>
+              <td>${winnerNames}</td>
+              <td>${collegeNames}</td>
+              <td>${winnerId}</td>
+            </tr>`;
+          }
+          htmlContent += `</table>`;
+        } else {
+          // Separate tables for each prize level
+          const teamData = [
+            { prize: "First Prize", users: firstPrizeWinners, team: winner.fname },
+            { prize: "Second Prize", users: secondPrizeWinners, team: winner.sname },
+            { prize: "Third Prize", users: thirdPrizeWinners, team: winner.tname },
+          ];
+
+          for (const prizeData of teamData) {
+            htmlContent += `<h3>${prizeData.prize}</h3>
+            <table>
+              <tr>
+                <th>Winner Name</th>
+                <th>College</th>
+                <th>Team Name</th>
+                <th>GMID</th>
+              </tr>`;
+
+            const winnerNames = prizeData.users
+              .map((u) => (u && u.name ? u.name : "N/A"))
+              .join(", ");
+            const collegeNames = prizeData.users
+              .map((u) => (u && u.cname ? u.cname : "N/A"))
+              .join(", ");
+              const winnerId= prizeData.users
+              .map((u) => (u && u.user_id ? u.user_id : "N/A"))
+              .join(", ");
+            htmlContent += `<tr>
+              <td>${winnerNames}</td>
+              <td>${collegeNames}</td>
+              <td>${prizeData.team || "N/A"}</td>
+              <td>${winnerId}</td>
+            </tr>`;
+
+            htmlContent += `</table>`;
+          }
+        }
+      }
+    }
+
+    htmlContent += `
+        </body>
+      </html>
+    `;
+
+    console.log(htmlContent);
+    const pdfBuffer = await generatePdfFromHtml(htmlContent);
+
+    res.setHeader("Content-Type", "application/pdf");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${domain_name}_winners.pdf"`
+    );
+    res.end(pdfBuffer);
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+    res.status(500).send("Internal Server Error");
+  }
+};
 
 
 
