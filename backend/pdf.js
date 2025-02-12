@@ -569,7 +569,6 @@ const getAllPdf = async (req, res) => {
   }
 };
 
-
 const puppeteer = require("puppeteer");
 
 async function generatePdfFromHtml(htmlContent) {
@@ -712,7 +711,7 @@ const domainWinnersPdf = async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 };
-const updatecode=async (req, res) => {
+const updatecode = async (req, res) => {
   try {
     const { domain_name } = req.query;
     if (!domain_name) {
@@ -753,6 +752,7 @@ const updatecode=async (req, res) => {
 
     for (const event of events) {
       const eventWinners = winners.filter((w) => w.event_id === event.eventid);
+
       if (!eventWinners.length) continue;
 
       htmlContent += `<h2>${event.name.toUpperCase()}</h2>`;
@@ -784,29 +784,38 @@ const updatecode=async (req, res) => {
           ];
 
           for (const prizeData of winnersData) {
-            const winnerNames = prizeData.users
-              .map((u) => (u && u.name ? u.name : "N/A"))
-              .join(", ");
-            const collegeNames = prizeData.users
-              .map((u) => (u && u.cname ? u.cname : "N/A"))
-              .join(", ");
-              const winnerId= prizeData.users
-              .map((u) => (u && u.user_id ? u.user_id : "N/A"))
-              .join(", ");
-            htmlContent += `<tr>
-              <td>${prizeData.prize}</td>
-              <td>${winnerNames}</td>
-              <td>${collegeNames}</td>
-              <td>${winnerId}</td>
-            </tr>`;
+            for (const user of prizeData.users) {
+              htmlContent += `
+                <tr>
+                  <td> ${prizeData.prize}</td>
+                  <td>${user?.name || "N/A"}</td>
+                  <td>${user?.cname || "N/A"}</td>
+                  <td>${user?.user_id || "N/A"}</td>
+                </tr>`;
+            }
           }
+
           htmlContent += `</table>`;
         } else {
           // Separate tables for each prize level
           const teamData = [
-            { prize: "First Prize", users: firstPrizeWinners, team: winner.fname },
-            { prize: "Second Prize", users: secondPrizeWinners, team: winner.sname },
-            { prize: "Third Prize", users: thirdPrizeWinners, team: winner.tname },
+            {
+              prize: "First Prize",
+              users: firstPrizeWinners,
+              team: winner.fname,
+            },
+
+            {
+              prize: "Second Prize",
+              users: secondPrizeWinners,
+              team: winner.sname,
+            },
+
+            {
+              prize: "Third Prize",
+              users: thirdPrizeWinners,
+              team: winner.tname,
+            },
           ];
 
           for (const prizeData of teamData) {
@@ -819,21 +828,15 @@ const updatecode=async (req, res) => {
                 <th>GMID</th>
               </tr>`;
 
-            const winnerNames = prizeData.users
-              .map((u) => (u && u.name ? u.name : "N/A"))
-              .join(", ");
-            const collegeNames = prizeData.users
-              .map((u) => (u && u.cname ? u.cname : "N/A"))
-              .join(", ");
-              const winnerId= prizeData.users
-              .map((u) => (u && u.user_id ? u.user_id : "N/A"))
-              .join(", ");
-            htmlContent += `<tr>
-              <td>${winnerNames}</td>
-              <td>${collegeNames}</td>
-              <td>${prizeData.team || "N/A"}</td>
-              <td>${winnerId}</td>
-            </tr>`;
+            for (const user of prizeData.users) {
+              htmlContent += `
+                <tr>
+                  <td>${user?.name || "N/A"}</td>
+                  <td>${user?.cname || "N/A"}</td>
+                  <td>${prizeData.team || "N/A"}</td>
+                  <td>${user?.user_id || "N/A"}</td>
+                </tr>`;
+            }
 
             htmlContent += `</table>`;
           }
@@ -848,12 +851,12 @@ const updatecode=async (req, res) => {
 
     console.log(htmlContent);
     const pdfBuffer = await generatePdfFromHtml(htmlContent);
-
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader(
       "Content-Disposition",
       `attachment; filename="${domain_name}_winners.pdf"`
     );
+
     res.end(pdfBuffer);
   } catch (error) {
     console.error("Error generating PDF:", error);
@@ -861,10 +864,8 @@ const updatecode=async (req, res) => {
   }
 };
 
-
-
 module.exports = {
   getCollegeWisePdf: getCollegeWisePdf,
-  getDomainWiseWinnersPdf: domainWinnersPdf,
+  getDomainWiseWinnersPdf: updatecode,
   getAllPdf: getAllPdf,
 };
