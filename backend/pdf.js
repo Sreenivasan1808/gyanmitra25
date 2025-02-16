@@ -569,20 +569,40 @@ const getAllPdf = async (req, res) => {
   }
 };
 
-const puppeteer = require("puppeteer");
+// const puppeteer = require("puppeteer");
 
-async function generatePdfFromHtml(htmlContent) {
-  const browser = await puppeteer.launch({
-    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+// async function generatePdfFromHtml(htmlContent) {
+//   const browser = await puppeteer.launch({
+//     args: ['--no-sandbox', '--disable-setuid-sandbox'],
+//   });
+//   const page = await browser.newPage();
+//   await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+//   const pdfBuffer = await page.pdf({ format: "A4" });
+//   fs.writeFileSync("debug_output.pdf", pdfBuffer);
+
+//   await browser.close();
+//   return pdfBuffer;
+// }
+
+const wkhtmltopdf = require('wkhtmltopdf');
+const fs = require('fs');
+
+function generatePdfFromHtml(htmlContent, outputPath = 'output.pdf') {
+  return new Promise((resolve, reject) => {
+    let buffers = [];
+    // Create the PDF stream from the HTML
+    const stream = wkhtmltopdf(htmlContent, { pageSize: 'A4' });
+
+    stream.on('data', (data) => buffers.push(data));
+    stream.on('end', () => {
+      const pdfBuffer = Buffer.concat(buffers);
+      fs.writeFileSync(outputPath, pdfBuffer);
+      resolve(pdfBuffer);
+    });
+    stream.on('error', reject);
   });
-  const page = await browser.newPage();
-  await page.setContent(htmlContent, { waitUntil: "networkidle0" });
-  const pdfBuffer = await page.pdf({ format: "A4" });
-  fs.writeFileSync("debug_output.pdf", pdfBuffer);
-
-  await browser.close();
-  return pdfBuffer;
 }
+
 const domainWinnersPdf = async (req, res) => {
   try {
     const { domain_name } = req.query;
