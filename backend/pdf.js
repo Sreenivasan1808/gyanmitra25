@@ -585,7 +585,6 @@ const getAllPdf = async (req, res) => {
 // }
 
 const wkhtmltopdf = require('wkhtmltopdf');
-const fs = require('fs');
 
 function generatePdfFromHtml(htmlContent, outputPath = 'output.pdf') {
   return new Promise((resolve, reject) => {
