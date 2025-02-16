@@ -269,7 +269,7 @@ const ParticipantsTable = ({ participants, onApprove, onReject }: any) => {
 
 
   const handleRowSelect = (email: string, checked: boolean) => {
-    setSelectedParticipants((prev:any) => (checked ? [email] : []));
+    setSelectedParticipants((_prev:any) => (checked ? [email] : []));
   };
   
 

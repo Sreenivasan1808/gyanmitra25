@@ -83,7 +83,7 @@ export const downloadAllEventWinnersDeptPdf = async (domain_name: string) => {
     return { message: "Downloaded successfully", type: "success" };
   } catch (error) {
     console.error(error);
-    return { message: error, type: "error" };
+    return { message:"Internal server error", type: "error" };
   }
 };
 

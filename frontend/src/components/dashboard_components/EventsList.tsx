@@ -5,6 +5,7 @@ import useAuth from "../../services/useAuth";
 import { getAllDepartmentList } from "../../services/ParticipantSVC";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { downloadAllEventWinnersDeptPdf } from "../../services/DownloadsSVC";
+import Snackbar from "../util_components/Snackbar";
 
 const EventsList = ({ targetPath, heading }: any) => {
   const navigate = useNavigate();
@@ -14,6 +15,21 @@ const EventsList = ({ targetPath, heading }: any) => {
   const [deptList, setDeptList] = useState<any[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredEvents, setFilteredEvents] = useState<any[]>([]);
+
+  const [snackbar, setSnackbar] = useState({
+    isOpen: false,
+    message: "",
+    type: "info", // Default type
+  });
+
+
+  const showSnackbar = (message: string, type: string) => {
+    setSnackbar({ isOpen: true, message, type });
+  };
+
+  const closeSnackbar = () => {
+    setSnackbar((prev) => ({ ...prev, isOpen: false }));
+  };
 
   // Handle department selection
   const handleSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -72,6 +88,7 @@ const EventsList = ({ targetPath, heading }: any) => {
   const handleAllWinnersDownload = async (e:any) => {
     e.preventDefault();
     const response = await downloadAllEventWinnersDeptPdf(department);
+    showSnackbar(response.message, response.type);
     
   }
 
@@ -149,6 +166,12 @@ const EventsList = ({ targetPath, heading }: any) => {
           <p>No events found</p>
         )}
       </div>
+      <Snackbar
+        message={snackbar.message}
+        isOpen={snackbar.isOpen}
+        type={snackbar.type}
+        onClose={closeSnackbar}
+      />
     </div>
   );
 };
