@@ -15,5 +15,6 @@ router.get("/getregistrationdetails",gform.getDetails)
 router.post("/deleteregistrationdetails",gform.deleteRowByEmail)
 router.post("/approve",gform.approveParticipants),
 router.put("/updateParticipantData",userController.updateParticipantData)
+router.put("/resgistrationKit",userController.registrationKit)
 
 module.exports = router;
