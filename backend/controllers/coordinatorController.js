@@ -667,9 +667,29 @@ const getDomainWiseWinnersData = async (req, res) => {
       res.status(500).send("Internal Server Error");
   }
 };
+const deleteWinnerByEventId = async (req, res) => {
+  try {
+    const { event_id } = req.body; // Assuming event_id is provided as a route parameter
 
+    // Find and delete the document with the given event_id
+    const deletedWinner = await winnersModel.findOneAndDelete({ event_id:event_id });
+
+    if (!deletedWinner) {
+      return res.status(204).json({ message: `No winner found with event_id: ${event_id}` });
+    }
+
+    res.status(200).json({
+      message: "Winner deleted successfully",
+      data: deletedWinner,
+    });
+  } catch (error) {
+    console.error("Deletion Error:", error);
+    res.status(500).json({ message: "Error deleting winner", error: error.message });
+  }
+};
 module.exports = {
   editWinners:editWinners,
+  deleteWinnerByEventId:deleteWinnerByEventId,
   uploadWinners: uploadWinners,
   getWinners: getWinners,
   getParticipantsCollegeWise: triggerCollegeWiseParticipant,
