@@ -15,5 +15,5 @@ router.put("/updatePayment",coordinatorController.updatePayment)
 router.put("/deleteEventAttendance",coordinatorController.deleteAttendance)
 router.put("/deleteWorkshopAttendance",coordinatorController.deleteWorkshopAttendance)
 router.get("/daywise-payment",coordinatorController.getDayWisePaymentDetails)
-
+router.delete("/deleteWinner",coordinatorController.deleteWinnerByEventId)
 module.exports = router;
