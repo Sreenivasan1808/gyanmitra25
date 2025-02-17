@@ -1,6 +1,7 @@
 const userModel = require("../models/user");
 const attendenceModel = require("../models/attendence");
 const workshopAttendenceModel = require("../models/workshopattendence");
+const registrationKitModel=require("../models/registrationKit")
 const updateParticipantData = async (req, res) => {
   try {
     const { user_id, email, name, gender, phone, collegeName, collegeCity } = req.body;
@@ -37,6 +38,32 @@ const updateParticipantData = async (req, res) => {
     res.status(500).send({ error: "Error updating participant" });
   }
 };
+const registrationKit = async (req, res) => {
+  try {
+    const { user_id, kitReceieved } = req.body;
+    console.log("hi",kitReceieved)
+    // Check if a registration kit document for the given user_id already exists
+    const verify = await registrationKitModel.findOne({ user_id });
+    let kit;
+
+    if (verify) {
+      // Update the existing document with the new kitRecieved value
+      verify.kitReceieved = kitReceieved;
+      kit = await verify.save();
+    } else {
+      // Create a new registration kit document
+      kit = new registrationKitModel({ user_id:user_id, kitReceieved:kitReceieved });
+      await kit.save();
+    }
+
+    res.status(201).json({
+      message: verify ? `Registration kit status updated to ${kitReceieved} successfully` : "Registration kit inserted successfully",
+    });
+  } catch (error) {
+    console.error("Insert/Update Error:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
 
 const getDetails = async (req, res) => {
   try {
@@ -46,7 +73,14 @@ const getDetails = async (req, res) => {
     const data = await userModel.findOne({ user_id: user_id });
     if (data) {
       console.log("sent");
-      res.status(200).json(data);
+      const data1=await registrationKitModel.findOne({user_id:user_id})
+      if(data1){
+        res.status(200).json({...data.toObject(),"kitstatus":true });
+      }
+      else{
+        res.status(200).json({...data.toObject(),"kitstatus":false });
+      }
+      
     } else {
       console.log("not found");
       res.status(204).json({ message: "No such User Found" });
@@ -208,5 +242,6 @@ module.exports = {
   getAttendanceDetails: getAttendanceDetails,
   markWorkshopAttendance: markWorkshopAttendance,
   getAllWorkshopParticipants:getAllWorkshopParticipants,
-  updateParticipantData:updateParticipantData
+  updateParticipantData:updateParticipantData,
+  registrationKit:registrationKit
 };
