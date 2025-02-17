@@ -12,6 +12,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { approveEventWinners, getEventDetails } from "../../services/EventsSVC";
 import useAuth from "../../services/useAuth";
 import Modal from "../util_components/Modal";
+import { XMarkIcon } from "@heroicons/react/24/solid";
 
 const EventWinners = () => {
   const { "event-id": eventId } = useParams();
@@ -27,6 +28,7 @@ const EventWinners = () => {
   const [event, setEvent] = useState<any>();
   const [modalOpen, setModalOpen] = useState(false);
   const [approvalModalOpen, setApprovalModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [snackbar, setSnackbar] = useState({
     isOpen: false,
     message: "",
@@ -370,6 +372,7 @@ const EventWinners = () => {
       });
       setIsUpdate(false);
       setEditable(true);
+      setDeleteModalOpen(false);
     } catch (error) {
       console.error("Error deleting winners:", error);
       showSnackbar("Error deleting winners", "error");
@@ -830,7 +833,7 @@ const EventWinners = () => {
                 <div className="w-full flex justify-end gap-2 mt-4">
                   <button
                     className="rounded-lg px-2 py-1 bg-red-600 text-white md:px-4 md:py-2 hover:scale-95"
-                    onClick={handleDeleteWinners}
+                    onClick={(e:any) => {e.preventDefault();  setDeleteModalOpen(true)}}
                   >
                     Delete
                   </button>
@@ -938,6 +941,38 @@ const EventWinners = () => {
               onClick={handleWinnersApproval}
             >
               Approve
+            </button>
+            <button
+              className="px-4 py-2 bg-accent-100 rounded-lg w-full"
+              onClick={() => setApprovalModalOpen(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </Modal>
+      <Modal
+        open={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+      >
+        <div className="text-center w-56">
+          <XMarkIcon className="size-32 mx-auto text-red-500" />
+          <div className="mx-auto my-4 w-48">
+            <h3 className="text-lg font-black text-gray-800">
+              Confirm Deletion
+            </h3>
+            <p className="text-sm text-text-500">
+              Are you sure you want to delete winners for{" "}
+              <span className="font-bold text-text-700">{event?.name}</span>{" "}
+              event?
+            </p>
+          </div>
+          <div className="flex gap-4">
+            <button
+              className="px-4 py-2 bg-red-600 rounded-lg w-full text-white"
+              onClick={handleDeleteWinners}
+            >
+              Delete
             </button>
             <button
               className="px-4 py-2 bg-accent-100 rounded-lg w-full"
