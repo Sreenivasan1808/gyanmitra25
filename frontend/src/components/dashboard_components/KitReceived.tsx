@@ -3,11 +3,14 @@ import { getParticipantDetailsFromGMID } from "../../services/ParticipantSVC";
 import Snackbar from "../util_components/Snackbar";
 import useAuth from "../../services/useAuth";
 import { updateKitStatus } from "../../services/RegistrationSVC";
+import { CheckIcon } from "@heroicons/react/24/solid";
+import Modal from "../util_components/Modal";
 
 const KitReceived = () => {
   const [gmid, setGmid] = useState("");
   const [participant, setParticipant] = useState<any>(null);
   const { role } = useAuth();
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleGetParticipantDetails = async (e: any) => {
     e.preventDefault();
@@ -39,8 +42,17 @@ const KitReceived = () => {
 
   const handleKitUpdation = async (e: any) => {
     e.preventDefault();
-    const status = await updateKitStatus(gmid, !participant.kitstatus);
+    const status = await updateKitStatus(gmid, !participant.kitReceived);
     showSnackbar(status?.message, status?.type);
+    const details = await getParticipantDetailsFromGMID(gmid);
+    console.log(details);
+
+    if (!details) {
+      showSnackbar("Invalid GMID", "error");
+      return;
+    }
+    setParticipant(details);
+    setModalOpen(false)
   };
 
   return (
@@ -82,11 +94,10 @@ const KitReceived = () => {
                   label: "College",
                   key: "cname",
                 },
-                { label: "Department", key: "ccity" },
+                { label: "Year and Department", key: "ccity" },
                 { label: "Email", key: "email" },
                 { label: "Phone", key: "phone" },
                 { label: "Payment status for Events", key: "eventPayed" },
-                { label: "Has received kit", key: "kitstatus" },
               ].map(({ label, key }) => (
                 <tr
                   key={key}
@@ -96,16 +107,22 @@ const KitReceived = () => {
                   <td>{participant[key]}</td>
                 </tr>
               ))}
+                <tr
+                  className="table-row border-2 border-gray-300 text-center"
+                >
+                  <td className="font-semibold">Has received kit</td>
+                  <td>{participant.kitReceived ? "Received" : "Not Received"}</td>
+                </tr>
             </tbody>
           </table>
           <div className="flex gap-2">
             {(role === "super-admin" ||
               role === "registration-coordinator") && (
               <button
-                className={`mt-4 rounded-lg px-4 py-2 text-white  hover:scale-95 flex items-center gap-2 ${participant.kitstatus ? "bg-red-600 hover:bg-red-700" : "bg-primary-600 hover:bg-primary-700"}`}
-                onClick={handleKitUpdation}
+                className={`mt-4 rounded-lg px-4 py-2 text-white  hover:scale-95 flex items-center gap-2 ${participant.kitReceived ? "bg-red-600 hover:bg-red-700" : "bg-primary-600 hover:bg-primary-700"}`}
+                onClick={() => setModalOpen(true)}
               >
-                {participant.kitstatus ? "Changed to not received" : "Change to received" }
+                {participant.kitReceived ? "Changed to not received" : "Change to received" }
               </button>
             )}
           </div>
@@ -117,6 +134,27 @@ const KitReceived = () => {
         type={snackbar.type}
         onClose={closeSnackbar}
       />
+
+<Modal open={modalOpen} onClose={() => setModalOpen(false)}>
+        <div className="text-center w-56">
+          <CheckIcon className="size-32 mx-auto text-green-500" />
+          <div className="mx-auto my-4 w-48">
+            <h3 className="text-lg font-black text-gray-800">Confirm Action</h3>
+            <p className="text-sm text-gray-500">
+              Are you sure you want to change the receival status?
+            </p>
+          </div>
+          <div className="flex gap-4">
+            <button className="px-4 py-2 bg-green-600 rounded-lg w-full text-white" onClick={handleKitUpdation}>Confirm</button>
+            <button
+              className="px-4 py-2 bg-accent-100 rounded-lg w-full"
+              onClick={() => setModalOpen(false)}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 };

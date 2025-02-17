@@ -65,3 +65,20 @@ export const getWinnersList = async (eventId: String) => {
     return null;
   }
 };
+
+export const deleteWinners = async (eventId: string) => {
+  try {
+    const response = await axios.delete(`${SERVER_URL}/coordinator/deleteWinner`, { 
+      data: { event_id: eventId } 
+    });
+    if(response.status === 200){
+      return { message: "Deleted successfully", type: "success" };
+    }
+    else{
+      return { message: "No such event", type: "warning" };
+    }
+  } catch (error) {
+    console.error(error);
+    return { message: "Internal Server error", type: "error" };
+  }
+}

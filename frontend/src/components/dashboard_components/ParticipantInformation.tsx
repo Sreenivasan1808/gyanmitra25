@@ -98,7 +98,7 @@ const ParticipantInformation = () => {
                   label: "College",
                   key: "cname"
                 },
-                { label: "Department", key: "ccity" },
+                { label: "Year and Department", key: "ccity" },
                 { label: "Email", key: "email" },
                 { label: "Phone", key: "phone" },
               ].map(({ label, key}) => (

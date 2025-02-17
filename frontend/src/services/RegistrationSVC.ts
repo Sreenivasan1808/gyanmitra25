@@ -81,9 +81,9 @@ export const getDayWisePaymentDetails = async (day: string) => {
 
 export const updateKitStatus = async (gmid: string, status: boolean) => {
   try {
-    const response = await axios.put(`${SERVER_URL}/participant/registrationKit`, {gmid: gmid, kitReceived: status});
-    if(response.status == 200){
-      return {message: response.data, type: "success"};
+    const response = await axios.put(`${SERVER_URL}/participant/registrationKit`, {user_id: gmid, kitReceived: status});
+    if(response.status == 201){
+      return {message: response.data.message, type: "success"};
     }
   } catch (error) {
     console.error(error);

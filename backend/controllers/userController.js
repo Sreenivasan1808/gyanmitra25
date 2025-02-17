@@ -40,24 +40,24 @@ const updateParticipantData = async (req, res) => {
 };
 const registrationKit = async (req, res) => {
   try {
-    const { user_id, kitReceieved } = req.body;
-    console.log("hi",kitReceieved)
+    const { user_id, kitReceived } = req.body;
+    console.log("hi",kitReceived)
     // Check if a registration kit document for the given user_id already exists
     const verify = await registrationKitModel.findOne({ user_id });
     let kit;
 
     if (verify) {
       // Update the existing document with the new kitRecieved value
-      verify.kitReceieved = kitReceieved;
+      verify.kitReceived = kitReceived;
       kit = await verify.save();
     } else {
       // Create a new registration kit document
-      kit = new registrationKitModel({ user_id:user_id, kitReceieved:kitReceieved });
+      kit = new registrationKitModel({ user_id:user_id, kitReceived:kitReceived });
       await kit.save();
     }
 
     res.status(201).json({
-      message: verify ? `Registration kit status updated to ${kitReceieved} successfully` : "Registration kit inserted successfully",
+      message: verify ? `Registration kit status updated to ${kitReceived ? "Received" :"Not Received"} ` : "Registration kit received successfully",
     });
   } catch (error) {
     console.error("Insert/Update Error:", error);
@@ -75,10 +75,10 @@ const getDetails = async (req, res) => {
       console.log("sent");
       const data1=await registrationKitModel.findOne({user_id:user_id})
       if(data1){
-        res.status(200).json({...data.toObject(),"kitstatus":true });
+        res.status(200).json({...data.toObject(),"kitReceived":data1.kitReceived });
       }
       else{
-        res.status(200).json({...data.toObject(),"kitstatus":false });
+        res.status(200).json({...data.toObject(),"kitReceived":false });
       }
       
     } else {

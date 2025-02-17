@@ -6,6 +6,7 @@ import {
   editWinners,
   getWinnersList,
   uploadWinners,
+  deleteWinners,
 } from "../../services/WinnersSVC";
 import { useNavigate, useParams } from "react-router-dom";
 import { approveEventWinners, getEventDetails } from "../../services/EventsSVC";
@@ -156,7 +157,6 @@ const EventWinners = () => {
         // Fetch winners after event details are set
         const eventWinners = await getWinnersList(eventId);
         console.log("Event winners");
-        
         console.log(eventWinners);
 
         if (eventWinners) {
@@ -222,6 +222,7 @@ const EventWinners = () => {
       firstPrizeTeamName: "",
       secondPrizeTeamName: "",
       thirdPrizeTeamName: "",
+      approved: false,
     });
   };
 
@@ -234,7 +235,6 @@ const EventWinners = () => {
       const updatedPrizes = [...prevFormData[prizeCategory]];
       updatedPrizes[index] = {
         ...updatedPrizes[index],
-
         gmid: newGmid,
       };
 
@@ -255,8 +255,6 @@ const EventWinners = () => {
     }
     let participantDetails = await getParticipantDetailsFromGMID(gmid);
 
-
-
     if (participantDetails == null || gmid.length == 0) {
       showSnackbar("Invalid GMID", "error");
       setFormData((prevFormData: any) => {
@@ -264,15 +262,12 @@ const EventWinners = () => {
 
         updatedPrizes[index] = {
           ...updatedPrizes[index],
-
           name: "",
           college: "",
         };
 
-        
         return {
           ...prevFormData,
-
           [prizeCategory]: updatedPrizes,
         };
       });
@@ -285,16 +280,14 @@ const EventWinners = () => {
 
       updatedPrizes[index] = {
         ...updatedPrizes[index],
-
         name: participantDetails.name,
         college: participantDetails.cname,
-        ccity:participantDetails.ccity,
-        mobileNo:participantDetails.phone
+        ccity: participantDetails.ccity,
+        mobileNo: participantDetails.phone,
       };
 
       return {
         ...prevFormData,
-
         [prizeCategory]: updatedPrizes,
       };
     });
@@ -340,6 +333,47 @@ const EventWinners = () => {
     };
 
     fetchData();
+  };
+
+  const handleDeleteWinners = async (e: any) => {
+    e.preventDefault();
+    try {
+      const response = await deleteWinners(event?.eventid);
+      showSnackbar(response?.message, response?.type);
+      // Reset form data to default state after deletion
+      setFormData({
+        firstPrize: [
+          {
+            gmid: "",
+            college: "",
+            name: "",
+          },
+        ],
+        secondPrize: [
+          {
+            gmid: "",
+            college: "",
+            name: "",
+          },
+        ],
+        thirdPrize: [
+          {
+            gmid: "",
+            college: "",
+            name: "",
+          },
+        ],
+        firstPrizeTeamName: "",
+        secondPrizeTeamName: "",
+        thirdPrizeTeamName: "",
+        approved: false,
+      });
+      setIsUpdate(false);
+      setEditable(true);
+    } catch (error) {
+      console.error("Error deleting winners:", error);
+      showSnackbar("Error deleting winners", "error");
+    }
   };
 
   return (
@@ -792,42 +826,53 @@ const EventWinners = () => {
                 </table>
               </>
               {/* Action Buttons */}
-              {editable && (
+              {formData.approved ? (
                 <div className="w-full flex justify-end gap-2 mt-4">
                   <button
-                    className="rounded-lg px-2 py-1 border-2 border-accent-200 md:px-4 md:py-2 hover:scale-95"
-                    onClick={handleClearButton}
-                    disabled={!editable || formData.approved}
+                    className="rounded-lg px-2 py-1 bg-red-600 text-white md:px-4 md:py-2 hover:scale-95"
+                    onClick={handleDeleteWinners}
                   >
-                    Clear
+                    Delete
                   </button>
-                  <button
-                    className="rounded-lg px-2 py-1 bg-green-600 text-white md:px-4 md:py-2 hover:scale-95"
-                    type="submit"
-                    onClick={(e: any) => {
-                      e.preventDefault();
-                      setModalOpen(true);
-                    }}
-                    disabled={!editable || formData.approved}
-                  >
-                    Save
-                  </button>
-                  {/* Only render the Approve Winners button if winners are not approved */}
-                  {(role === "domain-coordinator" || role === "super-admin") &&
-                    formData.firstPrize[0]?.gmid &&
-                    isUpdate &&
-                    !formData.approved && (
-                      <button
-                        className="rounded-lg px-2 py-1 bg-primary-600 text-white md:px-4 md:py-2 hover:scale-95"
-                        onClick={(e: any) => {
-                          e.preventDefault();
-                          setApprovalModalOpen(true);
-                        }}
-                      >
-                        Approve Winners
-                      </button>
-                    )}
                 </div>
+              ) : (
+                editable && (
+                  <div className="w-full flex justify-end gap-2 mt-4">
+                    <button
+                      className="rounded-lg px-2 py-1 border-2 border-accent-200 md:px-4 md:py-2 hover:scale-95"
+                      onClick={handleClearButton}
+                      disabled={!editable || formData.approved}
+                    >
+                      Clear
+                    </button>
+                    <button
+                      className="rounded-lg px-2 py-1 bg-green-600 text-white md:px-4 md:py-2 hover:scale-95"
+                      type="submit"
+                      onClick={(e: any) => {
+                        e.preventDefault();
+                        setModalOpen(true);
+                      }}
+                      disabled={!editable || formData.approved}
+                    >
+                      Save
+                    </button>
+                    {(role === "domain-coordinator" ||
+                      role === "super-admin") &&
+                      formData.firstPrize[0]?.gmid &&
+                      isUpdate &&
+                      !formData.approved && (
+                        <button
+                          className="rounded-lg px-2 py-1 bg-primary-600 text-white md:px-4 md:py-2 hover:scale-95"
+                          onClick={(e: any) => {
+                            e.preventDefault();
+                            setApprovalModalOpen(true);
+                          }}
+                        >
+                          Approve Winners
+                        </button>
+                      )}
+                  </div>
+                )
               )}
             </form>
           </div>
@@ -853,7 +898,6 @@ const EventWinners = () => {
               <span className="font-bold text-text-700">{event?.name}</span>{" "}
               event?
             </p>
-            <p>You cannot change once submitted</p>
           </div>
           <div className="flex gap-4">
             <button
@@ -886,6 +930,7 @@ const EventWinners = () => {
               <span className="font-bold text-text-700">{event?.name}</span>{" "}
               event?
             </p>
+            <p>You cannot change once submitted</p>
           </div>
           <div className="flex gap-4">
             <button
