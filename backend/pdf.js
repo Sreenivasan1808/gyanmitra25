@@ -569,38 +569,38 @@ const getAllPdf = async (req, res) => {
   }
 };
 
-// const puppeteer = require("puppeteer");
+const puppeteer = require("puppeteer");
 
-// async function generatePdfFromHtml(htmlContent) {
-//   const browser = await puppeteer.launch({
-//     args: ['--no-sandbox', '--disable-setuid-sandbox'],
-//   });
-//   const page = await browser.newPage();
-//   await page.setContent(htmlContent, { waitUntil: "networkidle0" });
-//   const pdfBuffer = await page.pdf({ format: "A4" });
-//   fs.writeFileSync("debug_output.pdf", pdfBuffer);
-
-//   await browser.close();
-//   return pdfBuffer;
-// }
-
-const wkhtmltopdf = require('wkhtmltopdf');
-
-function generatePdfFromHtml(htmlContent, outputPath = 'output.pdf') {
-  return new Promise((resolve, reject) => {
-    let buffers = [];
-    // Create the PDF stream from the HTML
-    const stream = wkhtmltopdf(htmlContent, { pageSize: 'A4' });
-
-    stream.on('data', (data) => buffers.push(data));
-    stream.on('end', () => {
-      const pdfBuffer = Buffer.concat(buffers);
-      fs.writeFileSync(outputPath, pdfBuffer);
-      resolve(pdfBuffer);
-    });
-    stream.on('error', reject);
+async function generatePdfFromHtml(htmlContent) {
+  const browser = await puppeteer.launch({
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
   });
+  const page = await browser.newPage();
+  await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+  const pdfBuffer = await page.pdf({ format: "A4" });
+  fs.writeFileSync("debug_output.pdf", pdfBuffer);
+
+  await browser.close();
+  return pdfBuffer;
 }
+
+// const wkhtmltopdf = require('wkhtmltopdf');
+
+// function generatePdfFromHtml(htmlContent, outputPath = 'output.pdf') {
+//   return new Promise((resolve, reject) => {
+//     let buffers = [];
+//     // Create the PDF stream from the HTML
+//     const stream = wkhtmltopdf(htmlContent, { pageSize: 'A4' });
+
+//     stream.on('data', (data) => buffers.push(data));
+//     stream.on('end', () => {
+//       const pdfBuffer = Buffer.concat(buffers);
+//       fs.writeFileSync(outputPath, pdfBuffer);
+//       resolve(pdfBuffer);
+//     });
+//     stream.on('error', reject);
+//   });
+// }
 
 const domainWinnersPdf = async (req, res) => {
   try {
@@ -787,7 +787,7 @@ const updatecode = async (req, res) => {
       for (const winner of eventWinners) {
         const firstPrizeWinners = await fetchUsers(winner.first_prize);
         const secondPrizeWinners = await fetchUsers(winner.second_prize);
-        const thirdPrizeWinners = await fetchUsers(winner.third_prize);
+        // const thirdPrizeWinners = await fetchUsers(winner.third_prize);
 
         if (event.eventtype === "Individual") {
           htmlContent += `<table>
@@ -801,7 +801,7 @@ const updatecode = async (req, res) => {
           const winnersData = [
             { prize: "First Prize", users: firstPrizeWinners },
             { prize: "Second Prize", users: secondPrizeWinners },
-            { prize: "Third Prize", users: thirdPrizeWinners },
+            // { prize: "Third Prize", users: thirdPrizeWinners },
           ];
 
           for (const prizeData of winnersData) {
@@ -832,11 +832,11 @@ const updatecode = async (req, res) => {
               team: winner.sname,
             },
 
-            {
-              prize: "Third Prize",
-              users: thirdPrizeWinners,
-              team: winner.tname,
-            },
+            // {
+            //   prize: "Third Prize",
+            //   users: thirdPrizeWinners,
+            //   team: winner.tname,
+            // },
           ];
 
           for (const prizeData of teamData) {
