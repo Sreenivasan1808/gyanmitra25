@@ -103,15 +103,15 @@ const PaymentUpdate = () => {
                 <th scope="col" className="px-6 py-3">
                   GMID
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="px-6 py-3 w-full">
                   Full Name
                 </th>
                 <th scope="col" className="px-6 py-3 w-full">
                   Event payment status
                 </th>
-                <th scope="col" className="px-6 py-3 w-full">
+                {/* <th scope="col" className="px-6 py-3 w-full">
                   Workshop payment status
-                </th>
+                </th> */}
               </tr>
             </thead>
             <tbody className="w-full">
@@ -146,7 +146,7 @@ const PaymentUpdate = () => {
                     ""
                   )}
                 </td>
-                <td
+                {/* <td
                   scope="col"
                   className="px-4 py-4 font-medium text-text-900 whitespace-nowrap w-full text-center "
                 >
@@ -163,7 +163,7 @@ const PaymentUpdate = () => {
                   ) : (
                     ""
                   )}
-                </td>
+                </td> */}
               </tr>
             </tbody>
           </table>

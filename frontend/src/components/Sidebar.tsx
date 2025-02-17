@@ -32,12 +32,12 @@ const navItems = [
     url: "/dashboard/winners",
     allowedRoles : ["super-admin", "event-coordinator"]
   },
-  {
-    name: "Workshop Attendance",
-    icon: <UserPlusIcon className="size-6" />,
-    url: "/dashboard/workshop-attendance",
-    allowedRoles : ["super-admin", "workshop-coordinator"]
-  },
+  // {
+  //   name: "Workshop Attendance",
+  //   icon: <UserPlusIcon className="size-6" />,
+  //   url: "/dashboard/workshop-attendance",
+  //   allowedRoles : ["super-admin", "workshop-coordinator"]
+  // },
   {
     name: "Certificate Committee Participants List",
     icon: <UserGroupIcon className="size-6" />,
@@ -49,6 +49,11 @@ const navItems = [
     icon: <IdentificationIcon className="size-6" />,
     url: "/dashboard/participant-info",
     allowedRoles : ["super-admin", "event-coordinator", "workshop-coordinator", "certificate-committee"]
+  },
+  {
+    name: "Kit Receival Status Update",
+    icon: <IdentificationIcon className="size-6" />,
+    url: "/dashboard/kit-info",
   },
   {
     name: "On the Spot Registration",

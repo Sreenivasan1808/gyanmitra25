@@ -401,7 +401,7 @@ const ParticipantsTable = ({ participants, onApprove, onReject }: any) => {
                     </p>
                   </div>
                   <div className="flex gap-4">
-                    <button
+                    {/* <button
                       className="px-4 py-2 bg-green-500 rounded-lg w-full hover:bg-green-600 text-white"
                       onClick={async () => {
                         await onApprove(selectedParticipants, 0);
@@ -409,7 +409,7 @@ const ParticipantsTable = ({ participants, onApprove, onReject }: any) => {
                       }}
                     >
                       Approve for Workshops alone
-                    </button>
+                    </button> */}
                     <button
                       className="px-4 py-2 bg-green-500 rounded-lg w-full hover:bg-green-600 text-white"
                       onClick={async () => {
@@ -417,9 +417,9 @@ const ParticipantsTable = ({ participants, onApprove, onReject }: any) => {
                         setApproveModalOpen(false);
                       }}
                     >
-                      Approve for Events alone
+                      Approve for Events
                     </button>
-                    <button
+                    {/* <button
                       className="px-4 py-2 bg-green-500 rounded-lg w-full hover:bg-green-600 text-white"
                       onClick={async () => {
                         await onApprove(selectedParticipants, 2);
@@ -427,7 +427,7 @@ const ParticipantsTable = ({ participants, onApprove, onReject }: any) => {
                       }}
                     >
                       Approve for both
-                    </button>
+                    </button> */}
                     <button
                       className="px-4 py-2 bg-accent-100 rounded-lg w-full"
                       onClick={() => setApproveModalOpen(false)}

@@ -25,12 +25,14 @@ export const rolePermissions: any = {
     "/dashboard/on-spot-registration",
     "/dashboard/payment-update",
     "/dashboard/payment-details",
+    "/dashboard/kit-info",
   ],
   "registration-coordinator": [
     "/dashboard/on-spot-registration",
     "/dashboard/participant-info",
     "/dashboard/payment-update",
     "/dashboard/payment-details",
+    "/dashboard/kit-info",
   ],
   "domain-coordinator": [
     "/dashboard/event-attendance",
