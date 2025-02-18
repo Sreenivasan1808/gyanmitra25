@@ -10,7 +10,7 @@ const UserTable = ({ users }: any) => {
             <th className="border border-gray-300 p-2">GMID</th>
             <th className="border border-gray-300 p-2">Name</th>
             <th className="border border-gray-300 p-2">Participated Events</th>
-            <th className="border border-gray-300 p-2">Participated Workshops</th>
+            {/* <th className="border border-gray-300 p-2">Participated Workshops</th> */}
             <th className="border border-gray-300 p-2">Year and Department</th>
             <th className="border border-gray-300 p-2">Mobile No.</th>
           </tr>
@@ -32,16 +32,16 @@ const UserTable = ({ users }: any) => {
                   ))}
                 </ul>
               </td>
-              <td className="border border-gray-300 p-2">
+              {/* <td className="border border-gray-300 p-2">
                 <ul className='ml-4 list-disc'>
                   {userObj?.workshops.map((workshop: any, workshopIndex: any) => (
                     <li key={workshopIndex}>
-                      {/* Event ID: {event.event_id}, Status: {event.status ? 'Active' : 'Inactive'} */}
+                      Event ID: {event.event_id}, Status: {event.status ? 'Active' : 'Inactive'}
                       {workshop.name}
                     </li>
                   ))}
                 </ul>
-              </td>
+              </td> */}
               <td className="border border-gray-300 p-2">{userObj.user.ccity}</td>
               <td className="border border-gray-300 p-2">{userObj.user.phone}</td>
             </tr>

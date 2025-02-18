@@ -15,7 +15,7 @@ const attendanceDownload = async (req, res) => {
                 const data=await userModel.findOne({user_id:user_id})
                 
                 if (data) {
-                    jsonData.push({GMId:data.user_id,Name:data.name,CollegeName:data.cname,MobileNumber:data.phone,"Year And Department":data.ccity});
+                    jsonData.push({GMId:data.user_id,Name:data.name,CollegeName:data.cname,"Year And Department":data.ccity,"Mobile Number":data.phone});
                 }
             }
 
@@ -54,7 +54,7 @@ const workshopAttendanceDownload = async (req, res) => {
                 const data=await userModel.findOne({user_id:user_id})
                 
                 if (data) {
-                    jsonData.push({GMId:data.user_id,Name:data.name,CollegeName:data.cname});
+                    jsonData.push({GMId:data.user_id,Name:data.name,CollegeName:data.cname,"Year And Department":data.ccity,"Mobile Number":data.phone});
                 }
             }
 
