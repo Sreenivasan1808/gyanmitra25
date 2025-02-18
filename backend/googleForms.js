@@ -43,7 +43,7 @@ const getDetails=async (req, res) => {
         });
         return entry;
       });
-      console.log(data);
+      // console.log(data);
       res.status(200).json(data); // Send the structured data as JSON
     } catch (error) {
       console.error("Error fetching spreadsheet data:", error.message);
@@ -205,7 +205,7 @@ const approveParticipants = async (req, res) => {
     if (verify1) {
       // Update the existing document with the new kitRecieved value
       verify1.kitReceived = true;
-      kit = await verify.save();
+      kit = await verify1.save();
       console.log("hi")
     } else {
       // Create a new registration kit document

@@ -10,5 +10,6 @@ router.get("/getdomainwisewinners",pdf.getDomainWiseWinnersPdf)
 router.get("/getallwinners",pdf.getAllPdf)
 router.get("/getdomainwisewinnersdata",coordinatorController.getDomainWiseWinnersData)
 router.post("/approvewinners",coordinatorController.approveEventWinner)
+router.get("/college-wise-participant-count",eventController.getcount)
 
 module.exports = router;
