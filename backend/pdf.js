@@ -746,11 +746,11 @@ const updatecode = async (req, res) => {
       return res.status(404).send("No events found for the given domain");
 
     const eventIds = events.map((event) => event.eventid);
-    const winners = await winnersModel.find({ event_id: { $in: eventIds } });
-    if (!winners.length)
-      return res
-        .status(404)
-        .send("No winners found for the events in the given domain");
+    const winners = await winnersModel.find({ event_id: { $in: eventIds } ,approved:true});
+    // if (!winners.length)
+    //   return res
+    //     .status(404)
+    //     .send("No winners found for the events in the given domain");
 
     let htmlContent = `
       <!DOCTYPE html>
@@ -774,10 +774,14 @@ const updatecode = async (req, res) => {
     for (const event of events) {
       const eventWinners = winners.filter((w) => w.event_id === event.eventid);
 
-      if (!eventWinners.length) continue;
+      
 
-      htmlContent += `<h2>${event.name.toUpperCase()}</h2>`;
-
+      htmlContent += !eventWinners.length ? `<p><h2>${event.name.toUpperCase()}</h2> - Not Updated<p>` : `<h2>${event.name.toUpperCase()}</h2>`;
+      if (!eventWinners.length)
+      {
+        // htmlContent += `<p>Not Updated</p>`;
+        continue;
+      } 
       const fetchUsers = async (userIds) => {
         return await Promise.all(
           userIds.map(async (userId) => userModel.findOne({ user_id: userId }))

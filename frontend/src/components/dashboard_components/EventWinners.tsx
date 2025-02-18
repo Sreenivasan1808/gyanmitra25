@@ -58,7 +58,7 @@ const EventWinners = () => {
     ],
     firstPrizeTeamName: "",
     secondPrizeTeamName: "",
-    thirdPrizeTeamName: "",
+    thirdPrizeTeamName: " ",
     approved: false,
   });
   const [isUpdate, setIsUpdate] = useState<boolean>(false); //boolean variable to check if it uploading or editing winners
@@ -76,11 +76,9 @@ const EventWinners = () => {
     if (
       !formData.firstPrize.length ||
       !formData.secondPrize.length ||
-      !formData.thirdPrize.length ||
       (event.eventtype === "Group" &&
         (!formData.firstPrizeTeamName.trim() ||
-          !formData.secondPrizeTeamName.trim() ||
-          !formData.thirdPrizeTeamName.trim()))
+          !formData.secondPrizeTeamName.trim()))
     ) {
       showSnackbar("Please fill all required fields.", "error");
       return;
@@ -223,7 +221,7 @@ const EventWinners = () => {
       ],
       firstPrizeTeamName: "",
       secondPrizeTeamName: "",
-      thirdPrizeTeamName: "",
+      thirdPrizeTeamName: " ",
       approved: false,
     });
   };
@@ -829,17 +827,26 @@ const EventWinners = () => {
                 </table>
                           </>*/}
               {/* Action Buttons */}
-              {formData.approved && [ "super-admin", "domain-coordinator"].includes(role) ? (
+              {formData.approved &&
+              ["super-admin", "domain-coordinator"].includes(role) ? (
                 <div className="w-full flex justify-end gap-2 mt-4">
                   <button
                     className="rounded-lg px-2 py-1 bg-red-600 text-white md:px-4 md:py-2 hover:scale-95"
-                    onClick={(e:any) => {e.preventDefault();  setDeleteModalOpen(true)}}
+                    onClick={(e: any) => {
+                      e.preventDefault();
+                      setDeleteModalOpen(true);
+                    }}
                   >
                     Delete
                   </button>
                 </div>
               ) : (
-                editable && ["event-coordinator", "super-admin", "domain-coordinator"].includes(role) && (
+                editable &&
+                [
+                  "event-coordinator",
+                  "super-admin",
+                  "domain-coordinator",
+                ].includes(role) && (
                   <div className="w-full flex justify-end gap-2 mt-4">
                     <button
                       className="rounded-lg px-2 py-1 border-2 border-accent-200 md:px-4 md:py-2 hover:scale-95"
@@ -951,10 +958,7 @@ const EventWinners = () => {
           </div>
         </div>
       </Modal>
-      <Modal
-        open={deleteModalOpen}
-        onClose={() => setDeleteModalOpen(false)}
-      >
+      <Modal open={deleteModalOpen} onClose={() => setDeleteModalOpen(false)}>
         <div className="text-center w-56">
           <XMarkIcon className="size-32 mx-auto text-red-500" />
           <div className="mx-auto my-4 w-48">

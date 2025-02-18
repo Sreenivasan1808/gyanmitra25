@@ -8,6 +8,7 @@ const PaymentDetailsModel = require("./models/payment_details")
 const agent = new https.Agent({
   rejectUnauthorized: false,
 });
+const registrationKitModel=require("./models/registrationKit")
 
 const getDetails=async (req, res) => {
     console.log("entered");
@@ -151,6 +152,7 @@ const deleteRowsByEmails = async (req, res) => {
 
 const approveParticipants = async (req, res) => {
   try {
+    console.log('enterd approve')
     const participants = await getRowsByEmails(req.body.emails); // Fetch participant data based on emails
     const approvedFor=req.body.approvedFor
     if (!participants || participants.length === 0) {
@@ -196,6 +198,21 @@ const approveParticipants = async (req, res) => {
 
       // Save the new user to the database
       const savedUser = await newUser.save();
+      const verify1 = await registrationKitModel.findOne({ user_id:savedUser.user_id });
+    let kit;
+    console.log("verify",savedUser)
+
+    if (verify1) {
+      // Update the existing document with the new kitRecieved value
+      verify1.kitReceived = true;
+      kit = await verify.save();
+      console.log("hi")
+    } else {
+      // Create a new registration kit document
+      kit = new registrationKitModel({ user_id:savedUser.user_id, kitReceived:true });
+      await kit.save();
+      console.log("hello")
+    }
       const verifyPaydetail = await PaymentDetailsModel.findOne({user_id:savedUser.user_id})
       var day="Other Date"
       const currdate=new Date()
