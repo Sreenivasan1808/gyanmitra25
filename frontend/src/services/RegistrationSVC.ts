@@ -78,15 +78,31 @@ export const getDayWisePaymentDetails = async (day: string) => {
   }
 };
 
-
 export const updateKitStatus = async (gmid: string, status: boolean) => {
   try {
-    const response = await axios.put(`${SERVER_URL}/participant/registrationKit`, {user_id: gmid, kitReceived: status});
-    if(response.status == 201){
-      return {message: response.data.message, type: "success"};
+    const response = await axios.put(
+      `${SERVER_URL}/participant/registrationKit`,
+      { user_id: gmid, kitReceived: status }
+    );
+    if (response.status == 201) {
+      return { message: response.data.message, type: "success" };
     }
   } catch (error) {
     console.error(error);
-    return {message: "Internal server error", type: "error"}
+    return { message: "Internal server error", type: "error" };
   }
-}
+};
+
+export const getCollegeWiseParticipantCount = async () => {
+  try {
+    const response = await axios.get(
+      `${SERVER_URL}/event/college-wise-participant-count`
+    );
+    if (response.status == 200) {
+      return { message: response.data.message, type: "success", data: response.data.data };
+    }
+  } catch (error) {
+    console.error(error);
+    return { message: "Internal server error", type: "error" };
+  }
+};

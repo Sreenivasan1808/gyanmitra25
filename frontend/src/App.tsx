@@ -16,6 +16,7 @@ import OnSpotRegistration from "./components/dashboard_components/OnSpotRegistra
 import PaymentUpdate from "./components/dashboard_components/PaymentUpdate";
 import PaymentDetails from "./components/dashboard_components/PaymentDetails";
 import KitReceived from "./components/dashboard_components/KitReceived";
+import ParticipantsCount from "./components/dashboard_components/ParticipantsCount";
 
 const RoleBasedRedirect = () => {
   const { role } = useAuth();
@@ -76,6 +77,7 @@ const App = () => {
           <Route path="winners/:event-id" element={<EventWinners />} />
           <Route path="participants" element={<CollegeParticipants />} />
           <Route path="participant-info" element={<ParticipantInformation />} />
+          <Route path="count-info" element={<ParticipantsCount />} />
           <Route path="kit-info" element={<KitReceived />} />
           <Route path="payment-update" element={<PaymentUpdate />} />
           <Route path="payment-details" element={<PaymentDetails />} />
