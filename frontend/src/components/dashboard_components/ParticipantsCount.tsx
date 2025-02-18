@@ -6,6 +6,7 @@ const ParticipantsCount = () => {
 
     const fetchData = async () => {
         const status = await getCollegeWiseParticipantCount();
+        console.log(status)
         if(status?.data){
             setCollegeWiseData(status.data);
         }
@@ -19,14 +20,15 @@ const ParticipantsCount = () => {
         return () => clearInterval(interval);
       }, []);
   return (
-    <div>
+    <div className='p-8'>
+        <h1 className='text-lg text-center m-4 font-semibold'>College Wise Count</h1>
       <table className="table-auto w-full mb-4 border-collapse">
         <thead>
           <tr>
-            <th className="px-4 py-2 border w-fit">S.No</th>
-            <th className="px-4 py-2 border min-w-full">College Name</th>
+            <th className="px-4 py-2 border-2 bg-secondary-400 w-fit">S.No</th>
+            <th className="px-4 py-2 border-2 bg-secondary-400 min-w-full">College Name</th>
             
-            <th className="px-4 py-2 border">Total Count</th>
+            <th className="px-4 py-2 border-2 bg-secondary-400">Total Count</th>
           </tr>
         </thead>
         <tbody>
@@ -39,17 +41,17 @@ const ParticipantsCount = () => {
                 </td>
                 
                 <td className="border px-4 py-2">
-                  {college.count}
+                  {college.participantCount}
                 </td>
                 
               </tr>
             ))}
-          <tr>
+          <tr className='bg-secondary-400'>
             <td></td>
             <td className="font-semibold border px-4 py-2 text-right">TOTAL</td>
             
             <td className="font-semibold border px-4 py-2">
-              {collegeWiseData?.reduce((acc: any, curr:any) => acc + curr.count, 0)}
+              {collegeWiseData?.reduce((acc: any, curr:any) => acc + curr.participantCount, 0)}
             </td>
           </tr>
         </tbody>

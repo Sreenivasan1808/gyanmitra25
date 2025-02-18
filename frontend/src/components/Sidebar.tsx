@@ -71,6 +71,11 @@ const navItems = [
     icon: <CurrencyRupeeIcon className="size-6" />,
     url: "/dashboard/payment-details",
   },
+  {
+    name: "College Wise Count",
+    icon: <CurrencyRupeeIcon className="size-6" />,
+    url: "/dashboard/count-info",
+  },
 ];
 
 const Sidebar = ({ setIsOpen }: any) => {

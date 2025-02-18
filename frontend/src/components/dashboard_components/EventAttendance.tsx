@@ -62,7 +62,7 @@ const EventAttendance = () => {
       return;
     }
     // console.log(participantDetails.gmid)
-    let details = await getParticipantDetailsFromGMID(participantDetails.gmid);
+    let details = await getParticipantDetailsFromGMID(participantDetails.gmid, false);
     // console.log(details);
     if (details != null) {
       setParticipantDetails((prevData) => ({

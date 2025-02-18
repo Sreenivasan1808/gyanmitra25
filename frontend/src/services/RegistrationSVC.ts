@@ -99,7 +99,7 @@ export const getCollegeWiseParticipantCount = async () => {
       `${SERVER_URL}/event/college-wise-participant-count`
     );
     if (response.status == 200) {
-      return { message: response.data.message, type: "success", data: response.data.data };
+      return { message: response.data.message, type: "success", data: response.data };
     }
   } catch (error) {
     console.error(error);

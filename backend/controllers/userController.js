@@ -69,11 +69,20 @@ const getDetails = async (req, res) => {
   try {
     console.log("entered");
     const user_id = req.query.gmId;
+    const email = req.query.email;
+    let data;
     console.log(user_id);
-    const data = await userModel.findOne({ user_id: user_id });
+    if(user_id){
+      data = await userModel.findOne({ user_id: user_id });
+      
+    }else if(email.length > 0){
+      data = await userModel.findOne({ email: email });
+    }else{
+      res.status(500).json({message: "GMID or E-Mail is required"});
+    }
     if (data) {
       console.log("sent");
-      const data1=await registrationKitModel.findOne({user_id:user_id})
+      const data1=await registrationKitModel.findOne({user_id:data.user_id})
       if(data1){
         res.status(200).json({...data.toObject(),"kitReceived":data1.kitReceived });
       }

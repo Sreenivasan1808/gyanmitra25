@@ -1,11 +1,18 @@
 import axios from "axios";
 const SERVER_URL = import.meta.env.VITE_SERVER_API_URL;
 
-export const getParticipantDetailsFromGMID = async (gmid: string) => {
+export const getParticipantDetailsFromGMID = async (gmid: string, isEmail: boolean) => {
   try {
+    let params;
+    if(isEmail){
+      params = {params: { email: gmid }}
+    }else{
+      params = { params: { gmId: gmid } }
+
+    }
     const response = await axios.get(
       `${SERVER_URL}/participant/getParticipantDetails`,
-      { params: { gmId: gmid } }
+      params
     );
     console.log(response);
     if (response.status == 200) {

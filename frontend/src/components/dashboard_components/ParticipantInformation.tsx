@@ -17,7 +17,8 @@ const ParticipantInformation = () => {
       showSnackbar("Enter a valid GMID", "error");
       return;
     }
-    const details = await getParticipantDetailsFromGMID(gmid);
+    const isEmail = gmid.includes('@');
+    const details = await getParticipantDetailsFromGMID(gmid, isEmail);
     console.log(details);
     
     if (!details) {
@@ -64,7 +65,7 @@ const ParticipantInformation = () => {
       <h2 className="text-xl text-center">Participant Information</h2>
       <div className="border-2 border-secondary-500 p-4 rounded-lg m-2 w-72 flex flex-col items-center gap-4">
         <div className="flex flex-col gap-1 max-w-72">
-          <label htmlFor="gmid">GMID</label>
+          <label htmlFor="gmid">GMID / E-Mail</label>
           <input
             type="email"
             id="gmid"

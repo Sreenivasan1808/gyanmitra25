@@ -253,7 +253,7 @@ const EventWinners = () => {
     if (gmid == null || gmid.length == 0) {
       return;
     }
-    let participantDetails = await getParticipantDetailsFromGMID(gmid);
+    let participantDetails = await getParticipantDetailsFromGMID(gmid, false);
 
     if (participantDetails == null || gmid.length == 0) {
       showSnackbar("Invalid GMID", "error");

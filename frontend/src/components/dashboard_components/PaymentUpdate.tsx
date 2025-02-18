@@ -18,7 +18,7 @@ const PaymentUpdate = () => {
       showSnackbar("Enter a valid GMID", "error");
       return;
     }
-    const details = await getParticipantDetailsFromGMID(gmid);
+    const details = await getParticipantDetailsFromGMID(gmid, false);
     console.log(details);
 
     if (!details) {
@@ -43,7 +43,7 @@ const PaymentUpdate = () => {
   const handlePaymentUpdate = async (type: any) => {
     const status = await updatePaymentStatus(participant.user_id, type);
     showSnackbar(status?.message, status?.type);
-    const details = await getParticipantDetailsFromGMID(gmid);
+    const details = await getParticipantDetailsFromGMID(gmid, false);
     console.log(details);
 
     if (!details) {
