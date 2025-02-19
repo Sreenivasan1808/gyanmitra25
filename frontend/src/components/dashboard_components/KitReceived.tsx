@@ -18,7 +18,7 @@ const KitReceived = () => {
       showSnackbar("Enter a valid GMID", "error");
       return;
     }
-    const details = await getParticipantDetailsFromGMID(gmid);
+    const details = await getParticipantDetailsFromGMID(gmid, false);
     console.log(details);
 
     if (!details) {
@@ -44,7 +44,7 @@ const KitReceived = () => {
     e.preventDefault();
     const status = await updateKitStatus(gmid, !participant.kitReceived);
     showSnackbar(status?.message, status?.type);
-    const details = await getParticipantDetailsFromGMID(gmid);
+    const details = await getParticipantDetailsFromGMID(gmid, false);
     console.log(details);
 
     if (!details) {
@@ -117,7 +117,7 @@ const KitReceived = () => {
           </table>
           <div className="flex gap-2">
             {(role === "super-admin" ||
-              role === "registration-coordinator") && (
+              role === "registration-coordinator" || role === "registration-committee") && (
               <button
                 className={`mt-4 rounded-lg px-4 py-2 text-white  hover:scale-95 flex items-center gap-2 ${participant.kitReceived ? "bg-red-600 hover:bg-red-700" : "bg-primary-600 hover:bg-primary-700"}`}
                 onClick={() => setModalOpen(true)}

@@ -386,6 +386,7 @@ const ParticipantsTable = ({ participants, onApprove, onReject }: any) => {
                     </h3>
                     <p className="text text-gray-500">
                       Are you sure you want to approve this participant?
+                      <span className="font-semibold">NOTE: </span> Make sure the participant has paid the entry fee and has received the kit
                       <ul>
                         <li>
                           <strong>Name:</strong> {selectedParticipant?.Name}
