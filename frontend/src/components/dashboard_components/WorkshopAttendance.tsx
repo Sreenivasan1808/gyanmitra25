@@ -276,7 +276,7 @@ const WorkshopAttendance = () => {
                   Full Name
                 </th>
                 <th scope="col" className="px-6 py-3 w-full">
-                  Year and Department
+                  Department and Year
                 </th>
                 <th scope="col" className="px-6 py-3 w-full">
                   College

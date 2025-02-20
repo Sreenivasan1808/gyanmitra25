@@ -173,7 +173,7 @@ const approveParticipants = async (req, res) => {
       const password="participant.password"
       const MobileNo=participant.MobileNo
       const CollegeName=participant.CollegeName
-      const CollegeCity=participant["Year & Department"]
+      const CollegeCity=participant["Department & Year"]
       // Check if the user already exists by email
       const existingUser = await UserModel.findOne({ email: Email });
       if (existingUser) {

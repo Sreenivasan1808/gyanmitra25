@@ -489,7 +489,7 @@ const EventWinners = () => {
                         scope="col"
                         className="px-2 py-3 md:px-6 md:py-3 w-full"
                       >
-                        Year and Department
+                        Department and Year
                       </th>
                       <th
                         scope="col"
@@ -629,7 +629,7 @@ const EventWinners = () => {
                         scope="col"
                         className="px-2 py-3 md:px-6 md:py-3 w-full"
                       >
-                        Year and Department
+                        Department and Year
                       </th>
                       <th
                         scope="col"
@@ -767,7 +767,7 @@ const EventWinners = () => {
                         scope="col"
                         className="px-2 py-3 md:px-6 md:py-3 w-full"
                       >
-                        Year and Department
+                        Department and Year
                       </th>
                       <th
                         scope="col"
